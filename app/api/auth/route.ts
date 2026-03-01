@@ -16,7 +16,26 @@ export async function POST(request: NextRequest) {
     const supabase = getServiceClient()
     const cedulaClean = String(cedula).trim()
 
-    // Buscar testigo
+    // 1. Verify if the user is an admin
+    const { data: admin } = await supabase
+      .from('admins')
+      .select('cedula')
+      .eq('cedula', cedulaClean)
+      .single()
+
+    if (admin) {
+      return NextResponse.json({
+        exito: true,
+        esCoordinador: true,
+        sesion: {
+          cedula: cedulaClean,
+          // Coordinadores no necesitan la estructura completa de testigo para el panel
+          esAdmin: true
+        },
+      })
+    }
+
+    // 2. Buscar testigo regular
     const { data: testigo, error: testigoError } = await supabase
       .from('testigos')
       .select('*')
@@ -30,7 +49,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Buscar asignaciones de mesas
+    // 3. Buscar asignaciones de mesas
     const { data: asignaciones } = await supabase
       .from('mesa_asignaciones')
       .select('*')
@@ -98,6 +117,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       exito: true,
+      esCoordinador: false,
       sesion: {
         cedula: cedulaClean,
         testigo,

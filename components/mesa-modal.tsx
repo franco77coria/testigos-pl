@@ -126,29 +126,26 @@ export default function MesaModal({ mesa, cedula, onClose, onUpdate }: Props) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-[500px] max-h-[92vh] overflow-y-auto"
+            className="bg-white sm:rounded-3xl rounded-t-3xl w-full max-w-[500px] max-h-[92vh] sm:max-h-[85vh] flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
           >
-            {/* Header con gradiente */}
-            <div className="px-6 py-5 rounded-t-3xl sm:rounded-t-3xl sticky top-0 z-10 flex items-center justify-between"
-              style={{ background: 'linear-gradient(135deg, #E31837, #B71530)' }}
-            >
+            {/* Header Limpio */}
+            <div className="px-6 py-5 rounded-t-3xl border-b border-gray-100 bg-white sticky top-0 z-10 flex items-center justify-between shrink-0">
               <div>
-                <h2 className="text-white text-lg font-bold">Mesa #{mesa.mesa_numero}</h2>
-                <p className="text-white/60 text-xs mt-0.5">{mesa.puesto}</p>
+                <h2 className="text-[#1A1A1A] text-xl font-black tracking-tight mb-0.5">Mesa #{mesa.mesa_numero}</h2>
+                <p className="text-[#6B7280] text-xs font-semibold uppercase tracking-wider">{mesa.puesto}</p>
               </div>
               <button
                 onClick={onClose}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer"
-                style={{ background: 'rgba(255,255,255,0.2)' }}
+                className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 transition-colors hover:bg-red-50 hover:text-[#E31837] cursor-pointer"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 6 6 18" /><path d="m6 6 12 12" />
                 </svg>
               </button>
             </div>
 
-            {/* Body */}
-            <div className="p-6 space-y-4">
+            {/* Body scrollable */}
+            <div className="p-5 sm:p-6 space-y-4 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
               {SECCIONES.map((seccion) => (
                 <SectionBlock
                   key={seccion.id}
