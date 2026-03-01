@@ -72,23 +72,21 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
 
   return (
     <>
-      <div className="min-h-screen bg-surface">
-        {/* Red header */}
-        <div className="bg-pl-red relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.06]" style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-            backgroundSize: '24px 24px',
-          }} />
-
-          <div className="relative z-10 max-w-[900px] mx-auto px-4 pt-4 pb-14">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
+      <div className="min-h-screen bg-[#F5F5F7]">
+        {/* Header con gradiente */}
+        <div className="relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #E31837, #8B0A1E)' }}
+        >
+          <div className="max-w-[900px] mx-auto px-5 pt-6 pb-16">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2.5 text-white">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                <span className="text-white/70 text-xs font-medium">Testigos PL</span>
+                <span className="text-sm font-semibold">Testigos PL</span>
               </div>
               <button
                 onClick={onLogout}
-                className="text-white/70 text-xs font-medium cursor-pointer hover:text-white transition-colors flex items-center gap-1.5"
+                className="px-4 py-2 rounded-full text-white text-xs font-medium cursor-pointer transition-all duration-300 hover:bg-white/25 flex items-center gap-1.5"
+                style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -98,49 +96,53 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
                 Salir
               </button>
             </div>
-            <h1 className="text-white text-lg font-bold">
-              {testigo.nombre1} {testigo.apellido1}
-            </h1>
-            <div className="flex items-center gap-3 mt-1 text-xs text-white/60">
-              <span className="flex items-center gap-1">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                {testigo.municipio}
-              </span>
-              <span className="text-white/30">|</span>
-              <span>{testigo.puesto}</span>
+            <div className="text-white">
+              <h1 className="text-xl font-bold mb-1">
+                {testigo.nombre1} {testigo.apellido1}
+              </h1>
+              <div className="flex items-center gap-2 text-[13px] text-white/85 flex-wrap">
+                <span className="flex items-center gap-1.5">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {testigo.municipio}
+                </span>
+                <span className="text-white/30">|</span>
+                <span>{testigo.puesto}</span>
+                <span className="px-2.5 py-0.5 rounded-xl text-[11px] font-medium" style={{ background: 'rgba(255,255,255,0.2)' }}>
+                  {mesas.length} mesas
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Curve */}
-          <div className="absolute -bottom-[1px] left-0 right-0">
-            <svg viewBox="0 0 1440 40" className="w-full h-auto block">
-              <path d="M0,40 L0,20 Q720,0 1440,20 L1440,40 Z" fill="#F8F9FA" />
-            </svg>
-          </div>
+          {/* Curva decorativa */}
+          <div className="absolute -bottom-[1px] left-[-5%] right-[-5%] h-[60px]"
+            style={{ background: '#F5F5F7', borderRadius: '50% 50% 0 0' }}
+          />
         </div>
 
         <div className="max-w-[900px] mx-auto px-4 -mt-7 relative z-10">
-          {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-3 mb-5">
+          {/* Resumen cards */}
+          <div className="grid grid-cols-3 gap-2.5 mb-6">
             {[
-              { label: 'Total', value: total, color: 'text-pl-red', borderColor: 'border-t-pl-red' },
-              { label: 'Completadas', value: completadas, color: 'text-success', borderColor: 'border-t-success' },
-              { label: 'En progreso', value: enProgreso, color: 'text-warning', borderColor: 'border-t-warning' },
+              { label: 'Total', value: total, color: '#E31837' },
+              { label: 'Completadas', value: completadas, color: '#059669' },
+              { label: 'En progreso', value: enProgreso, color: '#D97706' },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className={`bg-white rounded-lg p-3.5 text-center shadow-[0_2px_8px_rgba(0,0,0,0.06)] border-t-[3px] ${item.borderColor}`}
+                className="bg-white rounded-2xl p-3.5 text-center"
+                style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}
               >
-                <div className={`text-2xl font-extrabold ${item.color} leading-none mb-1`}>
+                <div className="text-[24px] font-extrabold leading-none mb-1" style={{ color: item.color }}>
                   <AnimatedNumber value={item.value} />
                 </div>
-                <div className="text-[10px] text-text-secondary font-medium uppercase tracking-wider">
+                <div className="text-[10px] text-[#6B7280] font-medium uppercase tracking-wider">
                   {item.label}
                 </div>
               </motion.div>
@@ -148,12 +150,12 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
           </div>
 
           {/* Title + Refresh */}
-          <div className="flex items-center justify-between mb-3 px-0.5">
-            <h2 className="text-sm font-bold text-text-primary">Mis Mesas</h2>
+          <div className="flex items-center justify-between mb-3.5 px-1">
+            <h2 className="text-base font-bold text-[#1A1A1A]">📋 Mis Mesas</h2>
             <button
               onClick={refrescar}
               disabled={refreshing}
-              className="text-xs text-text-secondary flex items-center gap-1.5 hover:text-pl-red transition-colors cursor-pointer disabled:opacity-50"
+              className="text-xs text-[#6B7280] flex items-center gap-1.5 hover:text-[#E31837] transition-colors cursor-pointer disabled:opacity-50"
             >
               {refreshing ? (
                 <Loader2 size={13} className="animate-spin" />
@@ -170,7 +172,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
           </div>
 
           {/* Mesa grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3.5">
             {mesas.map((mesa, i) => (
               <MesaCard
                 key={mesa.mesa_numero}
@@ -181,7 +183,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
             ))}
           </div>
 
-          <p className="text-center mt-5 text-[11px] text-text-secondary/50">
+          <p className="text-center mt-5 mb-8 text-[11px] text-[#6B7280]/50">
             Ultima actualizacion: {ultimaAct}
           </p>
         </div>

@@ -33,22 +33,24 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
   const hasImage = preview || existingUrl
 
   return (
-    <div className="mb-2">
-      <label className="block text-[10px] font-semibold text-text-secondary mb-1.5 uppercase tracking-wider">
+    <div className="mb-3">
+      <label className="block text-[10px] font-semibold text-[#6B7280] mb-1.5 uppercase tracking-wider">
         {label}
       </label>
       <div
         onClick={() => inputRef.current?.click()}
-        className={`border border-dashed rounded-lg text-center cursor-pointer transition-colors hover:border-pl-red ${
-          hasImage ? 'border-solid border-success p-2' : 'border-border p-4'
-        }`}
+        className="rounded-2xl text-center cursor-pointer transition-all duration-300 hover:border-[#E31837] hover:bg-[rgba(227,24,55,0.03)]"
+        style={{
+          border: hasImage ? '2px solid #10B981' : '2px dashed #E0E0E0',
+          padding: hasImage ? '8px' : '20px',
+        }}
       >
         {hasImage ? (
           <div className="relative">
             <img
               src={preview || existingUrl || ''}
               alt={label}
-              className="w-full max-h-[160px] object-contain rounded"
+              className="w-full max-h-[200px] object-contain rounded-xl"
             />
             <button
               onClick={(e) => {
@@ -56,7 +58,8 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
                 setPreview(null)
                 if (inputRef.current) inputRef.current.value = ''
               }}
-              className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/50 rounded flex items-center justify-center text-white"
+              className="absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-white cursor-pointer"
+              style={{ background: 'rgba(0,0,0,0.5)' }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18" /><path d="m6 6 12 12" />
@@ -64,12 +67,12 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
             </button>
           </div>
         ) : (
-          <div className="py-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-1.5">
+          <div className="py-3">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-2">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
               <circle cx="12" cy="13" r="3" />
             </svg>
-            <p className="text-xs text-text-secondary/60">Toca para tomar foto</p>
+            <p className="text-xs text-[#6B7280]/60 font-medium">Toque para tomar foto</p>
           </div>
         )}
 
@@ -84,7 +87,7 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
       </div>
 
       {(uploading || uploaded || (existingUrl && !preview)) && (
-        <div className={`flex items-center gap-1.5 mt-1.5 text-[11px] font-medium ${uploaded || existingUrl ? 'text-success' : 'text-warning'}`}>
+        <div className={`flex items-center gap-1.5 mt-2 text-[11px] font-medium ${uploaded || existingUrl ? 'text-[#059669]' : 'text-[#D97706]'}`}>
           {uploading ? (
             <>
               <Loader2 size={11} className="animate-spin" />

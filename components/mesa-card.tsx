@@ -19,31 +19,27 @@ export default function MesaCard({ mesa, onClick, index }: Props) {
   const completadas = Math.min(seccionActiva - 1, totalSecciones)
   const porcentaje = Math.round((completadas / totalSecciones) * 100)
 
-  const radio = 17
-  const circunferencia = 2 * Math.PI * radio
-  const offset = circunferencia - (porcentaje / 100) * circunferencia
-
   const estadoConfig = {
     pendiente: {
-      border: 'border-l-locked',
-      badgeBg: 'bg-locked-light',
-      badgeText: 'text-locked',
+      border: '#E0E0E0',
+      badgeBg: '#F3F4F6',
+      badgeText: '#6B7280',
       label: 'Pendiente',
-      stroke: '#94A3B8',
+      progressColor: '#E0E0E0',
     },
     en_progreso: {
-      border: 'border-l-pl-red',
-      badgeBg: 'bg-red-50',
-      badgeText: 'text-pl-red',
+      border: '#F59E0B',
+      badgeBg: '#FEF3C7',
+      badgeText: '#D97706',
       label: 'En progreso',
-      stroke: '#E31837',
+      progressColor: 'linear-gradient(90deg, #F59E0B, #10B981)',
     },
     completada: {
-      border: 'border-l-success',
-      badgeBg: 'bg-success-light',
-      badgeText: 'text-success',
+      border: '#10B981',
+      badgeBg: '#D1FAE5',
+      badgeText: '#059669',
       label: 'Completada',
-      stroke: '#059669',
+      progressColor: '#10B981',
     },
   }
 
@@ -55,50 +51,69 @@ export default function MesaCard({ mesa, onClick, index }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
       onClick={onClick}
-      className={cn(
-        'bg-white rounded-lg p-4 border border-border border-l-[3px] cursor-pointer transition-shadow hover:shadow-[0_2px_12px_rgba(0,0,0,0.08)]',
-        config.border
-      )}
+      className="bg-white rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 relative"
+      style={{
+        boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+        borderLeft: `5px solid ${config.border}`,
+      }}
+      whileHover={{ boxShadow: '0 16px 48px rgba(0,0,0,0.12)' }}
     >
-      <div className="flex items-center gap-3.5">
-        {/* Donut progress */}
-        <div className="relative flex-shrink-0">
-          <svg width="44" height="44" className="-rotate-90">
-            <circle cx="22" cy="22" r={radio} fill="none" stroke="#E2E8F0" strokeWidth="2.5" />
-            <motion.circle
-              cx="22" cy="22" r={radio}
-              fill="none"
-              stroke={config.stroke}
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeDasharray={circunferencia}
-              initial={{ strokeDashoffset: circunferencia }}
-              animate={{ strokeDashoffset: offset }}
-              transition={{ duration: 0.6, delay: index * 0.04 + 0.2 }}
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-text-primary">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-lg font-extrabold"
+            style={{ background: 'linear-gradient(135deg, #E31837, #B71530)' }}
+          >
             {mesa.mesa_numero}
-          </span>
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-sm font-semibold text-text-primary">Mesa {mesa.mesa_numero}</span>
-            <span className={cn('text-[10px] font-medium px-2 py-0.5 rounded', config.badgeBg, config.badgeText)}>
-              {config.label}
-            </span>
           </div>
-          <div className="flex items-center gap-3 text-[11px] text-text-secondary">
-            <span>Hab: <strong className="text-text-primary">{mesa.cantidad_votantes_mesa || '-'}</strong></span>
-            <span>10AM: <strong className="text-text-primary">{mesa.votantes_10am || '-'}</strong></span>
-            <span>1PM: <strong className="text-text-primary">{mesa.votantes_1pm || '-'}</strong></span>
-          </div>
+          <span className="text-[15px] font-semibold text-[#1A1A1A]">Mesa {mesa.mesa_numero}</span>
         </div>
+        <span className="text-[11px] font-semibold px-3 py-1 rounded-full"
+          style={{ background: config.badgeBg, color: config.badgeText }}
+        >
+          {config.label}
+        </span>
+      </div>
 
-        {/* Arrow */}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+      {/* Datos */}
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+          <span>👥</span>
+          <span>Hab: <strong className="text-[#1A1A1A]">{mesa.cantidad_votantes_mesa || '-'}</strong></span>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+          <span>🕐</span>
+          <span>10AM: <strong className="text-[#1A1A1A]">{mesa.votantes_10am || '-'}</strong></span>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+          <span>🕐</span>
+          <span>1PM: <strong className="text-[#1A1A1A]">{mesa.votantes_1pm || '-'}</strong></span>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+          <span>🗳️</span>
+          <span>4PM: <strong className="text-[#1A1A1A]">{mesa.votantes_4pm || '-'}</strong></span>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="mt-2">
+        <div className="flex justify-between text-[11px] text-[#6B7280] mb-1">
+          <span>Progreso</span>
+          <span className="font-semibold">{completadas}/{totalSecciones}</span>
+        </div>
+        <div className="h-2 bg-[#E5E7EB] rounded overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${porcentaje}%` }}
+            transition={{ duration: 0.6, delay: index * 0.04 + 0.2 }}
+            className="h-full rounded"
+            style={{ background: estado === 'en_progreso' ? 'linear-gradient(90deg, #F59E0B, #10B981)' : (estado === 'completada' ? '#10B981' : '#E0E0E0') }}
+          />
+        </div>
+      </div>
+
+      {/* Arrow */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#E0E0E0] transition-all duration-300">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="m9 18 6-6-6-6" />
         </svg>
       </div>

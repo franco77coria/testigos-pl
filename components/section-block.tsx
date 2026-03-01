@@ -14,11 +14,11 @@ interface Props {
   saving: boolean
 }
 
-const SECTION_COLORS: Record<number, { bg: string; border: string; text: string; btn: string }> = {
-  1: { bg: 'bg-amber-50', border: 'border-amber-300', text: 'text-amber-700', btn: 'bg-amber-600 hover:bg-amber-700' },
-  2: { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-700', btn: 'bg-blue-600 hover:bg-blue-700' },
-  3: { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700', btn: 'bg-orange-600 hover:bg-orange-700' },
-  4: { bg: 'bg-red-50', border: 'border-red-300', text: 'text-red-700', btn: 'bg-pl-red hover:bg-pl-red-dark' },
+const SECTION_COLORS: Record<number, { bg: string; border: string; text: string; iconBg: string; btnGradient: string }> = {
+  1: { bg: '#FFFBEB', border: '#FCD34D', text: '#92400E', iconBg: 'rgba(245,158,11,0.3)', btnGradient: 'linear-gradient(135deg, #D97706, #B45309)' },
+  2: { bg: '#EFF6FF', border: '#93C5FD', text: '#1E40AF', iconBg: 'rgba(59,130,246,0.3)', btnGradient: 'linear-gradient(135deg, #3B82F6, #1D4ED8)' },
+  3: { bg: '#FFF7ED', border: '#FDBA74', text: '#9A3412', iconBg: 'rgba(249,115,22,0.3)', btnGradient: 'linear-gradient(135deg, #F97316, #EA580C)' },
+  4: { bg: '#FEF2F2', border: '#FCA5A5', text: '#991B1B', iconBg: 'rgba(227,24,55,0.3)', btnGradient: 'linear-gradient(135deg, #E31837, #B71530)' },
 }
 
 export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, saving }: Props) {
@@ -52,14 +52,20 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
     }).join(' · ')
 
     return (
-      <div className="rounded-lg p-3.5 border border-success/20 bg-success-light flex items-center gap-3">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-          <path d="m9 11 3 3L22 4" />
-        </svg>
+      <div className="rounded-2xl p-4 flex items-center gap-3 border-2"
+        style={{ borderColor: '#D1FAE5', background: 'rgba(16,185,129,0.02)' }}
+      >
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ background: 'rgba(16,185,129,0.15)' }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <path d="m9 11 3 3L22 4" />
+          </svg>
+        </div>
         <div className="min-w-0 flex-1">
-          <span className="text-xs font-semibold text-success block">{seccion.nombre}</span>
-          <p className="text-[11px] text-text-secondary truncate">{resumen}</p>
+          <span className="text-xs font-semibold text-[#059669] block">{seccion.nombre} ✓</span>
+          <p className="text-[11px] text-[#6B7280] truncate">{resumen}</p>
         </div>
       </div>
     )
@@ -68,15 +74,21 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
   // Locked state
   if (isLocked) {
     return (
-      <div className="rounded-lg p-3.5 border border-border bg-locked-light/50">
+      <div className="rounded-2xl p-4 border-2 border-[#E0E0E0]"
+        style={{ background: '#F9FAFB', opacity: 0.55 }}
+      >
         <div className="flex items-center gap-3">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
-            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(148,163,184,0.15)' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
           <div>
-            <span className="text-xs font-semibold text-locked block">{seccion.nombre}</span>
-            <p className="text-[11px] text-locked">Complete la seccion anterior</p>
+            <span className="text-xs font-semibold text-[#94A3B8] block">{seccion.nombre}</span>
+            <p className="text-[11px] text-[#94A3B8]">Complete la seccion anterior</p>
           </div>
         </div>
       </div>
@@ -89,23 +101,30 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className={`rounded-lg p-4 border ${color.border} ${color.bg}`}
+      className="rounded-2xl p-5 border-2"
+      style={{ borderColor: color.border, background: color.bg }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className={`w-6 h-6 rounded ${color.btn} flex items-center justify-center text-white text-[11px] font-bold`}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-[13px] font-bold"
+            style={{ background: color.btnGradient }}
+          >
             {seccion.id}
           </div>
-          <span className="text-sm font-semibold text-text-primary">{seccion.nombre}</span>
+          <span className="text-sm font-bold text-[#1A1A1A]">{seccion.nombre}</span>
         </div>
-        <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-success-light text-success">
-          Activa
+        <span className="text-[10px] font-semibold px-2.5 py-1 rounded-xl"
+          style={{ background: '#D1FAE5', color: '#059669' }}
+        >
+          🟢 Activa
         </span>
       </div>
 
       {/* Description */}
-      <p className="text-xs text-text-secondary bg-white/70 rounded-md p-2.5 mb-4 leading-relaxed">
+      <p className="text-xs text-[#6B7280] rounded-xl p-3 mb-4 leading-relaxed"
+        style={{ background: 'rgba(255,255,255,0.7)' }}
+      >
         {seccion.descripcion}
       </p>
 
@@ -113,7 +132,7 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
       <div className={seccion.campos.length > 2 ? 'grid grid-cols-2 gap-3' : 'space-y-3'}>
         {seccion.campos.map((campo, i) => (
           <div key={campo}>
-            <label className="block text-[10px] font-semibold text-text-secondary mb-1.5 uppercase tracking-wider">
+            <label className="block text-[10px] font-semibold text-[#6B7280] mb-1.5 uppercase tracking-wider">
               {seccion.labels[i]}
             </label>
             <input
@@ -122,7 +141,7 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
               value={valores[campo]}
               onChange={(e) => setValores((prev) => ({ ...prev, [campo]: e.target.value }))}
               placeholder="0"
-              className="w-full py-2.5 px-3 border border-border rounded-lg bg-white text-base font-semibold text-text-primary focus:border-pl-red focus:outline-none focus:ring-2 focus:ring-pl-red/10 transition-colors"
+              className="w-full py-3 px-4 border-2 border-[#E0E0E0] rounded-xl bg-[#F5F5F7] text-base font-semibold text-[#1A1A1A] outline-none transition-all duration-300 focus:border-[#E31837] focus:bg-white focus:shadow-[0_0_0_4px_rgba(227,24,55,0.1)]"
             />
           </div>
         ))}
@@ -148,7 +167,8 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
       <button
         onClick={handleSave}
         disabled={saving}
-        className={`w-full mt-4 py-3 ${color.btn} text-white rounded-lg font-semibold text-sm cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
+        className="w-full mt-4 py-3.5 text-white rounded-xl font-bold text-sm cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:-translate-y-0.5 hover:shadow-lg"
+        style={{ background: color.btnGradient }}
       >
         {saving ? (
           <>

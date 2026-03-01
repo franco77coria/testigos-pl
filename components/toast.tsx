@@ -31,21 +31,25 @@ export default function ToastContainer() {
   }, [])
 
   const styles = {
-    ok: 'bg-success text-white',
-    err: 'bg-pl-red text-white',
-    info: 'bg-info text-white',
+    ok: { background: '#059669', color: '#fff' },
+    err: { background: '#DC2626', color: '#fff' },
+    info: { background: '#2563EB', color: '#fff' },
   }
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] flex flex-col gap-2">
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] flex flex-col gap-2">
       <AnimatePresence>
         {toasts.map((t) => (
           <motion.div
             key={t.id}
-            initial={{ opacity: 0, y: -16, scale: 0.97 }}
+            initial={{ opacity: 0, y: -20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -16, scale: 0.97 }}
-            className={`${styles[t.type]} px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2 shadow-md`}
+            exit={{ opacity: 0, y: -20, scale: 0.97 }}
+            className="px-5 py-3.5 rounded-2xl text-[13px] font-medium flex items-center gap-2.5"
+            style={{
+              ...styles[t.type],
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+            }}
           >
             {t.type === 'ok' && (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

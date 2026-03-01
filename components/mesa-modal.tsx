@@ -117,7 +117,8 @@ export default function MesaModal({ mesa, cedula, onClose, onUpdate }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/40 z-[1000] flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
         >
           <motion.div
             initial={{ y: '100%' }}
@@ -125,26 +126,29 @@ export default function MesaModal({ mesa, cedula, onClose, onUpdate }: Props) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-[500px] max-h-[92vh] overflow-y-auto"
+            className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-[500px] max-h-[92vh] overflow-y-auto"
           >
-            {/* Header */}
-            <div className="bg-pl-red px-5 py-4 rounded-t-2xl sm:rounded-t-2xl sticky top-0 z-10 flex items-center justify-between">
+            {/* Header con gradiente */}
+            <div className="px-6 py-5 rounded-t-3xl sm:rounded-t-3xl sticky top-0 z-10 flex items-center justify-between"
+              style={{ background: 'linear-gradient(135deg, #E31837, #B71530)' }}
+            >
               <div>
-                <h2 className="text-white text-base font-bold">Mesa #{mesa.mesa_numero}</h2>
+                <h2 className="text-white text-lg font-bold">Mesa #{mesa.mesa_numero}</h2>
                 <p className="text-white/60 text-xs mt-0.5">{mesa.puesto}</p>
               </div>
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center text-white hover:bg-white/25 transition-colors"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer"
+                style={{ background: 'rgba(255,255,255,0.2)' }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 6 6 18" /><path d="m6 6 12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Body */}
-            <div className="p-5 space-y-3">
+            <div className="p-6 space-y-4">
               {SECCIONES.map((seccion) => (
                 <SectionBlock
                   key={seccion.id}
