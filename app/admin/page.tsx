@@ -148,7 +148,7 @@ export default function AdminPanel() {
           </p>
         </div>
 
-        <div className="px-4 sm:px-8 py-8 space-y-6 flex-1 max-w-2xl mx-auto w-full">
+        <div className="px-4 sm:px-8 py-8 space-y-6 flex-1 w-full mx-auto max-w-[1000px]">
 
           {/* Alertas */}
           {mensaje && (
@@ -170,7 +170,7 @@ export default function AdminPanel() {
           )}
 
           {/* Grid de Carga de Datos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             {cards.map((card, i) => (
               <motion.div
                 key={card.id}
@@ -222,111 +222,113 @@ export default function AdminPanel() {
             ))}
           </div>
 
-          {/* Asignación Inteligente */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm overflow-hidden relative"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -z-0" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+            {/* Asignación Inteligente */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm overflow-hidden relative flex flex-col justify-between"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -z-0" />
 
-            <div className="relative z-10">
-              <div className="flex justify-between items-start mb-5">
-                <div>
-                  <div className="text-[#E31837] text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#E31837] animate-pulse" />
-                    Motor Analítico
+              <div className="relative z-10">
+                <div className="flex justify-between items-start mb-5">
+                  <div>
+                    <div className="text-[#E31837] text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#E31837] animate-pulse" />
+                      Motor Analítico
+                    </div>
+                    <h3 className="font-bold text-slate-800 text-[18px]">Asignación de Mesas</h3>
                   </div>
-                  <h3 className="font-bold text-slate-800 text-[18px]">Asignación de Mesas</h3>
+                  <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                    <Cpu size={24} strokeWidth={1.5} />
+                  </div>
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
-                  <Cpu size={24} strokeWidth={1.5} />
+
+                <p className="text-sm text-slate-500 mb-6 font-medium leading-relaxed">
+                  Ejecuta el algoritmo de distribución para asignar equitativamente las mesas del censo entre los testigos cargados priorizando puestos.
+                </p>
+
+                {stats.asignaciones > 0 && (
+                  <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[13px] font-bold flex items-center gap-2">
+                    <CheckCircle2 size={16} strokeWidth={2.5} />
+                    {stats.asignaciones} mesas estructuradas con éxito
+                  </div>
+                )}
+
+                <button
+                  onClick={ejecutarAsignacion}
+                  disabled={!!loading}
+                  className="w-full h-12 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading === 'asignar' ? (
+                    <><Loader2 size={18} className="animate-spin" /> Calculando distribución...</>
+                  ) : (
+                    <>Ejecutar Sincronización Red</>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Configuración de Administradores */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-slate-50 border border-slate-200 rounded-2xl p-6"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-red-100 text-[#E31837] flex items-center justify-center border border-red-200">
+                  <ShieldCheck size={20} />
                 </div>
+                <h3 className="font-bold text-slate-800 text-[16px]">Permisos de Acceso</h3>
               </div>
 
-              <p className="text-sm text-slate-500 mb-6 font-medium leading-relaxed">
-                Ejecuta el algoritmo de distribución para asignar equitativamente las mesas del censo entre los testigos cargados priorizando puestos.
-              </p>
-
-              {stats.asignaciones > 0 && (
-                <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[13px] font-bold flex items-center gap-2">
-                  <CheckCircle2 size={16} strokeWidth={2.5} />
-                  {stats.asignaciones} mesas estructuradas con éxito
+              {adminMensaje && (
+                <div className={`mb-5 px-4 py-3 rounded-xl border flex items-start gap-2 text-[12px] font-bold ${adminMensaje.tipo === 'ok' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'
+                  }`}>
+                  {adminMensaje.tipo === 'ok' ? <CheckCircle2 size={16} className="shrink-0" /> : <ShieldAlert size={16} className="shrink-0" />}
+                  {adminMensaje.texto}
                 </div>
               )}
 
-              <button
-                onClick={ejecutarAsignacion}
-                disabled={!!loading}
-                className="w-full h-12 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading === 'asignar' ? (
-                  <><Loader2 size={18} className="animate-spin" /> Calculando distribución...</>
-                ) : (
-                  <>Ejecutar Sincronización Red</>
-                )}
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Configuración de Administradores */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-slate-50 border border-slate-200 rounded-2xl p-6"
-          >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-red-100 text-[#E31837] flex items-center justify-center border border-red-200">
-                <ShieldCheck size={20} />
-              </div>
-              <h3 className="font-bold text-slate-800 text-[16px]">Permisos de Acceso</h3>
-            </div>
-
-            {adminMensaje && (
-              <div className={`mb-5 px-4 py-3 rounded-xl border flex items-start gap-2 text-[12px] font-bold ${adminMensaje.tipo === 'ok' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'
-                }`}>
-                {adminMensaje.tipo === 'ok' ? <CheckCircle2 size={16} className="shrink-0" /> : <ShieldAlert size={16} className="shrink-0" />}
-                {adminMensaje.texto}
-              </div>
-            )}
-
-            <form onSubmit={handleAddAdmin} className="space-y-4">
-              <div className="bg-white rounded-xl flex flex-col border border-slate-200 overflow-hidden shadow-sm">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  value={adminCedula}
-                  onChange={(e) => setAdminCedula(e.target.value)}
-                  placeholder="Tu Documento Maestro"
-                  className="w-full px-5 py-4 bg-transparent text-slate-800 text-sm outline-none placeholder-slate-400 font-bold block"
-                  required
-                />
-                <div className="h-px w-full bg-slate-100" />
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  value={newAdminCedula}
-                  onChange={(e) => setNewAdminCedula(e.target.value)}
-                  placeholder="Documento a autorizar"
-                  className="w-full px-5 py-4 bg-red-50/50 text-slate-800 text-sm outline-none placeholder-slate-400 font-bold block"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading === 'add_admin'}
-                className="w-full py-4 rounded-xl font-bold text-[14px] transition-all disabled:opacity-50 text-[#E31837] flex items-center justify-center gap-2 border border-red-200 bg-white hover:bg-red-50 shadow-sm"
-              >
-                {loading === 'add_admin' ? (
-                  <><Loader2 size={18} className="animate-spin" /> Concediendo...</>
-                ) : (
-                  <>Otorgar Acceso de Administrador</>
-                )}
-              </button>
-            </form>
-          </motion.div>
+              <form onSubmit={handleAddAdmin} className="space-y-4">
+                <div className="bg-white rounded-xl flex flex-col border border-slate-200 overflow-hidden shadow-sm">
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={adminCedula}
+                    onChange={(e) => setAdminCedula(e.target.value)}
+                    placeholder="Tu Documento Maestro"
+                    className="w-full px-5 py-4 bg-transparent text-slate-800 text-sm outline-none placeholder-slate-400 font-bold block"
+                    required
+                  />
+                  <div className="h-px w-full bg-slate-100" />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={newAdminCedula}
+                    onChange={(e) => setNewAdminCedula(e.target.value)}
+                    placeholder="Documento a autorizar"
+                    className="w-full px-5 py-4 bg-red-50/50 text-slate-800 text-sm outline-none placeholder-slate-400 font-bold block"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading === 'add_admin'}
+                  className="w-full py-4 rounded-xl font-bold text-[14px] transition-all disabled:opacity-50 text-[#E31837] flex items-center justify-center gap-2 border border-red-200 bg-white hover:bg-red-50 shadow-sm"
+                >
+                  {loading === 'add_admin' ? (
+                    <><Loader2 size={18} className="animate-spin" /> Concediendo...</>
+                  ) : (
+                    <>Otorgar Acceso de Administrador</>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </div>
 
         </div>
       </div>

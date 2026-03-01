@@ -121,7 +121,7 @@ export default function SectionBlock({ seccion, mesa, seccionActiva, onSave, sav
       <div className={seccion.campos.length > 2 ? 'grid grid-cols-2 gap-4' : 'space-y-4'}>
         {seccion.campos.map((campo, i) => (
           <div key={campo}>
-            <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">
               {seccion.labels[i]}
             </label>
             <div className="relative">

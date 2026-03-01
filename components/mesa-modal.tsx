@@ -144,7 +144,7 @@ export default function MesaModal({ mesa, cedula, onClose, onUpdate }: Props) {
             </div>
 
             {/* Body scrollable */}
-            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto bg-slate-50/50" style={{ scrollbarWidth: 'none' }}>
+            <div className="p-3 sm:p-6 space-y-4 overflow-y-auto bg-slate-50/50" style={{ scrollbarWidth: 'none' }}>
               {SECCIONES.map((seccion) => (
                 <SectionBlock
                   key={seccion.id}

@@ -110,7 +110,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* User Info Mobile */}
-        <div className="sm:hidden mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div className="sm:hidden mb-6 mx-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-slate-900">
               {testigo.nombre1} {testigo.apellido1}
@@ -125,7 +125,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
         </div>
 
         {/* Global Summary Cards */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-8">
+        <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-8 mx-2 sm:mx-0">
           <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center border border-slate-200 shadow-sm transition-transform hover:-translate-y-1">
             <span className="block text-2xl sm:text-3xl font-black text-slate-800 leading-none mb-1">
               <AnimatedNumber value={total} />
@@ -147,7 +147,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
         </div>
 
         {/* Header Mis Mesas */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 mx-2 sm:mx-0">
           <h2 className="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
             Mis Mesas Asignadas
           </h2>
@@ -162,7 +162,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
         </div>
 
         {/* Grid de Mesas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 px-2 sm:px-0">
           {mesas.map((mesa, i) => (
             <motion.div
               key={mesa.mesa_numero}
