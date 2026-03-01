@@ -157,8 +157,8 @@ export default function AdminPanel() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className={`flex items-start gap-3 p-4 rounded-2xl text-[13px] font-medium backdrop-blur-md border ${mensaje.tipo === 'ok'
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                  : 'bg-red-500/10 border-red-500/20 text-red-400'
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-red-500/10 border-red-500/20 text-red-400'
                 }`}
             >
               {mensaje.tipo === 'ok' ? (
@@ -175,7 +175,7 @@ export default function AdminPanel() {
           )}
 
           {/* Grid de Carga de Datos */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {cards.map((card, i) => (
               <motion.div
                 key={card.id}
