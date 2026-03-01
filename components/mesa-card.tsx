@@ -75,7 +75,7 @@ export default function MesaCard({ mesa, onClick, index }: Props) {
       </div>
 
       {/* Datos */}
-      <div className="grid grid-cols-2 gap-2 mb-3">
+      <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
           <span>👥</span>
           <span>Hab: <strong className="text-[#1A1A1A]">{mesa.cantidad_votantes_mesa || '-'}</strong></span>
@@ -87,10 +87,6 @@ export default function MesaCard({ mesa, onClick, index }: Props) {
         <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
           <span>🕐</span>
           <span>1PM: <strong className="text-[#1A1A1A]">{mesa.votantes_1pm || '-'}</strong></span>
-        </div>
-        <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
-          <span>🗳️</span>
-          <span>4PM: <strong className="text-[#1A1A1A]">{mesa.votantes_4pm || '-'}</strong></span>
         </div>
       </div>
 
