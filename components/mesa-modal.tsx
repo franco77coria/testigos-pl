@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { X } from 'lucide-react'
 import type { MesaDashboard } from '@/lib/types'
 import { SECCIONES, calcularSeccionActiva } from '@/lib/types'
 import SectionBlock from './section-block'
@@ -117,8 +118,8 @@ export default function MesaModal({ mesa, cedula, onClose, onUpdate }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center"
-          style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
+          className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center p-0 sm:p-4"
+          style={{ background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(3px)' }}
         >
           <motion.div
             initial={{ y: '100%' }}
@@ -126,26 +127,24 @@ export default function MesaModal({ mesa, cedula, onClose, onUpdate }: Props) {
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white sm:rounded-3xl rounded-t-3xl w-full max-w-[500px] max-h-[92vh] sm:max-h-[85vh] flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
+            className="bg-white/95 backdrop-blur-3xl sm:rounded-3xl rounded-t-3xl w-full max-w-xl max-h-[92vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200"
           >
             {/* Header Limpio */}
-            <div className="px-6 py-5 rounded-t-3xl border-b border-gray-100 bg-white sticky top-0 z-10 flex items-center justify-between shrink-0">
+            <div className="px-6 py-5 bg-white sticky top-0 z-10 flex items-center justify-between shrink-0 border-b border-slate-100">
               <div>
-                <h2 className="text-[#1A1A1A] text-xl font-black tracking-tight mb-0.5">Mesa #{mesa.mesa_numero}</h2>
-                <p className="text-[#6B7280] text-xs font-semibold uppercase tracking-wider">{mesa.puesto}</p>
+                <h2 className="text-slate-900 text-lg sm:text-xl font-bold tracking-tight">Mesa {mesa.mesa_numero}</h2>
+                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mt-0.5">{mesa.puesto}</p>
               </div>
               <button
                 onClick={onClose}
-                className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 transition-colors hover:bg-red-50 hover:text-[#E31837] cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6 6 18" /><path d="m6 6 12 12" />
-                </svg>
+                <X size={18} />
               </button>
             </div>
 
             {/* Body scrollable */}
-            <div className="p-5 sm:p-6 space-y-4 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto bg-slate-50/50" style={{ scrollbarWidth: 'none' }}>
               {SECCIONES.map((seccion) => (
                 <SectionBlock
                   key={seccion.id}

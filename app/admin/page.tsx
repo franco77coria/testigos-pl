@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ArrowLeft, UploadCloud, Users, Map, Cpu, ShieldAlert, CheckCircle2, ChevronRight, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
 interface Stats {
@@ -104,112 +104,105 @@ export default function AdminPanel() {
     {
       id: 'testigos' as const,
       titulo: 'Listado de Testigos',
-      descripcion: 'Sube el CSV base con la información de todos los testigos.',
+      descripcion: 'Cargue el CSV maestro con el censo de testigos registrados.',
       ref: testigosRef,
       statLabel: 'cargados',
       statValue: stats.testigos,
-      iconPath: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+      icon: <Users size={20} className="text-blue-500" />,
+      colorIconBg: 'bg-blue-50',
+      colorStatusText: 'text-blue-600',
+      colorStatusBg: 'bg-blue-100',
     },
     {
       id: 'semaforo' as const,
-      titulo: 'Semáforo por Municipio',
-      descripcion: 'Actualiza las metas y mesas designadas por región.',
+      titulo: 'Semáforo Municipal',
+      descripcion: 'Actualice las metas operativas por cada municipio.',
       ref: semaforoRef,
       statLabel: 'registrados',
       statValue: stats.municipios,
-      iconPath: 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z',
+      icon: <Map size={20} className="text-amber-500" />,
+      colorIconBg: 'bg-amber-50',
+      colorStatusText: 'text-amber-600',
+      colorStatusBg: 'bg-amber-100',
     },
   ]
 
   return (
-    <div className="min-h-screen bg-black/95 relative flex justify-center selection:bg-red-500/30">
-      {/* Background ambient glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-red-600/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[400px] h-[400px] bg-red-900/20 rounded-full blur-[100px] pointer-events-none" />
+    <div className="min-h-screen bg-slate-50 relative flex justify-center">
 
-      <div className="w-full max-w-[540px] relative z-10 flex flex-col min-h-screen pb-12">
-        {/* Sleek Header */}
-        <div className="px-6 pt-10 pb-8 flex flex-col items-center text-center">
-          <Link href="/" className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white transition-all backdrop-blur-md mb-6 absolute left-6 top-10">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m15 18-6-6 6-6" />
-            </svg>
+      <div className="w-full max-w-3xl relative z-10 flex flex-col min-h-screen pb-12">
+        {/* Sleek Light Header */}
+        <div className="px-6 pt-12 pb-8 flex flex-col items-center text-center relative border-b border-slate-200 bg-white">
+          <Link href="/" className="inline-flex items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-all absolute left-6 top-10 shadow-sm">
+            <ArrowLeft size={18} />
           </Link>
 
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#E31837] to-[#8f0e21] shadow-[0_0_30px_rgba(227,24,55,0.4)] flex items-center justify-center mb-4">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-            </svg>
+          <div className="w-16 h-16 mx-auto bg-red-50 rounded-2xl flex items-center justify-center mb-4 text-[#E31837] shadow-sm border border-red-100">
+            <ShieldCheck size={32} strokeWidth={2} />
           </div>
-          <h1 className="text-[24px] font-bold text-white tracking-tight leading-tight">
-            Control de Mando
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight leading-tight">
+            Panel de Control
           </h1>
-          <p className="text-white/50 text-[14px] font-medium mt-1">
-            Administración Central • Cundinamarca 2026
+          <p className="text-slate-500 text-sm font-medium mt-1 uppercase tracking-widest">
+            Administración Central
           </p>
         </div>
 
-        <div className="px-4 sm:px-6 space-y-4 flex-1">
+        <div className="px-4 sm:px-8 py-8 space-y-6 flex-1 max-w-2xl mx-auto w-full">
 
           {/* Alertas */}
           {mensaje && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className={`flex items-start gap-3 p-4 rounded-2xl text-[13px] font-medium backdrop-blur-md border ${mensaje.tipo === 'ok'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : 'bg-red-500/10 border-red-500/20 text-red-400'
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex items-start gap-3 p-4 rounded-xl text-[13px] font-bold border shadow-sm ${mensaje.tipo === 'ok'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : 'bg-red-50 border-red-200 text-red-700'
                 }`}
             >
               {mensaje.tipo === 'ok' ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="mt-0.5 shrink-0">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" />
-                </svg>
+                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="mt-0.5 shrink-0">
-                  <circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" />
-                </svg>
+                <ShieldAlert size={18} className="shrink-0 mt-0.5" />
               )}
               {mensaje.texto}
             </motion.div>
           )}
 
           {/* Grid de Carga de Datos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {cards.map((card, i) => (
               <motion.div
                 key={card.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => !loading && card.ref.current?.click()}
-                className="bg-white/5 border border-white/10 hover:bg-white/10 transition-colors backdrop-blur-xl rounded-[20px] p-5 flex flex-col cursor-pointer group relative overflow-hidden"
+                className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all rounded-2xl p-5 flex flex-col cursor-pointer group"
               >
-                <div className="w-10 h-10 rounded-xl bg-white/5 text-white/80 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={card.iconPath} />
-                    {card.id === 'semaforo' && <circle cx="12" cy="10" r="3" />}
-                  </svg>
+                <div className={`w-10 h-10 rounded-xl ${card.colorIconBg} flex items-center justify-center mb-4 border border-slate-100 group-hover:scale-110 transition-transform duration-300`}>
+                  {card.icon}
                 </div>
 
-                <h3 className="font-semibold text-white tracking-tight text-[14px] leading-tight mb-1">{card.titulo}</h3>
-                <p className="text-[12px] text-white/40 font-medium leading-snug mb-5">{card.descripcion}</p>
+                <h3 className="font-bold text-slate-800 tracking-tight text-[15px] mb-1.5">{card.titulo}</h3>
+                <p className="text-[12px] text-slate-500 font-medium leading-relaxed mb-6 flex-1">{card.descripcion}</p>
 
-                <div className="mt-auto">
+                <div className="mt-auto border-t border-slate-100 pt-4">
                   {card.statValue > 0 ? (
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-[11px] font-bold">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 6 9 17l-5-5" />
-                      </svg>
-                      {card.statValue}
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${card.colorStatusBg} ${card.colorStatusText} text-xs font-bold`}>
+                      <CheckCircle2 size={14} strokeWidth={2.5} />
+                      {card.statValue} procesados
                     </div>
                   ) : (
-                    <div className="text-[12px] font-bold flex items-center gap-1.5 text-white/50 group-hover:text-white transition-colors">
-                      {loading === card.id ? (
-                        <><Loader2 size={14} className="animate-spin" /> Cargando</>
-                      ) : (
-                        <><span className="text-xl leading-none -mt-1">+</span> Subir Archivo</>
-                      )}
+                    <div className="text-xs font-bold flex items-center justify-between text-slate-400 group-hover:text-[#E31837] transition-colors">
+                      <span className="flex items-center gap-2">
+                        {loading === card.id ? (
+                          <><Loader2 size={14} className="animate-spin" /> Procesando file...</>
+                        ) : (
+                          <><UploadCloud size={16} /> Subir archivo CSV</>
+                        )}
+                      </span>
+                      <ChevronRight size={16} />
                     </div>
                   )}
                 </div>
@@ -231,35 +224,34 @@ export default function AdminPanel() {
 
           {/* Asignación Inteligente */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-xl rounded-[24px] p-1 shadow-2xl relative overflow-hidden"
+            className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm overflow-hidden relative"
           >
-            <div className="bg-[#111] rounded-[22px] p-6 relative z-10">
-              <div className="flex justify-between items-start mb-4">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -z-0" />
+
+            <div className="relative z-10">
+              <div className="flex justify-between items-start mb-5">
                 <div>
-                  <div className="text-[#E31837] text-[11px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1.5">
+                  <div className="text-[#E31837] text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#E31837] animate-pulse" />
-                    Motor Neural
+                    Motor Analítico
                   </div>
-                  <h3 className="font-bold text-white text-[18px]">Asignación de Mesas</h3>
+                  <h3 className="font-bold text-slate-800 text-[18px]">Asignación de Mesas</h3>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-                    <path d="m9 12 2 2 4-4" />
-                  </svg>
+                <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                  <Cpu size={24} strokeWidth={1.5} />
                 </div>
               </div>
 
-              <p className="text-[13px] text-white/50 mb-6 font-medium leading-relaxed">
-                Distribuye automáticamente las mesas del censo entre los testigos cargados. El algoritmo balancea ~4 mesas por persona mediante asignación equitativa.
+              <p className="text-sm text-slate-500 mb-6 font-medium leading-relaxed">
+                Ejecuta el algoritmo de distribución para asignar equitativamente las mesas del censo entre los testigos cargados priorizando puestos.
               </p>
 
               {stats.asignaciones > 0 && (
-                <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[13px] font-bold flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
+                <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[13px] font-bold flex items-center gap-2">
+                  <CheckCircle2 size={16} strokeWidth={2.5} />
                   {stats.asignaciones} mesas estructuradas con éxito
                 </div>
               )}
@@ -267,12 +259,12 @@ export default function AdminPanel() {
               <button
                 onClick={ejecutarAsignacion}
                 disabled={!!loading}
-                className="w-full h-12 rounded-[14px] bg-white text-black font-bold text-[14px] hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full h-12 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading === 'asignar' ? (
-                  <><Loader2 size={18} className="animate-spin" /> Procesando red...</>
+                  <><Loader2 size={18} className="animate-spin" /> Calculando distribución...</>
                 ) : (
-                  <>Ejecutar Sincronización</>
+                  <>Ejecutar Sincronización Red</>
                 )}
               </button>
             </div>
@@ -280,57 +272,57 @@ export default function AdminPanel() {
 
           {/* Configuración de Administradores */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-[24px] p-6"
+            className="bg-slate-50 border border-slate-200 rounded-2xl p-6"
           >
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-lg bg-red-500/20 text-red-500 flex items-center justify-center">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
+              <div className="w-10 h-10 rounded-xl bg-red-100 text-[#E31837] flex items-center justify-center border border-red-200">
+                <ShieldCheck size={20} />
               </div>
-              <h3 className="font-bold text-white text-[15px]">Nuevos Autorizados</h3>
+              <h3 className="font-bold text-slate-800 text-[16px]">Permisos de Acceso</h3>
             </div>
 
             {adminMensaje && (
-              <div className={`mb-4 px-3 py-2.5 rounded-xl text-[12px] font-medium border flex items-start gap-2 ${adminMensaje.tipo === 'ok' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+              <div className={`mb-5 px-4 py-3 rounded-xl border flex items-start gap-2 text-[12px] font-bold ${adminMensaje.tipo === 'ok' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'
                 }`}>
+                {adminMensaje.tipo === 'ok' ? <CheckCircle2 size={16} className="shrink-0" /> : <ShieldAlert size={16} className="shrink-0" />}
                 {adminMensaje.texto}
               </div>
             )}
 
-            <form onSubmit={handleAddAdmin} className="space-y-3">
-              <div className="bg-[#111] rounded-[16px] p-1.5 flex flex-col gap-1.5 border border-white/5">
+            <form onSubmit={handleAddAdmin} className="space-y-4">
+              <div className="bg-white rounded-xl flex flex-col border border-slate-200 overflow-hidden shadow-sm">
                 <input
                   type="number"
+                  inputMode="numeric"
                   value={adminCedula}
                   onChange={(e) => setAdminCedula(e.target.value)}
-                  placeholder="Tu Cédula Maestra"
-                  className="w-full px-4 py-3 bg-transparent text-white text-[13px] outline-none placeholder-white/30 font-medium font-mono"
+                  placeholder="Tu Documento Maestro"
+                  className="w-full px-5 py-4 bg-transparent text-slate-800 text-sm outline-none placeholder-slate-400 font-bold block"
                   required
                 />
-                <div className="h-px w-full bg-white/5" />
+                <div className="h-px w-full bg-slate-100" />
                 <input
                   type="number"
+                  inputMode="numeric"
                   value={newAdminCedula}
                   onChange={(e) => setNewAdminCedula(e.target.value)}
-                  placeholder="Cédula a autorizar"
-                  className="w-full px-4 py-3 bg-transparent text-white text-[13px] outline-none placeholder-white/30 font-medium font-mono border-l-2 border-red-500/50"
+                  placeholder="Documento a autorizar"
+                  className="w-full px-5 py-4 bg-red-50/50 text-slate-800 text-sm outline-none placeholder-slate-400 font-bold block"
                   required
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading === 'add_admin'}
-                className="w-full py-3.5 rounded-[14px] font-bold text-[13px] transition-all disabled:opacity-50 text-white flex items-center justify-center gap-2 border border-red-500/50 bg-red-500/10 hover:bg-red-500/20"
+                className="w-full py-4 rounded-xl font-bold text-[14px] transition-all disabled:opacity-50 text-[#E31837] flex items-center justify-center gap-2 border border-red-200 bg-white hover:bg-red-50 shadow-sm"
               >
                 {loading === 'add_admin' ? (
-                  <><Loader2 size={16} className="animate-spin" /> Autorizando...</>
+                  <><Loader2 size={18} className="animate-spin" /> Concediendo...</>
                 ) : (
-                  <>Otorgar Acceso Total</>
+                  <>Otorgar Acceso de Administrador</>
                 )}
               </button>
             </form>

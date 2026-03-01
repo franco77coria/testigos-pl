@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Camera, CheckCircle2, X } from 'lucide-react'
 import { comprimirImagen } from '@/lib/utils'
 
 interface Props {
@@ -33,16 +33,16 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
   const hasImage = preview || existingUrl
 
   return (
-    <div className="mb-3">
-      <label className="block text-[10px] font-semibold text-[#6B7280] mb-1.5 uppercase tracking-wider">
+    <div className="bg-white p-3 rounded-xl border border-slate-200">
+      <label className="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-widest pl-1">
         {label}
       </label>
       <div
         onClick={() => inputRef.current?.click()}
-        className="rounded-2xl text-center cursor-pointer transition-all duration-300 hover:border-[#E31837] hover:bg-[rgba(227,24,55,0.03)]"
+        className="rounded-xl text-center cursor-pointer transition-all duration-300 hover:border-[#E31837] hover:bg-slate-50"
         style={{
-          border: hasImage ? '2px solid #10B981' : '2px dashed #E0E0E0',
-          padding: hasImage ? '8px' : '20px',
+          border: hasImage ? '2px solid #10B981' : '2px dashed #CBD5E1',
+          padding: hasImage ? '6px' : '20px',
         }}
       >
         {hasImage ? (
@@ -50,7 +50,7 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
             <img
               src={preview || existingUrl || ''}
               alt={label}
-              className="w-full max-h-[200px] object-contain rounded-xl"
+              className="w-full h-[180px] object-cover rounded-lg"
             />
             <button
               onClick={(e) => {
@@ -58,21 +58,17 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
                 setPreview(null)
                 if (inputRef.current) inputRef.current.value = ''
               }}
-              className="absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center text-white cursor-pointer"
-              style={{ background: 'rgba(0,0,0,0.5)' }}
+              className="absolute top-2 right-2 p-1.5 rounded-lg flex items-center justify-center text-white bg-black/60 backdrop-blur hover:bg-black/80 transition-colors"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
-              </svg>
+              <X size={16} />
             </button>
           </div>
         ) : (
-          <div className="py-3">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-2">
-              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-              <circle cx="12" cy="13" r="3" />
-            </svg>
-            <p className="text-xs text-[#6B7280]/60 font-medium">Toque para tomar foto</p>
+          <div className="py-4 flex flex-col items-center">
+            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+              <Camera size={20} className="text-slate-400" />
+            </div>
+            <p className="text-xs text-slate-500 font-semibold">Tocar para tomar/subir foto</p>
           </div>
         )}
 
@@ -87,19 +83,16 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
       </div>
 
       {(uploading || uploaded || (existingUrl && !preview)) && (
-        <div className={`flex items-center gap-1.5 mt-2 text-[11px] font-medium ${uploaded || existingUrl ? 'text-[#059669]' : 'text-[#D97706]'}`}>
+        <div className={`flex items-center gap-1.5 mt-2.5 text-[11px] font-bold ${uploaded || existingUrl ? 'text-emerald-600' : 'text-amber-600'} pl-1`}>
           {uploading ? (
             <>
-              <Loader2 size={11} className="animate-spin" />
-              Subiendo...
+              <Loader2 size={12} className="animate-spin" />
+              Subiendo imagen...
             </>
           ) : (
             <>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <path d="m9 11 3 3L22 4" />
-              </svg>
-              {uploaded ? 'Foto subida' : 'Foto ya registrada'}
+              <CheckCircle2 size={12} strokeWidth={2.5} />
+              {uploaded ? 'Foto subida correctamente' : 'Fotografía ya registrada en el sistema'}
             </>
           )}
         </div>
