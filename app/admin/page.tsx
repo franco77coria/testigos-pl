@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Loader2, ArrowLeft, UploadCloud, Users, Map, Cpu, ShieldAlert, CheckCircle2, ChevronRight, ShieldCheck } from 'lucide-react'
+import { Loader2, ArrowLeft, UploadCloud, Users, Map, Cpu, ShieldAlert, CheckCircle2, ChevronRight, ShieldCheck, Activity } from 'lucide-react'
 import Link from 'next/link'
 
 interface Stats {
@@ -268,6 +268,41 @@ export default function AdminPanel() {
                     <>Ejecutar Sincronización Red</>
                   )}
                 </button>
+              </div>
+            </motion.div>
+
+            {/* Link al Nuevo Dashboard de Estadísticas */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="bg-slate-800 rounded-2xl p-6 shadow-sm overflow-hidden relative flex flex-col justify-between group cursor-pointer"
+            >
+              <Link href="/admin/dashboard" className="absolute inset-0 z-10" />
+
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#E31837] rounded-bl-[100px] opacity-20 -z-0 group-hover:scale-110 transition-transform duration-500" />
+
+              <div className="relative z-10 h-full flex flex-col">
+                <div className="flex justify-between items-start mb-5">
+                  <div>
+                    <div className="text-emerald-400 text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Visualización en Vivo
+                    </div>
+                    <h3 className="font-bold text-white text-[18px]">Panel de Estadísticas</h3>
+                  </div>
+                  <div className="w-12 h-12 rounded-2xl bg-slate-700/50 border border-slate-600 flex items-center justify-center text-white">
+                    <Activity size={24} strokeWidth={1.5} />
+                  </div>
+                </div>
+
+                <p className="text-sm text-slate-300 mb-6 font-medium leading-relaxed flex-1">
+                  Accede al tablero maestro de escrutinio para ver el detalle de votos, candidatos, y comportamiento municipal en tiempo real.
+                </p>
+
+                <div className="w-full h-12 rounded-xl bg-white text-slate-900 font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-slate-50 transition-colors">
+                  Ver Métricas Nacionales <ChevronRight size={18} />
+                </div>
               </div>
             </motion.div>
 

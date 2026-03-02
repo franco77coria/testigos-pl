@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, Fingerprint, ChevronRight, AlertCircle, ShieldCheck } from 'lucide-react'
+import { Loader2, ChevronRight, AlertCircle, ShieldCheck } from 'lucide-react'
 
 interface Props {
   onLogin: (cedula: string) => Promise<{
@@ -82,9 +82,6 @@ export default function LoginScreen({ onLogin }: Props) {
                 Documento de Identidad
               </label>
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <Fingerprint size={20} />
-                </div>
                 <input
                   id="cedula"
                   type="number"
@@ -94,7 +91,7 @@ export default function LoginScreen({ onLogin }: Props) {
                     setCedula(e.target.value)
                     setHasError(false)
                   }}
-                  className={`w-full py-4 pl-[56px] pr-4 bg-slate-50 border-2 rounded-2xl text-[17px] font-bold text-slate-800 placeholder-slate-400 outline-none transition-all duration-300 focus:bg-white
+                  className={`w-full py-4 px-5 bg-slate-50 border-2 rounded-2xl text-[17px] font-bold text-slate-800 placeholder-slate-400 outline-none transition-all duration-300 focus:bg-white
                     ${hasError
                       ? 'border-red-400 shadow-[0_0_0_4px_rgba(239,68,68,0.1)]'
                       : 'border-slate-200 focus:border-[#E31837] focus:shadow-[0_0_0_4px_rgba(227,24,55,0.1)]'
