@@ -8,7 +8,7 @@
   --color-surface-card: #FFFFFF;
   --color-text-primary: #111827;
   --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
+  --color-text-muted: #6B7280;
   --color-success: #059669;
   --color-success-light: #ECFDF5;
   --color-warning: #D97706;
@@ -46,11 +46,13 @@ body {
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
 input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 ::-webkit-scrollbar {
@@ -68,6 +70,18 @@ input[type="number"] {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9CA3AF;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Utility for consistent card styling */
