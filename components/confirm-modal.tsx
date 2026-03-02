@@ -20,37 +20,35 @@ export default function ConfirmModal({ open, titulo, resumen, onConfirm, onCance
           exit={{ opacity: 0 }}
           onClick={onCancel}
           className="fixed inset-0 z-[2000] flex items-center justify-center p-5"
-          style={{ background: 'rgba(0,0,0,0.6)' }}
+          style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
         >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.25, type: 'spring', stiffness: 300, damping: 25 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl p-8 max-w-[360px] w-full text-center"
-            style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}
+            className="bg-white rounded-2xl p-7 max-w-[340px] w-full text-center border border-gray-100"
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
           >
             {/* Warning icon */}
-            <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-              style={{ background: '#FFFBEB' }}
-            >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-11 h-11 rounded-xl mx-auto mb-4 flex items-center justify-center bg-amber-50">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
                 <path d="M12 9v4" />
                 <path d="M12 17h.01" />
               </svg>
             </div>
 
-            <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">{titulo}</h3>
-            <p className="text-sm text-[#6B7280] mb-5">Verifique los datos antes de guardar</p>
+            <h3 className="text-base font-semibold text-gray-800 mb-1">{titulo}</h3>
+            <p className="text-xs text-gray-400 mb-5">Verifique los datos antes de guardar</p>
 
             {/* Data */}
-            <div className="bg-[#F5F5F7] rounded-2xl p-4 mb-6 space-y-2.5">
+            <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-2.5">
               {resumen.map((r) => (
                 <div key={r.label} className="flex justify-between items-center">
-                  <span className="text-xs text-[#6B7280]">{r.label}</span>
-                  <span className="text-lg font-extrabold text-[#E31837]">{r.valor}</span>
+                  <span className="text-xs text-gray-400">{r.label}</span>
+                  <span className="text-base font-bold text-red-600">{r.valor}</span>
                 </div>
               ))}
             </div>
@@ -58,14 +56,13 @@ export default function ConfirmModal({ open, titulo, resumen, onConfirm, onCance
             <div className="flex gap-3">
               <button
                 onClick={onCancel}
-                className="flex-1 py-3.5 bg-[#F3F4F6] text-[#2D2D2D] rounded-xl font-bold text-sm cursor-pointer transition-all duration-300 hover:bg-[#E5E7EB]"
+                className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium text-sm transition-colors hover:bg-gray-200"
               >
                 Revisar
               </button>
               <button
                 onClick={onConfirm}
-                className="flex-1 py-3.5 text-white rounded-xl font-bold text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
+                className="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-medium text-sm transition-all hover:bg-emerald-600 active:scale-[0.98]"
               >
                 Confirmar
               </button>

@@ -1,23 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pl-red: #E31837;
-  --color-pl-red-dark: #C41230;
-  --color-pl-red-deep: #8B0A1E;
-  --color-surface: #F8F9FA;
+  --color-pl-red: #DC2626;
+  --color-pl-red-dark: #B91C1C;
+  --color-pl-red-deep: #7F1D1D;
+  --color-surface: #F9FAFB;
   --color-surface-card: #FFFFFF;
-  --color-text-primary: #1A1A2E;
-  --color-text-secondary: #64748B;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
   --color-success: #059669;
   --color-success-light: #ECFDF5;
   --color-warning: #D97706;
   --color-warning-light: #FFFBEB;
   --color-info: #2563EB;
   --color-info-light: #EFF6FF;
-  --color-locked: #94A3B8;
-  --color-locked-light: #F1F5F9;
-  --color-border: #E2E8F0;
-  --font-sans: 'Poppins', system-ui, sans-serif;
+  --color-locked: #D1D5DB;
+  --color-locked-light: #F3F4F6;
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -26,14 +28,15 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 body {
-  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-  background: #F8F9FA;
-  color: #1A1A2E;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #F9FAFB;
+  color: #111827;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -51,7 +54,7 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -59,6 +62,25 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 2px;
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Utility for consistent card styling */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #F3F4F6;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.card-elevated {
+  background: #FFFFFF;
+  border: 1px solid #F3F4F6;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
 }

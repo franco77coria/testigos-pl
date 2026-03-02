@@ -6,7 +6,6 @@ import { LogOut, LayoutDashboard, RefreshCw } from 'lucide-react'
 import type { SesionTestigo, MesaDashboard } from '@/lib/types'
 import { calcularEstado } from '@/lib/types'
 import MesaCard from './mesa-card'
-import MesaModal from './mesa-modal'
 import { horaActual } from '@/lib/utils'
 
 interface Props {
@@ -38,7 +37,6 @@ function AnimatedNumber({ value }: { value: number }) {
 }
 
 export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
-  const [mesaAbierta, setMesaAbierta] = useState<MesaDashboard | null>(null)
   const [refreshing, setRefreshing] = useState(false)
   const [ultimaAct, setUltimaAct] = useState(horaActual())
 
@@ -66,133 +64,120 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
       m.mesa_numero === updatedMesa.mesa_numero ? updatedMesa : m
     )
     onMesasUpdate(newMesas)
-    setMesaAbierta(updatedMesa)
     setUltimaAct(horaActual())
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Navbar Minimalista */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-[#E31837] flex items-center justify-center text-white font-bold">
-                <LayoutDashboard size={18} />
+    <div className="min-h-screen bg-[#F9FAFB]">
+      {/* Navbar */}
+      <nav className="bg-white border-b border-gray-100 sticky top-0 z-40" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between h-14 items-center">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-md bg-red-600 flex items-center justify-center text-white">
+                <LayoutDashboard size={15} />
               </div>
-              <span className="text-[15px] font-bold text-slate-900 tracking-tight">Testigos <span className="text-[#E31837]">PL</span></span>
+              <span className="text-sm font-semibold text-gray-800 tracking-tight">Testigos <span className="text-red-600">PL</span></span>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <div className="hidden sm:block text-right">
-                <p className="text-sm font-semibold text-slate-900 leading-tight">
+                <p className="text-sm font-medium text-gray-800 leading-tight">
                   {testigo.nombre1} {testigo.apellido1}
                 </p>
-                <p className="text-[11px] font-medium text-slate-500">
+                <p className="text-[11px] text-gray-400">
                   {testigo.puesto}
                 </p>
               </div>
-              <div className="w-px h-8 bg-slate-200 hidden sm:block"></div>
+              <div className="w-px h-7 bg-gray-100 hidden sm:block" />
               <button
                 onClick={onLogout}
-                className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-[#E31837] transition-colors"
+                className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-500 transition-colors"
                 title="Cerrar sesión"
               >
-                <LogOut size={18} />
-                <span className="hidden sm:inline">Salir</span>
+                <LogOut size={16} />
+                <span className="hidden sm:inline text-xs font-medium">Salir</span>
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main */}
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
 
-        {/* User Info Mobile */}
-        <div className="sm:hidden mb-6 mx-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        {/* Mobile User Info */}
+        <div className="sm:hidden mb-5 bg-white p-3.5 rounded-xl border border-gray-100 flex items-center justify-between" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
           <div>
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-medium text-gray-800">
               {testigo.nombre1} {testigo.apellido1}
             </p>
-            <p className="text-[12px] font-medium text-slate-500">
+            <p className="text-[11px] text-gray-400">
               {testigo.puesto}
             </p>
           </div>
-          <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
-            <span className="text-xs font-bold text-slate-700">CI: {testigo.cedula}</span>
-          </div>
+          <span className="text-[11px] font-medium text-gray-400 bg-gray-50 px-2.5 py-1 rounded-md">
+            CI: {testigo.cedula}
+          </span>
         </div>
 
-        {/* Global Summary Cards */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-8 mx-2 sm:mx-0">
-          <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center border border-slate-200 shadow-sm transition-transform hover:-translate-y-1">
-            <span className="block text-2xl sm:text-3xl font-black text-slate-800 leading-none mb-1">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="bg-white rounded-xl p-4 flex flex-col items-center justify-center border border-gray-100 transition-transform hover:-translate-y-0.5" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <span className="text-2xl sm:text-3xl font-bold text-gray-800 leading-none mb-0.5">
               <AnimatedNumber value={total} />
             </span>
-            <span className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Total</span>
+            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Total</span>
           </div>
-          <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center border border-emerald-100 shadow-sm transition-transform hover:-translate-y-1">
-            <span className="block text-2xl sm:text-3xl font-black text-emerald-600 leading-none mb-1">
+          <div className="bg-white rounded-xl p-4 flex flex-col items-center justify-center border border-emerald-100 transition-transform hover:-translate-y-0.5" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-500 leading-none mb-0.5">
               <AnimatedNumber value={completadas} />
             </span>
-            <span className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Listas</span>
+            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Listas</span>
           </div>
-          <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center border border-amber-100 shadow-sm transition-transform hover:-translate-y-1">
-            <span className="block text-2xl sm:text-3xl font-black text-amber-500 leading-none mb-1">
+          <div className="bg-white rounded-xl p-4 flex flex-col items-center justify-center border border-amber-100 transition-transform hover:-translate-y-0.5" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <span className="text-2xl sm:text-3xl font-bold text-amber-400 leading-none mb-0.5">
               <AnimatedNumber value={enProgreso} />
             </span>
-            <span className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Activas</span>
+            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Activas</span>
           </div>
         </div>
 
-        {/* Header Mis Mesas */}
-        <div className="flex items-center justify-between mb-6 mx-2 sm:mx-0">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-            Mis Mesas Asignadas
-          </h2>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-semibold text-gray-700">Mis Mesas</h2>
           <button
             onClick={refrescar}
             disabled={refreshing}
-            className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 bg-white border border-slate-200 px-3 sm:px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs font-medium text-gray-400 bg-white border border-gray-100 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
           >
-            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+            <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''} />
             <span className="hidden sm:inline">Actualizar</span>
           </button>
         </div>
 
-        {/* Grid de Mesas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 px-2 sm:px-0">
+        {/* Mesa Grid — now with inline accordion, no modal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {mesas.map((mesa, i) => (
             <motion.div
               key={mesa.mesa_numero}
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="h-full"
+              transition={{ delay: i * 0.04 }}
             >
               <MesaCard
                 mesa={mesa}
-                index={i}
-                onClick={() => setMesaAbierta(mesa)}
+                cedula={sesion.cedula}
+                onUpdate={handleMesaUpdate}
               />
             </motion.div>
           ))}
         </div>
 
-        <div className="text-center mt-10 text-xs font-medium text-slate-400">
+        <p className="text-center mt-8 text-[11px] text-gray-300">
           Última actualización: {ultimaAct}
-        </div>
+        </p>
       </main>
-
-      {mesaAbierta && (
-        <MesaModal
-          mesa={mesaAbierta}
-          cedula={sesion.cedula}
-          onClose={() => setMesaAbierta(null)}
-          onUpdate={handleMesaUpdate}
-        />
-      )}
     </div>
   )
 }

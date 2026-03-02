@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import type { SesionTestigo } from '@/lib/types'
-import { MapPin, Building2, CheckCircle2, ChevronRight, Inbox } from 'lucide-react'
+import { MapPin, Building2, ChevronRight } from 'lucide-react'
 
 interface Props {
   sesion: SesionTestigo
@@ -13,70 +13,68 @@ export default function InfoScreen({ sesion, onContinue }: Props) {
   const { testigo, mesas } = sesion
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB]">
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative z-10 w-full max-w-[500px] px-5 py-8"
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="w-full max-w-[440px] px-5 py-8"
       >
-        {/* Main Card */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-xl shadow-slate-200/50 border border-slate-100">
+        <div className="bg-white rounded-2xl p-8 sm:p-10 border border-gray-100" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03)' }}>
 
+          {/* Success Header */}
           <div className="text-center mb-8">
-            <div className="w-14 h-14 mx-auto bg-red-50 rounded-2xl flex items-center justify-center mb-4 text-[#E31837]">
-              <CheckCircle2 size={30} strokeWidth={2.5} />
+            <div className="w-11 h-11 mx-auto bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <path d="m9 11 3 3L22 4" />
+              </svg>
             </div>
-            <h2 className="text-slate-800 text-2xl font-bold tracking-tight mb-1">Verificación Exitosa</h2>
-            <p className="text-slate-500 text-[15px] font-medium">
+            <h2 className="text-gray-900 text-xl font-semibold tracking-tight mb-1">Verificación Exitosa</h2>
+            <p className="text-gray-400 text-sm">
               Bienvenido/a {testigo.nombre1} {testigo.apellido1}
             </p>
           </div>
 
-          <div className="space-y-4 mb-8">
-            {/* Box: Municipio & Puesto */}
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
-              {/* Municipio */}
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-[#E31837] flex-shrink-0">
-                  <MapPin size={20} />
+          {/* Info Card */}
+          <div className="space-y-3 mb-7">
+            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-red-500 flex-shrink-0">
+                  <MapPin size={17} />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest block mb-0.5">Municipio Asignado</span>
-                  <span className="font-bold text-slate-800 text-[15px]">{testigo.municipio}</span>
+                  <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">Municipio</span>
+                  <span className="font-semibold text-gray-800 text-sm">{testigo.municipio}</span>
                 </div>
               </div>
 
-              <div className="h-px bg-slate-200 w-full" />
+              <div className="h-px bg-gray-200/60" />
 
-              {/* Puesto */}
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-[#E31837] flex-shrink-0">
-                  <Building2 size={20} />
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-red-500 flex-shrink-0">
+                  <Building2 size={17} />
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest block mb-0.5">Puesto de votación</span>
-                  <span className="font-bold text-slate-800 text-[15px] leading-tight block">{testigo.puesto}</span>
+                  <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">Puesto de votación</span>
+                  <span className="font-semibold text-gray-800 text-sm leading-tight">{testigo.puesto}</span>
                 </div>
               </div>
             </div>
 
-            {/* Box: Mesas */}
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200">
-              <div className="flex items-center gap-2 justify-center mb-4">
-                <Inbox size={16} className="text-slate-400" />
-                <span className="text-xs text-slate-600 font-bold uppercase tracking-wider">
-                  Mesas asignadas ({mesas.length})
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2.5 justify-center">
+            {/* Mesas */}
+            <div className="bg-gray-50 rounded-xl p-4">
+              <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider block text-center mb-3">
+                Mesas asignadas ({mesas.length})
+              </span>
+              <div className="flex flex-wrap gap-2 justify-center">
                 {mesas.map((mesa, i) => (
                   <motion.span
                     key={mesa.mesa_numero}
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 + i * 0.05 }}
-                    className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-[16px] bg-[#E31837] text-white shadow-md shadow-red-500/20"
+                    transition={{ delay: 0.08 + i * 0.04 }}
+                    className="w-11 h-11 rounded-lg flex items-center justify-center font-bold text-sm bg-red-600 text-white"
                   >
                     {mesa.mesa_numero}
                   </motion.span>
@@ -87,14 +85,14 @@ export default function InfoScreen({ sesion, onContinue }: Props) {
 
           <button
             onClick={onContinue}
-            className="w-full py-4 bg-[#E31837] text-white rounded-2xl font-bold text-[15px] cursor-pointer transition-all duration-300 hover:bg-[#c6102b] hover:shadow-lg hover:shadow-red-500/30 flex items-center justify-center gap-2"
+            className="w-full py-3.5 bg-red-600 text-white rounded-xl font-semibold text-sm transition-all duration-200 hover:bg-red-700 active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            Continuar al Centro de Control
-            <ChevronRight size={20} strokeWidth={2.5} />
+            Continuar al Panel
+            <ChevronRight size={18} />
           </button>
         </div>
 
-        <p className="text-center mt-8 text-slate-400 text-xs font-semibold tracking-widest uppercase">
+        <p className="text-center mt-6 text-gray-300 text-[11px] font-medium tracking-widest uppercase">
           Partido Liberal de Colombia — 2026
         </p>
       </motion.div>

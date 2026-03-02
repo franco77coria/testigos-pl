@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, ChevronRight, AlertCircle, ShieldCheck } from 'lucide-react'
+import { Loader2, ChevronRight, AlertCircle } from 'lucide-react'
 
 interface Props {
   onLogin: (cedula: string) => Promise<{
@@ -41,82 +41,70 @@ export default function LoginScreen({ onLogin }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative bg-slate-50 overflow-hidden">
-
-      {/* Decorative clean background elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#E31837]/5 blur-[100px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#E31837]/5 blur-[80px] rounded-full" />
-      </div>
-
+    <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB]">
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-[420px] px-5"
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="w-full max-w-[400px] px-5"
       >
-        {/* Main Clean White Card */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-xl shadow-slate-200/50 border border-slate-100">
+        <div className="bg-white rounded-2xl p-8 sm:p-10 border border-gray-100" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03)' }}>
 
           {/* Header */}
-          <div className="text-center mb-10">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-              className="w-16 h-16 mx-auto bg-red-50 rounded-2xl flex items-center justify-center mb-5 text-[#E31837]"
-            >
-              <ShieldCheck size={32} strokeWidth={2} />
-            </motion.div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight mb-1">
+          <div className="text-center mb-9">
+            <div className="w-12 h-12 mx-auto bg-red-50 rounded-xl flex items-center justify-center mb-5">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+            </div>
+            <h1 className="text-xl font-semibold text-gray-900 tracking-tight mb-1">
               Testigos Electorales
             </h1>
-            <p className="text-slate-500 text-sm font-medium">
+            <p className="text-gray-400 text-sm">
               Partido Liberal — 2026
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="cedula" className="block text-xs font-bold text-slate-500 mb-2 px-1 uppercase tracking-wider">
-                Documento de Identidad
+              <label htmlFor="cedula" className="block text-xs font-medium text-gray-500 mb-2 tracking-wide">
+                DOCUMENTO DE IDENTIDAD
               </label>
-              <div className="relative">
-                <input
-                  id="cedula"
-                  type="number"
-                  inputMode="numeric"
-                  value={cedula}
-                  onChange={(e) => {
-                    setCedula(e.target.value)
-                    setHasError(false)
-                  }}
-                  className={`w-full py-4 px-5 bg-slate-50 border-2 rounded-2xl text-[17px] font-bold text-slate-800 placeholder-slate-400 outline-none transition-all duration-300 focus:bg-white
-                    ${hasError
-                      ? 'border-red-400 shadow-[0_0_0_4px_rgba(239,68,68,0.1)]'
-                      : 'border-slate-200 focus:border-[#E31837] focus:shadow-[0_0_0_4px_rgba(227,24,55,0.1)]'
-                    }
-                  `}
-                  placeholder="Ej: 1012345678"
-                  disabled={loading}
-                />
-              </div>
+              <input
+                id="cedula"
+                type="number"
+                inputMode="numeric"
+                value={cedula}
+                onChange={(e) => {
+                  setCedula(e.target.value)
+                  setHasError(false)
+                }}
+                className={`w-full py-3.5 px-4 bg-gray-50 border rounded-xl text-[15px] font-medium text-gray-900 placeholder-gray-300 outline-none transition-all duration-200
+                  ${hasError
+                    ? 'border-red-300 bg-red-50/30 focus:border-red-400 focus:ring-2 focus:ring-red-100'
+                    : 'border-gray-200 focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100'
+                  }
+                `}
+                placeholder="Ej: 1012345678"
+                disabled={loading}
+              />
             </div>
 
             <button
               type="submit"
               disabled={!cedula || loading}
-              className="w-full py-4 bg-[#E31837] text-white rounded-2xl font-bold text-[15px] cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#c6102b] hover:shadow-lg hover:shadow-red-500/30 flex items-center justify-center gap-2 group"
+              className="w-full py-3.5 bg-red-600 text-white rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-700 active:scale-[0.98] flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin" size={20} />
-                  Verificando credenciales...
+                  <Loader2 className="animate-spin" size={18} />
+                  Verificando...
                 </>
               ) : (
                 <>
                   Ingresar al Sistema
-                  <ChevronRight size={20} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+                  <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" />
                 </>
               )}
             </button>
@@ -125,13 +113,13 @@ export default function LoginScreen({ onLogin }: Props) {
             <AnimatePresence>
               {error && (
                 <motion.div
-                  initial={{ opacity: 0, y: -5, height: 0 }}
+                  initial={{ opacity: 0, y: -4, height: 0 }}
                   animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0, y: -5 }}
+                  exit={{ opacity: 0, height: 0, y: -4 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-[13px] font-medium flex items-start gap-2.5 mt-2">
-                    <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+                  <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-[13px] font-medium flex items-start gap-2.5">
+                    <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
                     <span>{error}</span>
                   </div>
                 </motion.div>
@@ -140,8 +128,8 @@ export default function LoginScreen({ onLogin }: Props) {
           </form>
         </div>
 
-        <p className="text-center mt-8 text-slate-400 text-xs font-semibold tracking-widest uppercase">
-          Control de Mando Nacional
+        <p className="text-center mt-6 text-gray-300 text-[11px] font-medium tracking-widest uppercase">
+          Cundinamarca · 2026
         </p>
       </motion.div>
     </div>
