@@ -95,30 +95,30 @@ export interface Seccion {
 export const SECCIONES: Seccion[] = [
   {
     id: 1,
-    nombre: 'Censo de Votantes',
+    nombre: '8:00 AM — Censo de Votantes',
     campos: ['cantidad_votantes_mesa'],
     labels: ['Total votantes habilitados'],
     descripcion: 'Registre el total de votantes habilitados en el formulario E-11.',
   },
   {
     id: 2,
-    nombre: 'Conteo 10:00 AM',
+    nombre: '11:00 AM — Conteo',
     campos: ['votantes_10am'],
-    labels: ['Votantes hasta las 10:00 AM'],
-    descripcion: 'Cuente las personas que han votado hasta las 10:00 AM.',
+    labels: ['Votantes hasta las 11:00 AM'],
+    descripcion: 'Cuente las personas que han votado hasta las 11:00 AM.',
   },
   {
     id: 3,
-    nombre: 'Conteo 1:00 PM',
+    nombre: '1:00 PM — Conteo',
     campos: ['votantes_1pm'],
     labels: ['Votantes hasta la 1:00 PM'],
     descripcion: 'Cuente las personas que han votado hasta la 1:00 PM.',
   },
   {
     id: 4,
-    nombre: 'Resultados Finales',
+    nombre: '4:00 PM — Resultados Finales',
     campos: ['votos_alex_p', 'votos_camara_cun_pl', 'votos_oscar_sanchez_senado', 'votos_senado_pl'],
-    labels: ['Votos Alex P (Cámara)', 'Votos Cámara CUN PL', 'Votos Oscar Sánchez (Senado)', 'Votos Senado PL'],
+    labels: ['Votos Alex Prieto Cámara', 'Votos Partido Liberal Cámara CUN', 'Votos Oscar Sánchez Senado', 'Votos Partido Liberal Senado'],
     descripcion: 'Registre los resultados finales del escrutinio y suba las fotos del E-14.',
   },
 ]
@@ -127,13 +127,14 @@ export function calcularSeccionActiva(mesa: MesaDashboard): number {
   if (!mesa.cantidad_votantes_mesa) return 1
   if (!mesa.votantes_10am) return 2
   if (!mesa.votantes_1pm) return 3
-  if (!mesa.votos_alex_p || !mesa.votos_camara_cun_pl || !mesa.votos_oscar_sanchez_senado || !mesa.votos_senado_pl) return 4
-  return 5 // todas completas
+  return 4 // seccion 4 siempre activa una vez completada seccion 3
 }
 
 export function calcularEstado(mesa: MesaDashboard): 'pendiente' | 'en_progreso' | 'completada' {
   const seccion = calcularSeccionActiva(mesa)
   if (seccion === 1) return 'pendiente'
-  if (seccion === 5 && mesa.foto_camara && mesa.foto_senado) return 'completada'
+  const tieneVotos = mesa.votos_alex_p != null && mesa.votos_camara_cun_pl != null
+    && mesa.votos_oscar_sanchez_senado != null && mesa.votos_senado_pl != null
+  if (tieneVotos && mesa.foto_camara && mesa.foto_senado) return 'completada'
   return 'en_progreso'
 }

@@ -18,16 +18,16 @@ function StatCard({ title, value, subtitle, icon, delay }: { title: string; valu
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay }}
-            className="bg-white border border-gray-100 rounded-xl p-4"
-            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}
+            className="bg-white rounded-xl p-4 relative overflow-hidden"
+            style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
         >
             <div className="flex items-center justify-between mb-3">
-                <h3 className="text-gray-400 font-medium text-[10px] uppercase tracking-wider">{title}</h3>
-                <div className="text-gray-300">{icon}</div>
+                <h3 className="text-[#718096] font-semibold text-[10px] uppercase tracking-wider">{title}</h3>
+                <div className="text-[#CBD5E1]">{icon}</div>
             </div>
             <div className="flex items-end gap-1.5">
-                <span className="text-2xl font-bold text-gray-800 leading-none">{value}</span>
-                <span className="text-[10px] font-medium text-gray-400 mb-0.5">{subtitle}</span>
+                <span style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-2xl font-bold text-[#1a1a1a] leading-none">{value}</span>
+                <span className="text-[10px] font-semibold text-[#718096] mb-0.5">{subtitle}</span>
             </div>
         </motion.div>
     )
@@ -35,14 +35,14 @@ function StatCard({ title, value, subtitle, icon, delay }: { title: string; valu
 
 function CandidateCard({ name, votes, color }: { name: string; votes: number; color: string }) {
     return (
-        <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between hover:bg-gray-100/50 transition-colors">
+        <div className="p-3.5 rounded-xl flex items-center justify-between hover:bg-[#F8F9FA] transition-colors" style={{ background: '#FAFBFC', border: '1px solid #E2E8F0' }}>
             <div className="flex items-center gap-2.5">
                 <div className={`w-2 h-2 rounded-full ${color}`} />
-                <span className="font-medium text-gray-600 text-sm">{name}</span>
+                <span className="font-medium text-[#4a5568] text-sm">{name}</span>
             </div>
             <div className="text-right">
-                <span className="text-base font-bold text-gray-800">{votes.toLocaleString()}</span>
-                <span className="text-[9px] uppercase font-medium text-gray-300 ml-1.5">votos</span>
+                <span className="text-base font-bold text-[#1a1a1a]">{votes.toLocaleString()}</span>
+                <span className="text-[9px] uppercase font-semibold text-[#CBD5E1] ml-1.5">votos</span>
             </div>
         </div>
     )
@@ -77,45 +77,49 @@ export default function AdminStats() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
-                <Loader2 size={24} className="animate-spin text-red-500" />
+            <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center">
+                <Loader2 size={24} className="animate-spin text-[#E31837]" />
             </div>
         )
     }
 
     if (error || !data) {
         return (
-            <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-6">
                 <div className="text-center">
-                    <ShieldAlert size={36} className="mx-auto text-gray-300 mb-3" />
-                    <h1 className="text-lg font-semibold text-gray-700 mb-1">Error</h1>
-                    <p className="text-gray-400 text-sm mb-5">{error}</p>
-                    <Link href="/admin" className="px-4 py-2 rounded-lg bg-gray-800 text-white font-medium text-sm">Volver</Link>
+                    <ShieldAlert size={36} className="mx-auto text-[#CBD5E1] mb-3" />
+                    <h1 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-lg font-bold text-[#1a1a1a] mb-1">Error</h1>
+                    <p className="text-[#718096] text-sm mb-5">{error}</p>
+                    <Link href="/admin" className="px-4 py-2 rounded-xl text-white font-semibold text-sm" style={{ background: 'linear-gradient(135deg, #E31837, #C41530)' }}>Volver</Link>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-[#F9FAFB] pb-12">
+        <div className="min-h-screen bg-[#F8F9FA] pb-12">
+            {/* Top accent bar */}
+            <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
+
             {/* Header */}
-            <div className="bg-white border-b border-gray-100 sticky top-0 z-40" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+            <div className="bg-white sticky top-0 z-40" style={{ borderBottom: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                 <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/admin" className="p-1.5 rounded-lg bg-gray-50 border border-gray-100 text-gray-400 hover:bg-gray-100 transition-colors">
+                        <Link href="/admin" className="p-1.5 rounded-lg bg-[#F8F9FA] text-[#94A3B8] hover:bg-[#E2E8F0] hover:text-[#E31837] transition-colors" style={{ border: '1px solid #E2E8F0' }}>
                             <ArrowLeft size={16} />
                         </Link>
                         <div>
-                            <h1 className="text-base font-semibold text-gray-800 tracking-tight flex items-center gap-2">
+                            <h1 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-base font-bold text-[#1a1a1a] tracking-tight flex items-center gap-2">
                                 Estadísticas en Vivo <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                             </h1>
-                            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Testigos PL 2026</p>
+                            <p className="text-[10px] text-[#718096] font-semibold uppercase tracking-wider">Testigos PL 2026</p>
                         </div>
                     </div>
                     <button
                         onClick={fetchStats}
                         disabled={refreshing}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-medium text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-xs font-semibold text-[#718096] hover:text-[#E31837] disabled:opacity-40 transition-all"
+                        style={{ border: '1px solid #E2E8F0' }}
                     >
                         <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''} />
                         <span className="hidden sm:inline">Actualizar</span>
@@ -138,65 +142,65 @@ export default function AdminStats() {
 
                         {/* Time Reports */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl p-5 border border-gray-100" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                             <div className="flex items-center gap-2 mb-4">
-                                <Activity size={16} className="text-red-500" />
-                                <h2 className="text-sm font-semibold text-gray-700">Censos Horarios</h2>
+                                <Activity size={16} className="text-[#E31837]" />
+                                <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Censos Horarios</h2>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-gray-50 p-4 rounded-xl text-center">
-                                    <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mb-1">10:00 AM</span>
-                                    <span className="text-xl font-bold text-gray-800">{data.conteo.reporte10am.toLocaleString()}</span>
+                                <div className="p-4 rounded-xl text-center" style={{ background: '#F8F9FA', border: '1px solid #F1F5F9' }}>
+                                    <span className="text-[10px] font-semibold text-[#718096] uppercase tracking-wider block mb-1">10:00 AM</span>
+                                    <span style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-xl font-bold text-[#1a1a1a]">{data.conteo.reporte10am.toLocaleString()}</span>
                                 </div>
-                                <div className="bg-gray-50 p-4 rounded-xl text-center">
-                                    <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mb-1">01:00 PM</span>
-                                    <span className="text-xl font-bold text-gray-800">{data.conteo.reporte1pm.toLocaleString()}</span>
+                                <div className="p-4 rounded-xl text-center" style={{ background: '#F8F9FA', border: '1px solid #F1F5F9' }}>
+                                    <span className="text-[10px] font-semibold text-[#718096] uppercase tracking-wider block mb-1">01:00 PM</span>
+                                    <span style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-xl font-bold text-[#1a1a1a]">{data.conteo.reporte1pm.toLocaleString()}</span>
                                 </div>
                             </div>
                         </motion.div>
 
                         {/* Candidates */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-                            className="bg-white rounded-xl p-5 border border-gray-100" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
+                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                             <div className="flex items-center gap-2 mb-4">
-                                <CheckCircle2 size={16} className="text-red-500" />
-                                <h2 className="text-sm font-semibold text-gray-700">Reporte E-14 (Escrutinio)</h2>
+                                <CheckCircle2 size={16} className="text-[#E31837]" />
+                                <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Reporte E-14 (Escrutinio)</h2>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                                <CandidateCard name="Alex P. (Cámara)" votes={data.conteo.alexP} color="bg-red-400" />
-                                <CandidateCard name="Senado PL" votes={data.conteo.senadoPl} color="bg-blue-400" />
-                                <CandidateCard name="Oscar Sánchez" votes={data.conteo.oscarSanchez} color="bg-emerald-400" />
-                                <CandidateCard name="Cámara CUN" votes={data.conteo.camaraCun} color="bg-amber-400" />
+                                <CandidateCard name="Alex P. (Cámara)" votes={data.conteo.alexP} color="bg-[#E31837]" />
+                                <CandidateCard name="Senado PL" votes={data.conteo.senadoPl} color="bg-[#1E3A8A]" />
+                                <CandidateCard name="Oscar Sánchez" votes={data.conteo.oscarSanchez} color="bg-emerald-500" />
+                                <CandidateCard name="Cámara CUN" votes={data.conteo.camaraCun} color="bg-amber-500" />
                             </div>
                         </motion.div>
                     </div>
 
                     {/* Municipalities */}
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                        className="bg-white rounded-xl border border-gray-100 flex flex-col h-[520px]" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-                        <div className="p-5 border-b border-gray-50">
+                        className="bg-white rounded-xl flex flex-col h-[520px]" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                        <div className="p-5" style={{ borderBottom: '1px solid #F1F5F9' }}>
                             <div className="flex items-center gap-2">
-                                <Map size={16} className="text-red-500" />
-                                <h2 className="text-sm font-semibold text-gray-700">Municipios</h2>
+                                <Map size={16} className="text-[#E31837]" />
+                                <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Municipios</h2>
                             </div>
-                            <p className="text-[10px] text-gray-400 mt-0.5">Avance departamental</p>
+                            <p className="text-[10px] text-[#718096] font-semibold mt-0.5">Avance departamental</p>
                         </div>
 
                         <div className="overflow-y-auto flex-1 p-2 space-y-0.5" style={{ scrollbarWidth: 'thin' }}>
                             {data.municipios.map((mun, i) => (
-                                <div key={i} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div key={i} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#F8F9FA] transition-colors">
                                     <div className="flex-1 min-w-0 pr-3">
                                         <div className="flex justify-between items-end mb-1">
-                                            <span className="font-medium text-gray-600 text-xs truncate">{mun.nombre}</span>
-                                            <span className="text-[9px] font-medium text-gray-400 ml-2">{mun.progreso}%</span>
+                                            <span className="font-medium text-[#4a5568] text-xs truncate">{mun.nombre}</span>
+                                            <span className="text-[9px] font-semibold text-[#94A3B8] ml-2">{mun.progreso}%</span>
                                         </div>
-                                        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-                                            <div className="h-full bg-red-500 rounded-full transition-all" style={{ width: `${mun.progreso}%` }} />
+                                        <div className="h-1 bg-[#F1F5F9] rounded-full overflow-hidden">
+                                            <div className="h-full rounded-full transition-all" style={{ width: `${mun.progreso}%`, background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-xs font-bold text-gray-600">{mun.completadas}</span>
-                                        <span className="text-[9px] text-gray-300 ml-0.5">/{mun.asignadas}</span>
+                                        <span className="text-xs font-bold text-[#1a1a1a]">{mun.completadas}</span>
+                                        <span className="text-[9px] text-[#CBD5E1] ml-0.5">/{mun.asignadas}</span>
                                     </div>
                                 </div>
                             ))}

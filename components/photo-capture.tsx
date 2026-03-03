@@ -33,16 +33,17 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
   const hasImage = preview || existingUrl
 
   return (
-    <div className="bg-white p-3 rounded-xl border border-slate-200">
-      <label className="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-widest pl-1">
+    <div className="bg-white p-3.5 rounded-xl" style={{ border: '1px solid #E2E8F0' }}>
+      <label className="block text-[10px] font-bold text-[#718096] mb-2 uppercase tracking-widest pl-0.5">
         {label}
       </label>
       <div
         onClick={() => inputRef.current?.click()}
-        className="rounded-xl text-center cursor-pointer transition-all duration-300 hover:border-[#E31837] hover:bg-slate-50"
+        className="rounded-xl text-center cursor-pointer transition-all duration-200 active:scale-[0.98] active:opacity-80"
         style={{
           border: hasImage ? '2px solid #10B981' : '2px dashed #CBD5E1',
           padding: hasImage ? '6px' : '20px',
+          background: hasImage ? 'transparent' : '#FAFBFC',
         }}
       >
         {hasImage ? (
@@ -65,10 +66,10 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
           </div>
         ) : (
           <div className="py-4 flex flex-col items-center">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
-              <Camera size={20} className="text-slate-400" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2" style={{ background: 'rgba(227,24,55,0.08)' }}>
+              <Camera size={20} className="text-[#E31837]" />
             </div>
-            <p className="text-xs text-slate-500 font-semibold">Tocar para tomar/subir foto</p>
+            <p className="text-xs text-[#718096] font-semibold">Tocar para tomar o subir foto</p>
           </div>
         )}
 
@@ -83,7 +84,7 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
       </div>
 
       {(uploading || uploaded || (existingUrl && !preview)) && (
-        <div className={`flex items-center gap-1.5 mt-2.5 text-[11px] font-bold ${uploaded || existingUrl ? 'text-emerald-600' : 'text-amber-600'} pl-1`}>
+        <div className={`flex items-center gap-1.5 mt-2.5 text-[11px] font-bold ${uploaded || existingUrl ? 'text-emerald-600' : 'text-amber-600'} pl-0.5`}>
           {uploading ? (
             <>
               <Loader2 size={12} className="animate-spin" />
@@ -92,7 +93,7 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
           ) : (
             <>
               <CheckCircle2 size={12} strokeWidth={2.5} />
-              {uploaded ? 'Foto subida correctamente' : 'Fotografía ya registrada en el sistema'}
+              {uploaded ? 'Foto subida correctamente' : 'Foto ya registrada'}
             </>
           )}
         </div>

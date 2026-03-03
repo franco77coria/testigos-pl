@@ -47,6 +47,21 @@ export default function Home() {
     setPantalla('login')
   }
 
+  async function handleMesasConfirm(numeros: number[]): Promise<{ exito: boolean; mensaje?: string }> {
+    const res = await fetch('/api/mesas/confirmar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cedula: sesion!.cedula, mesas: numeros }),
+    })
+    const data = await res.json()
+    if (data.exito) {
+      setSesion({ ...sesion!, mesas: data.mesas })
+      setPantalla('dashboard')
+      return { exito: true }
+    }
+    return { exito: false, mensaje: data.mensaje }
+  }
+
   function handleMesasUpdate(mesas: MesaDashboard[]) {
     if (sesion) {
       setSesion({ ...sesion, mesas })
@@ -62,7 +77,7 @@ export default function Home() {
       )}
 
       {pantalla === 'info' && sesion && (
-        <InfoScreen sesion={sesion} onContinue={() => setPantalla('dashboard')} />
+        <InfoScreen sesion={sesion} onConfirm={handleMesasConfirm} />
       )}
 
       {pantalla === 'dashboard' && sesion && (

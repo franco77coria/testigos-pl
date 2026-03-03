@@ -53,17 +53,17 @@ export async function POST(request: NextRequest) {
     }
 
     for (const campo of seccionDef.campos) {
-      if (datos[campo] !== undefined) {
-        updateData[campo] = parseInt(datos[campo]) || 0
+      if (datos[campo] !== undefined && datos[campo] !== '') {
+        updateData[campo] = parseInt(datos[campo])
       }
     }
 
     // Calcular estado
     const merged = { ...resultado, ...updateData }
     const tieneTodo =
-      merged.cantidad_votantes_mesa &&
-      merged.votantes_10am &&
-      merged.votantes_1pm &&
+      merged.cantidad_votantes_mesa != null &&
+      merged.votantes_10am != null &&
+      merged.votantes_1pm != null &&
       merged.votos_alex_p != null &&
       merged.votos_camara_cun_pl != null &&
       merged.votos_oscar_sanchez_senado != null &&
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (tieneTodo && merged.foto_camara && merged.foto_senado) {
       updateData.estado = 'completada'
-    } else if (merged.cantidad_votantes_mesa) {
+    } else if (merged.cantidad_votantes_mesa != null) {
       updateData.estado = 'en_progreso'
     }
 

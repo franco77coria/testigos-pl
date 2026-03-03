@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServiceClient } from '@/lib/supabase'
-import { calcularSeccionActiva, calcularEstado } from '@/lib/types'
-import type { MesaDashboard } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +14,7 @@ export async function POST(request: NextRequest) {
     const supabase = getServiceClient()
     const cedulaClean = String(cedula).trim()
 
-    // 1. Verify if the user is an admin
+    // 1. Verificar si es admin
     const { data: admin } = await supabase
       .from('admins')
       .select('cedula')
@@ -27,15 +25,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         exito: true,
         esCoordinador: true,
-        sesion: {
-          cedula: cedulaClean,
-          // Coordinadores no necesitan la estructura completa de testigo para el panel
-          esAdmin: true
-        },
+        sesion: { cedula: cedulaClean, esAdmin: true },
       })
     }
 
-    // 2. Buscar testigo regular
+    // 2. Buscar testigo — solo retorna ubicacion, sin mesas
     const { data: testigo, error: testigoError } = await supabase
       .from('testigos')
       .select('*')
@@ -45,75 +39,9 @@ export async function POST(request: NextRequest) {
     if (testigoError || !testigo) {
       return NextResponse.json({
         exito: false,
-        mensaje: 'Cédula no encontrada. Verifique su número o contacte al coordinador.',
+        mensaje: 'Cedula no encontrada. Verifique su numero o contacte al coordinador.',
       })
     }
-
-    // 3. Buscar asignaciones de mesas
-    const { data: asignaciones } = await supabase
-      .from('mesa_asignaciones')
-      .select('*')
-      .eq('testigo_cedula', cedulaClean)
-      .order('mesa_numero', { ascending: true })
-
-    if (!asignaciones || asignaciones.length === 0) {
-      return NextResponse.json({
-        exito: false,
-        mensaje: 'No tiene mesas asignadas. Contacte al coordinador.',
-      })
-    }
-
-    // Buscar o crear resultados para cada mesa
-    const { data: resultadosExistentes } = await supabase
-      .from('resultados')
-      .select('*')
-      .eq('testigo_cedula', cedulaClean)
-
-    const resultadosMap = new Map(
-      (resultadosExistentes || []).map((r) => [r.mesa_numero, r])
-    )
-
-    // Crear resultados faltantes
-    const faltantes = asignaciones.filter((a) => !resultadosMap.has(a.mesa_numero))
-    if (faltantes.length > 0) {
-      const nuevosResultados = faltantes.map((a) => ({
-        testigo_cedula: cedulaClean,
-        mesa_numero: a.mesa_numero,
-        municipio: a.municipio,
-        puesto: a.puesto,
-        estado: 'pendiente',
-      }))
-      await supabase.from('resultados').insert(nuevosResultados)
-    }
-
-    // Obtener resultados finales
-    const { data: resultados } = await supabase
-      .from('resultados')
-      .select('*')
-      .eq('testigo_cedula', cedulaClean)
-      .order('mesa_numero', { ascending: true })
-
-    const mesas: MesaDashboard[] = (resultados || []).map((r) => {
-      const mesa: MesaDashboard = {
-        mesa_numero: r.mesa_numero,
-        municipio: r.municipio || testigo.municipio,
-        puesto: r.puesto || testigo.puesto,
-        cantidad_votantes_mesa: r.cantidad_votantes_mesa,
-        votantes_10am: r.votantes_10am,
-        votantes_1pm: r.votantes_1pm,
-        votos_alex_p: r.votos_alex_p,
-        votos_camara_cun_pl: r.votos_camara_cun_pl,
-        votos_oscar_sanchez_senado: r.votos_oscar_sanchez_senado,
-        votos_senado_pl: r.votos_senado_pl,
-        foto_camara: r.foto_camara,
-        foto_senado: r.foto_senado,
-        estado: r.estado || 'pendiente',
-        seccion_activa: 1,
-      }
-      mesa.seccion_activa = calcularSeccionActiva(mesa)
-      mesa.estado = calcularEstado(mesa)
-      return mesa
-    })
 
     return NextResponse.json({
       exito: true,
@@ -121,7 +49,7 @@ export async function POST(request: NextRequest) {
       sesion: {
         cedula: cedulaClean,
         testigo,
-        mesas,
+        mesas: [],
       },
     })
   } catch (error) {

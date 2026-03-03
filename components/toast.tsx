@@ -31,13 +31,13 @@ export default function ToastContainer() {
   }, [])
 
   const styles = {
-    ok: { background: '#059669', color: '#fff' },
-    err: { background: '#DC2626', color: '#fff' },
-    info: { background: '#2563EB', color: '#fff' },
+    ok: { background: '#10B981', color: '#fff' },
+    err: { background: '#E31837', color: '#fff' },
+    info: { background: '#3B82F6', color: '#fff' },
   }
 
   return (
-    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] flex flex-col gap-2">
+    <div className="fixed left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] flex flex-col gap-2" style={{ top: 'max(20px, env(safe-area-inset-top, 20px))' }}>
       <AnimatePresence>
         {toasts.map((t) => (
           <motion.div

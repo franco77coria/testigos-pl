@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pl-red: #DC2626;
-  --color-pl-red-dark: #B91C1C;
-  --color-pl-red-deep: #7F1D1D;
-  --color-surface: #F9FAFB;
-  --color-surface-card: #FFFFFF;
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #6B7280;
-  --color-success: #059669;
+  --color-pl-red: #E31837;
+  --color-pl-red-dark: #C41530;
+  --color-pl-red-light: #FEF2F2;
+  --color-pl-red-deep: #8B0A1E;
+  --color-navy: #1E3A8A;
+  --color-navy-light: #3B5BA5;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F8F9FA;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #718096;
+  --color-success: #10B981;
   --color-success-light: #ECFDF5;
-  --color-warning: #D97706;
+  --color-warning: #F59E0B;
   --color-warning-light: #FFFBEB;
-  --color-info: #2563EB;
+  --color-info: #3B82F6;
   --color-info-light: #EFF6FF;
-  --color-locked: #D1D5DB;
-  --color-locked-light: #F3F4F6;
-  --color-border: #E5E7EB;
-  --color-border-light: #F3F4F6;
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -35,8 +36,8 @@ body {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #F9FAFB;
-  color: #111827;
+  background: #FFFFFF;
+  color: #1a1a1a;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -56,7 +57,7 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -64,17 +65,15 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: #CBD5E1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  background: #94A3B8;
 }
 
-/* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -82,19 +81,4 @@ input[type="number"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Utility for consistent card styling */
-.card {
-  background: #FFFFFF;
-  border: 1px solid #F3F4F6;
-  border-radius: 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
-}
-
-.card-elevated {
-  background: #FFFFFF;
-  border: 1px solid #F3F4F6;
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
 }

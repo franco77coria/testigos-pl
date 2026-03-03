@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { AlertTriangle } from 'lucide-react'
 
 interface Props {
   open: boolean
@@ -28,27 +29,21 @@ export default function ConfirmModal({ open, titulo, resumen, onConfirm, onCance
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl p-7 max-w-[340px] w-full text-center border border-gray-100"
-            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+            className="bg-white rounded-2xl p-7 max-w-[360px] w-full text-center"
+            style={{ border: '1px solid #E2E8F0', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}
           >
-            {/* Warning icon */}
-            <div className="w-11 h-11 rounded-xl mx-auto mb-4 flex items-center justify-center bg-amber-50">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                <path d="M12 9v4" />
-                <path d="M12 17h.01" />
-              </svg>
+            <div className="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.1)' }}>
+              <AlertTriangle size={22} className="text-amber-500" />
             </div>
 
-            <h3 className="text-base font-semibold text-gray-800 mb-1">{titulo}</h3>
-            <p className="text-xs text-gray-400 mb-5">Verifique los datos antes de guardar</p>
+            <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-base font-bold text-[#1a1a1a] mb-1">{titulo}</h3>
+            <p className="text-xs text-[#718096] mb-5">Verifique los datos antes de guardar</p>
 
-            {/* Data */}
-            <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-2.5">
+            <div className="rounded-xl p-4 mb-5 space-y-3" style={{ background: '#F8F9FA', border: '1px solid #E2E8F0' }}>
               {resumen.map((r) => (
                 <div key={r.label} className="flex justify-between items-center">
-                  <span className="text-xs text-gray-400">{r.label}</span>
-                  <span className="text-base font-bold text-red-600">{r.valor}</span>
+                  <span className="text-xs text-[#718096]">{r.label}</span>
+                  <span className="text-base font-bold text-[#E31837]">{r.valor}</span>
                 </div>
               ))}
             </div>
@@ -56,13 +51,15 @@ export default function ConfirmModal({ open, titulo, resumen, onConfirm, onCance
             <div className="flex gap-3">
               <button
                 onClick={onCancel}
-                className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium text-sm transition-colors hover:bg-gray-200"
+                className="flex-1 py-3 bg-[#F8F9FA] text-[#4a5568] rounded-xl font-semibold text-sm transition-colors hover:bg-[#E2E8F0]"
+                style={{ border: '1px solid #E2E8F0', minHeight: '44px' }}
               >
                 Revisar
               </button>
               <button
                 onClick={onConfirm}
-                className="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-medium text-sm transition-all hover:bg-emerald-600 active:scale-[0.98]"
+                className="flex-1 py-3 text-white rounded-xl font-semibold text-sm transition-all active:scale-[0.98]"
+                style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 12px rgba(16,185,129,0.25)', minHeight: '44px' }}
               >
                 Confirmar
               </button>

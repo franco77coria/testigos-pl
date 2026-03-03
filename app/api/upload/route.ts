@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
 
     if (resultado) {
       const tieneTodo =
-        resultado.cantidad_votantes_mesa &&
-        resultado.votantes_10am &&
-        resultado.votantes_1pm &&
+        resultado.cantidad_votantes_mesa != null &&
+        resultado.votantes_10am != null &&
+        resultado.votantes_1pm != null &&
         resultado.votos_alex_p != null &&
         resultado.votos_camara_cun_pl != null &&
         resultado.votos_oscar_sanchez_senado != null &&
