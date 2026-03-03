@@ -19,7 +19,7 @@ function StatCard({ title, value, subtitle, icon, delay }: { title: string; valu
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay }}
             className="bg-white rounded-xl p-4 relative overflow-hidden"
-            style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
         >
             <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[#718096] font-semibold text-[10px] uppercase tracking-wider">{title}</h3>
@@ -35,7 +35,7 @@ function StatCard({ title, value, subtitle, icon, delay }: { title: string; valu
 
 function CandidateCard({ name, votes, color }: { name: string; votes: number; color: string }) {
     return (
-        <div className="p-3.5 rounded-xl flex items-center justify-between hover:bg-[#F8F9FA] transition-colors" style={{ background: '#FAFBFC', border: '1px solid #E2E8F0' }}>
+        <div className="p-3.5 rounded-xl flex items-center justify-between hover:bg-[#F0F2F5] transition-colors" style={{ background: '#FAFBFC', border: '1px solid #D1D5DB' }}>
             <div className="flex items-center gap-2.5">
                 <div className={`w-2 h-2 rounded-full ${color}`} />
                 <span className="font-medium text-[#4a5568] text-sm">{name}</span>
@@ -77,7 +77,7 @@ export default function AdminStats() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center">
+            <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center">
                 <Loader2 size={24} className="animate-spin text-[#E31837]" />
             </div>
         )
@@ -85,7 +85,7 @@ export default function AdminStats() {
 
     if (error || !data) {
         return (
-            <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-6">
+            <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-6">
                 <div className="text-center">
                     <ShieldAlert size={36} className="mx-auto text-[#CBD5E1] mb-3" />
                     <h1 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-lg font-bold text-[#1a1a1a] mb-1">Error</h1>
@@ -102,10 +102,10 @@ export default function AdminStats() {
             <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
 
             {/* Header */}
-            <div className="bg-white sticky top-0 z-40" style={{ borderBottom: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+            <div className="bg-white sticky top-0 z-40" style={{ borderBottom: '1px solid #D1D5DB', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                 <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/admin" className="p-1.5 rounded-lg bg-[#F8F9FA] text-[#94A3B8] hover:bg-[#E2E8F0] hover:text-[#E31837] transition-colors" style={{ border: '1px solid #E2E8F0' }}>
+                        <Link href="/admin" className="p-1.5 rounded-lg bg-[#F8F9FA] text-[#94A3B8] hover:bg-[#D1D5DB] hover:text-[#E31837] transition-colors" style={{ border: '1px solid #D1D5DB' }}>
                             <ArrowLeft size={16} />
                         </Link>
                         <div>
@@ -119,7 +119,7 @@ export default function AdminStats() {
                         onClick={fetchStats}
                         disabled={refreshing}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-xs font-semibold text-[#718096] hover:text-[#E31837] disabled:opacity-40 transition-all"
-                        style={{ border: '1px solid #E2E8F0' }}
+                        style={{ border: '1px solid #D1D5DB' }}
                     >
                         <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''} />
                         <span className="hidden sm:inline">Actualizar</span>
@@ -142,7 +142,7 @@ export default function AdminStats() {
 
                         {/* Time Reports */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                             <div className="flex items-center gap-2 mb-4">
                                 <Activity size={16} className="text-[#E31837]" />
                                 <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Censos Horarios</h2>
@@ -161,7 +161,7 @@ export default function AdminStats() {
 
                         {/* Candidates */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                             <div className="flex items-center gap-2 mb-4">
                                 <CheckCircle2 size={16} className="text-[#E31837]" />
                                 <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Reporte E-14 (Escrutinio)</h2>
@@ -177,7 +177,7 @@ export default function AdminStats() {
 
                     {/* Municipalities */}
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                        className="bg-white rounded-xl flex flex-col h-[520px]" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                        className="bg-white rounded-xl flex flex-col h-[520px]" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                         <div className="p-5" style={{ borderBottom: '1px solid #F1F5F9' }}>
                             <div className="flex items-center gap-2">
                                 <Map size={16} className="text-[#E31837]" />

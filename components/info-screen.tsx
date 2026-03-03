@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Loader2, CheckCircle2, MapPin, Building2, Plus, ArrowRight, AlertCircle, X } from 'lucide-react'
 import type { SesionTestigo } from '@/lib/types'
-import { MapPin, Building2, Plus, X, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 interface Props {
   sesion: SesionTestigo
@@ -12,197 +12,164 @@ interface Props {
 
 export default function InfoScreen({ sesion, onConfirm }: Props) {
   const { testigo } = sesion
-  const [mesaInput, setMesaInput] = useState('')
-  const [mesasAgregadas, setMesasAgregadas] = useState<number[]>([])
+  const [mesas, setMesas] = useState<number[]>(sesion.mesas?.map(m => m.mesa_numero) || [])
+  const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
-  function agregarMesa() {
-    const num = parseInt(mesaInput)
-    if (!num || num <= 0) return
-    if (mesasAgregadas.includes(num)) {
-      setMesaInput('')
-      return
-    }
-    setMesasAgregadas(prev => [...prev, num].sort((a, b) => a - b))
-    setMesaInput('')
-    setError('')
+  function addMesa() {
+    const num = parseInt(input)
+    if (!num || mesas.includes(num)) return
+    setMesas([...mesas, num])
+    setInput('')
   }
 
-  function quitarMesa(num: number) {
-    setMesasAgregadas(prev => prev.filter(m => m !== num))
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      agregarMesa()
-    }
-  }
-
-  async function handleContinuar() {
-    if (mesasAgregadas.length === 0) {
-      setError('Agregue al menos una mesa.')
-      return
-    }
+  async function handleContinue() {
     setLoading(true)
-    setError('')
-    const result = await onConfirm(mesasAgregadas)
-    if (!result.exito) {
-      setError(result.mensaje || 'Error al registrar mesas.')
-      setLoading(false)
+    setError(null)
+    const res = await onConfirm(mesas)
+    if (!res.exito) {
+      setError(res.mensaje || 'Error al confirmar mesas.')
     }
+    setLoading(false)
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(227,24,55,0.03) 0%, rgba(30,58,138,0.03) 100%)' }}>
-      <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
+    <div className="min-h-screen flex flex-col" style={{ background: '#F0F2F5' }}>
+      <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #E31837, #B91C1C)' }} />
 
       <div className="flex-1 flex items-center justify-center px-5 py-10">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-[460px]"
         >
-          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.04)' }}>
-
+          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08)' }}>
             {/* Success header */}
-            <div className="px-7 pt-7 pb-5" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.03) 100%)' }}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center" style={{ boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
-                  <CheckCircle2 size={22} className="text-white" />
-                </div>
+            <div className="px-7 pt-7 pb-5 flex items-center gap-3" style={{ borderBottom: '1px solid #E5E7EB' }}>
+              <div className="w-12 h-12 rounded-xl bg-[#059669] flex items-center justify-center shrink-0" style={{ boxShadow: '0 4px 12px rgba(5,150,105,0.3)' }}>
+                <CheckCircle2 size={24} className="text-white" />
+              </div>
+              <div>
+                <h1 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-xl font-extrabold text-[#111827]">
+                  Identidad Verificada
+                </h1>
+                <p className="text-[13px] text-[#059669] font-bold mt-0.5 uppercase tracking-wide">
+                  {testigo.nombre1} {testigo.apellido1}
+                </p>
+              </div>
+            </div>
+
+            {/* Location info */}
+            <div className="px-7 py-5 space-y-3.5" style={{ borderBottom: '1px solid #E5E7EB' }}>
+              <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" style={{ background: '#F5F6FA', border: '1px solid #E5E7EB' }}>
+                <MapPin size={18} className="text-[#E31837] shrink-0" />
                 <div>
-                  <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-lg font-bold text-[#1a1a1a]">Identidad Verificada</h2>
-                  <p className="text-[#718096] text-sm">{testigo.nombre1} {testigo.apellido1}</p>
+                  <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">Municipio</p>
+                  <p className="text-sm font-bold text-[#111827]">{testigo.municipio}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl" style={{ background: '#F5F6FA', border: '1px solid #E5E7EB' }}>
+                <Building2 size={18} className="text-[#E31837] shrink-0" />
+                <div>
+                  <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider">Puesto de Votacion</p>
+                  <p className="text-sm font-bold text-[#111827]">{testigo.puesto}</p>
                 </div>
               </div>
             </div>
 
-            <div className="px-7 pb-7 pt-5 space-y-5">
-              {/* Location info */}
-              <div className="rounded-xl p-4 space-y-3" style={{ background: '#F8F9FA', border: '1px solid #E2E8F0' }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, rgba(227,24,55,0.1), rgba(227,24,55,0.05))' }}>
-                    <MapPin size={16} className="text-[#E31837]" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-[#718096] font-semibold uppercase tracking-wider block">Municipio</span>
-                    <span className="font-semibold text-[#1a1a1a] text-sm">{testigo.municipio}</span>
-                  </div>
-                </div>
-                <div className="h-px bg-[#E2E8F0]" />
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, rgba(227,24,55,0.1), rgba(227,24,55,0.05))' }}>
-                    <Building2 size={16} className="text-[#E31837]" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-[#718096] font-semibold uppercase tracking-wider block">Puesto de Votacion</span>
-                    <span className="font-semibold text-[#1a1a1a] text-sm leading-tight">{testigo.puesto}</span>
-                  </div>
-                </div>
+            {/* Mesas input */}
+            <div className="px-7 py-5">
+              <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-3">
+                Ingrese sus mesas de votacion
+              </label>
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addMesa())}
+                  placeholder="N° mesa"
+                  className="flex-1 py-2.5 px-3.5 bg-[#F9FAFB] border-2 border-[#D1D5DB] rounded-xl text-sm font-semibold text-[#111827] placeholder-[#9CA3AF] outline-none focus:border-[#E31837] focus:bg-white focus:ring-4 focus:ring-[#E31837]/10 transition-all"
+                  style={{ minHeight: '44px' }}
+                />
+                <button
+                  onClick={addMesa}
+                  className="w-12 h-12 bg-[#E31837] rounded-xl text-white flex items-center justify-center shrink-0 hover:bg-[#C41530] active:scale-95 transition-all"
+                  style={{ boxShadow: '0 4px 12px rgba(227,24,55,0.3)' }}
+                >
+                  <Plus size={20} />
+                </button>
               </div>
 
-              {/* Mesa input */}
-              <div className="rounded-xl p-4" style={{ background: '#F8F9FA', border: '1px solid #E2E8F0' }}>
-                <label className="text-[10px] text-[#718096] font-semibold uppercase tracking-wider block mb-3">
-                  Ingrese sus mesas de votacion
-                </label>
-                <div className="flex gap-2 mb-3">
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={mesaInput}
-                    onChange={(e) => setMesaInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="N° mesa"
-                    className="flex-1 h-11 px-3.5 bg-white border border-[#E2E8F0] rounded-lg text-sm font-medium text-[#1a1a1a] placeholder-[#CBD5E1] focus:outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all"
-                    style={{ minHeight: '44px' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={agregarMesa}
-                    className="h-11 w-11 shrink-0 text-white rounded-lg flex items-center justify-center active:scale-95 transition-all"
-                    style={{ background: 'linear-gradient(135deg, #E31837, #C41530)', minHeight: '44px' }}
-                  >
-                    <Plus size={18} />
-                  </button>
-                </div>
-
-                {/* Pills */}
-                <div className="flex flex-wrap gap-2 min-h-[40px]">
-                  <AnimatePresence mode="popLayout">
-                    {mesasAgregadas.map((num) => (
-                      <motion.span
-                        key={num}
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.85 }}
-                        layout
-                        className="inline-flex items-center gap-1.5 h-9 px-3.5 text-white rounded-lg text-sm font-bold"
-                        style={{ background: 'linear-gradient(135deg, #E31837, #C41530)' }}
-                      >
-                        Mesa {num}
-                        <button
-                          type="button"
-                          onClick={() => quitarMesa(num)}
-                          className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
+              {/* Mesa chips */}
+              <AnimatePresence>
+                {mesas.length > 0 ? (
+                  <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="overflow-hidden mb-4">
+                    <div className="flex flex-wrap gap-2">
+                      {mesas.map((m) => (
+                        <motion.span
+                          key={m}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FEF2F2] text-[#E31837] text-xs font-bold"
+                          style={{ border: '1px solid #FCA5A5' }}
                         >
-                          <X size={11} />
-                        </button>
-                      </motion.span>
-                    ))}
-                  </AnimatePresence>
-                  {mesasAgregadas.length === 0 && (
-                    <span className="text-xs text-[#CBD5E1] self-center">
-                      Agregue las mesas que va a cubrir
-                    </span>
-                  )}
-                </div>
-              </div>
+                          Mesa {m}
+                          <button onClick={() => setMesas(mesas.filter(x => x !== m))} className="hover:text-red-900 transition-colors">
+                            <X size={12} />
+                          </button>
+                        </motion.span>
+                      ))}
+                    </div>
+                  </motion.div>
+                ) : (
+                  <p className="text-xs text-[#9CA3AF] font-medium mb-4">Agregue las mesas que va a cubrir</p>
+                )}
+              </AnimatePresence>
 
               {/* Error */}
               <AnimatePresence>
                 {error && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden"
+                  <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+                    className="mb-4 bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-[13px] font-semibold flex items-start gap-2"
                   >
-                    <div className="flex items-center gap-2 text-red-600 text-sm px-1 font-medium">
-                      <AlertCircle size={14} />
-                      {error}
-                    </div>
+                    <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                    {error}
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Submit */}
+              {/* Continue button */}
               <button
-                onClick={handleContinuar}
-                disabled={loading || mesasAgregadas.length === 0}
-                className="w-full h-12 text-white rounded-xl font-semibold text-sm transition-all active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2.5"
+                onClick={handleContinue}
+                disabled={loading}
+                className="w-full py-4 rounded-xl font-bold text-[15px] text-white flex items-center justify-center gap-2.5 transition-all active:scale-[0.97] disabled:opacity-50"
                 style={{
-                  background: 'linear-gradient(135deg, #E31837, #C41530)',
-                  boxShadow: loading || mesasAgregadas.length === 0 ? 'none' : '0 4px 12px rgba(227,24,55,0.25)',
-                  minHeight: '48px',
+                  background: 'linear-gradient(135deg, #E31837, #B91C1C)',
+                  boxShadow: '0 4px 14px rgba(227,24,55,0.4), 0 2px 4px rgba(227,24,55,0.2)',
+                  minHeight: '52px',
                 }}
               >
                 {loading ? (
-                  <Loader2 size={18} className="animate-spin" />
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    Ingresando...
+                  </>
                 ) : (
                   <>
                     Continuar al Panel
-                    <ArrowRight size={18} />
+                    <ArrowRight size={20} />
                   </>
                 )}
               </button>
             </div>
           </div>
 
-          <p className="text-center mt-6 text-[#94A3B8] text-[11px] font-medium tracking-widest uppercase">
+          <p className="text-center mt-6 text-[#6B7280] text-[11px] font-bold tracking-widest uppercase">
             Partido Liberal — Cundinamarca 2026
           </p>
         </motion.div>

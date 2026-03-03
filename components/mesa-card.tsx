@@ -36,7 +36,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
   const porcentaje = Math.round((completadas / 4) * 100)
 
   const estadoConfig = {
-    pendiente: { badge: 'bg-gray-100 text-[#718096]', label: 'Pendiente', bar: '#E2E8F0' },
+    pendiente: { badge: 'bg-gray-100 text-[#718096]', label: 'Pendiente', bar: '#D1D5DB' },
     en_progreso: { badge: 'bg-amber-50 text-amber-600', label: 'En progreso', bar: '#F59E0B' },
     completada: { badge: 'bg-emerald-50 text-emerald-600', label: 'Completada', bar: '#10B981' },
   }
@@ -154,7 +154,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
 
   return (
     <>
-      <div className="bg-white rounded-xl overflow-hidden transition-shadow duration-200" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+      <div className="bg-white rounded-xl overflow-hidden transition-shadow duration-200" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         {/* Top accent bar */}
         <div className="h-1 bg-[#F1F5F9]">
           <div className="h-full transition-all duration-500" style={{ width: `${porcentaje}%`, background: config.bar }} />
@@ -212,7 +212,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
               transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="overflow-hidden"
             >
-              <div className="border-t border-[#E2E8F0] px-4 pb-4 pt-3 space-y-3">
+              <div className="border-t border-[#D1D5DB] px-4 pb-4 pt-3 space-y-3">
                 {SECCIONES.map((seccion) => {
                   const isActive = seccionActiva === seccion.id || (seccion.id === 4 && seccionActiva === 4)
                   const isCompleted = seccion.id < 4 ? seccionActiva > seccion.id : (seccion.id === 4 && estado === 'completada')
@@ -246,7 +246,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                   if (isLocked) {
                     return (
                       <div key={seccion.id} className="flex items-center gap-3 p-3 rounded-xl opacity-50" style={{ background: '#F8F9FA', border: '1px solid #F1F5F9' }}>
-                        <div className="w-7 h-7 rounded-lg bg-[#E2E8F0] flex items-center justify-center shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-[#D1D5DB] flex items-center justify-center shrink-0">
                           <Lock size={12} className="text-[#94A3B8]" />
                         </div>
                         <div>
@@ -260,7 +260,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                   // Active — sections 1-3
                   if (isActive && seccion.id < 4) {
                     return (
-                      <div key={seccion.id} className="rounded-xl p-4 bg-white" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <div key={seccion.id} className="rounded-xl p-4 bg-white" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2.5">
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[11px] font-bold" style={{ background: 'linear-gradient(135deg, #E31837, #C41530)' }}>
@@ -286,7 +286,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                               value={valores[campo] || ''}
                               onChange={(e) => setValores(prev => ({ ...prev, [campo]: e.target.value }))}
                               placeholder="0"
-                              className="w-full py-3 px-3.5 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:bg-white focus:ring-2 focus:ring-[#E31837]/10 transition-all"
+                              className="w-full py-3 px-3.5 bg-[#F8F9FA] border border-[#D1D5DB] rounded-xl text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:bg-white focus:ring-2 focus:ring-[#E31837]/10 transition-all"
                               style={{ minHeight: '44px' }}
                             />
                           </div>
@@ -308,7 +308,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                   // Active — section 4
                   if (isActive && seccion.id === 4) {
                     return (
-                      <div key={seccion.id} className="rounded-xl p-4 bg-white space-y-4" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <div key={seccion.id} className="rounded-xl p-4 bg-white space-y-4" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[11px] font-bold" style={{ background: 'linear-gradient(135deg, #E31837, #C41530)' }}>4</div>
@@ -324,7 +324,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                         {/* Camara block */}
                         <div className="rounded-xl p-3.5" style={tieneCamara
                           ? { background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)' }
-                          : { background: '#F8F9FA', border: '1px solid #E2E8F0' }
+                          : { background: '#F8F9FA', border: '1px solid #D1D5DB' }
                         }>
                           <span className="text-[10px] font-bold text-[#4a5568] uppercase tracking-wider block mb-2">Camara</span>
                           {tieneCamara ? (
@@ -337,11 +337,11 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                               <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 mb-2.5">
                                 <div>
                                   <label className="block text-[9px] text-[#718096] font-semibold mb-1">Votos Alex Prieto</label>
-                                  <input type="number" inputMode="numeric" value={valores.votos_alex_p || ''} onChange={(e) => setValores(p => ({ ...p, votos_alex_p: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#E2E8F0] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
+                                  <input type="number" inputMode="numeric" value={valores.votos_alex_p || ''} onChange={(e) => setValores(p => ({ ...p, votos_alex_p: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#D1D5DB] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
                                 </div>
                                 <div>
                                   <label className="block text-[9px] text-[#718096] font-semibold mb-1">Votos PL Camara CUN</label>
-                                  <input type="number" inputMode="numeric" value={valores.votos_camara_cun_pl || ''} onChange={(e) => setValores(p => ({ ...p, votos_camara_cun_pl: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#E2E8F0] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
+                                  <input type="number" inputMode="numeric" value={valores.votos_camara_cun_pl || ''} onChange={(e) => setValores(p => ({ ...p, votos_camara_cun_pl: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#D1D5DB] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
                                 </div>
                               </div>
                               <button onClick={() => handlePreSavePar('camara')} disabled={savingCamara} className="w-full py-2.5 text-white rounded-lg font-semibold text-xs active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-1.5 transition-all" style={{ background: 'linear-gradient(135deg, #E31837, #C41530)', minHeight: '40px' }}>
@@ -355,7 +355,7 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                         {/* Senado block */}
                         <div className="rounded-xl p-3.5" style={tieneSenado
                           ? { background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)' }
-                          : { background: '#F8F9FA', border: '1px solid #E2E8F0' }
+                          : { background: '#F8F9FA', border: '1px solid #D1D5DB' }
                         }>
                           <span className="text-[10px] font-bold text-[#4a5568] uppercase tracking-wider block mb-2">Senado</span>
                           {tieneSenado ? (
@@ -368,11 +368,11 @@ export default function MesaCard({ mesa, cedula, onUpdate }: Props) {
                               <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 mb-2.5">
                                 <div>
                                   <label className="block text-[9px] text-[#718096] font-semibold mb-1">Votos Oscar Sanchez</label>
-                                  <input type="number" inputMode="numeric" value={valores.votos_oscar_sanchez_senado || ''} onChange={(e) => setValores(p => ({ ...p, votos_oscar_sanchez_senado: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#E2E8F0] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
+                                  <input type="number" inputMode="numeric" value={valores.votos_oscar_sanchez_senado || ''} onChange={(e) => setValores(p => ({ ...p, votos_oscar_sanchez_senado: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#D1D5DB] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
                                 </div>
                                 <div>
                                   <label className="block text-[9px] text-[#718096] font-semibold mb-1">Votos PL Senado</label>
-                                  <input type="number" inputMode="numeric" value={valores.votos_senado_pl || ''} onChange={(e) => setValores(p => ({ ...p, votos_senado_pl: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#E2E8F0] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
+                                  <input type="number" inputMode="numeric" value={valores.votos_senado_pl || ''} onChange={(e) => setValores(p => ({ ...p, votos_senado_pl: e.target.value }))} placeholder="0" className="w-full py-2.5 px-3 bg-white border border-[#D1D5DB] rounded-lg text-sm font-semibold text-[#1a1a1a] placeholder-[#CBD5E1] outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 transition-all" style={{ minHeight: '40px' }} />
                                 </div>
                               </div>
                               <button onClick={() => handlePreSavePar('senado')} disabled={savingSenado} className="w-full py-2.5 text-white rounded-lg font-semibold text-xs active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-1.5 transition-all" style={{ background: 'linear-gradient(135deg, #E31837, #C41530)', minHeight: '40px' }}>

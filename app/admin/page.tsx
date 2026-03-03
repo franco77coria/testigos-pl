@@ -90,12 +90,12 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-16">
+    <div className="min-h-screen pb-16" style={{ background: '#F0F2F5' }}>
       {/* Top accent bar */}
       <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
 
       {/* Header */}
-      <div className="bg-white py-8 px-6 sm:px-10" style={{ borderBottom: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      <div className="bg-white py-8 px-6 sm:px-10" style={{ borderBottom: '1px solid #D1D5DB', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
         <div className="max-w-5xl mx-auto">
           <Link href="/" className="inline-flex items-center gap-1.5 text-xs font-medium text-[#94A3B8] hover:text-[#E31837] transition-colors mb-6">
             <ArrowLeft size={14} /> Volver al portal
@@ -152,7 +152,7 @@ export default function AdminPanel() {
           <div className="lg:col-span-2 space-y-4">
             <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#4a5568] tracking-tight pl-0.5">Flujo de Trabajo</h3>
 
-            <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
               {/* Testigos */}
               <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#F8F9FA] transition-colors" style={{ borderBottom: '1px solid #F1F5F9' }}>
                 <div className="flex gap-3">
@@ -171,7 +171,7 @@ export default function AdminPanel() {
                 </div>
                 <button onClick={() => !loading && testigosRef.current?.click()}
                   className="shrink-0 px-5 py-2.5 rounded-lg bg-white text-[#4a5568] font-semibold text-xs hover:text-[#E31837] transition-all flex items-center gap-2"
-                  style={{ border: '1px solid #E2E8F0' }}
+                  style={{ border: '1px solid #D1D5DB' }}
                 >
                   {loading === 'testigos' ? <><Loader2 size={14} className="animate-spin" /> Subiendo...</> : <><UploadCloud size={14} /> Subir CSV</>}
                 </button>
@@ -196,7 +196,7 @@ export default function AdminPanel() {
                 </div>
                 <button onClick={() => !loading && semaforoRef.current?.click()}
                   className="shrink-0 px-5 py-2.5 rounded-lg bg-white text-[#4a5568] font-semibold text-xs hover:text-[#E31837] transition-all flex items-center gap-2"
-                  style={{ border: '1px solid #E2E8F0' }}
+                  style={{ border: '1px solid #D1D5DB' }}
                 >
                   {loading === 'semaforo' ? <><Loader2 size={14} className="animate-spin" /> Subiendo...</> : <><UploadCloud size={14} /> Subir CSV</>}
                 </button>
@@ -233,7 +233,7 @@ export default function AdminPanel() {
           <div className="space-y-4">
             <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#4a5568] tracking-tight pl-0.5">Seguridad</h3>
 
-            <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
               <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-4" style={{ background: 'rgba(227,24,55,0.08)' }}>
                 <Key size={18} className="text-[#E31837]" />
               </div>
@@ -253,12 +253,12 @@ export default function AdminPanel() {
                 <div>
                   <label className="block text-[10px] font-semibold text-[#718096] uppercase tracking-wider mb-1.5">Tu cédula</label>
                   <input type="number" inputMode="numeric" value={adminCedula} onChange={(e) => setAdminCedula(e.target.value)} placeholder="Cédula maestra"
-                    className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 outline-none transition-all" required style={{ minHeight: '44px' }} />
+                    className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#D1D5DB] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 outline-none transition-all" required style={{ minHeight: '44px' }} />
                 </div>
                 <div>
                   <label className="block text-[10px] font-semibold text-[#718096] uppercase tracking-wider mb-1.5">Nuevo admin</label>
                   <input type="number" inputMode="numeric" value={newAdminCedula} onChange={(e) => setNewAdminCedula(e.target.value)} placeholder="Cédula a autorizar"
-                    className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 outline-none transition-all" required style={{ minHeight: '44px' }} />
+                    className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#D1D5DB] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/10 outline-none transition-all" required style={{ minHeight: '44px' }} />
                 </div>
                 <button type="submit" disabled={loading === 'add_admin'}
                   className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 text-white flex items-center justify-center gap-2 mt-1 active:scale-[0.98]"

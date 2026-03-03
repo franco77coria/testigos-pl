@@ -68,9 +68,9 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="min-h-screen" style={{ background: '#F0F2F5' }}>
       {/* Navbar */}
-      <nav className="bg-white sticky top-0 z-40" style={{ borderBottom: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      <nav className="bg-white sticky top-0 z-40" style={{ borderBottom: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex justify-between h-14 items-center">
             <div className="flex items-center gap-2.5">
@@ -93,7 +93,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
                   {testigo.puesto}
                 </p>
               </div>
-              <div className="w-px h-7 bg-[#E2E8F0] hidden sm:block" />
+              <div className="w-px h-7 bg-[#D1D5DB] hidden sm:block" />
               <button
                 onClick={onLogout}
                 className="flex items-center gap-1.5 text-sm text-[#718096] hover:text-[#E31837] transition-colors"
@@ -111,7 +111,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Mobile User Info */}
-        <div className="sm:hidden mb-5 bg-white p-4 rounded-xl flex items-center justify-between" style={{ border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+        <div className="sm:hidden mb-5 bg-white p-4 rounded-xl flex items-center justify-between" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <div>
             <p className="text-sm font-semibold text-[#1a1a1a]">
               {testigo.nombre1} {testigo.apellido1}
@@ -129,7 +129,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
             className="bg-white rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center relative overflow-hidden"
-            style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
           >
             <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
             <Layers size={16} className="text-[#718096] mb-2" />
@@ -144,7 +144,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="bg-white rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center relative overflow-hidden"
-            style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
           >
             <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500" />
             <CheckCircle2 size={16} className="text-emerald-500 mb-2" />
@@ -159,7 +159,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
             className="bg-white rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center relative overflow-hidden"
-            style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
           >
             <div className="absolute top-0 left-0 right-0 h-1 bg-amber-400" />
             <Clock size={16} className="text-amber-500 mb-2" />
@@ -179,7 +179,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
             onClick={refrescar}
             disabled={refreshing}
             className="flex items-center gap-1.5 text-xs font-semibold text-[#718096] bg-white px-3 py-2 rounded-lg hover:text-[#E31837] transition-all disabled:opacity-40"
-            style={{ border: '1px solid #E2E8F0' }}
+            style={{ border: '1px solid #D1D5DB' }}
           >
             <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
             <span className="hidden sm:inline">Actualizar</span>
@@ -192,7 +192,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl p-10 text-center"
-            style={{ border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
           >
             <Layers size={36} className="mx-auto text-[#CBD5E1] mb-3" />
             <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-base font-bold text-[#1a1a1a] mb-1">Sin mesas asignadas</h3>
