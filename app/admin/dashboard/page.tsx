@@ -19,7 +19,7 @@ function StatCard({ title, value, subtitle, icon, delay }: { title: string; valu
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay }}
             className="bg-white rounded-xl p-4 relative overflow-hidden"
-            style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
         >
             <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[#718096] font-semibold text-[10px] uppercase tracking-wider">{title}</h3>
@@ -142,7 +142,7 @@ export default function AdminStats() {
 
                         {/* Time Reports */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                             <div className="flex items-center gap-2 mb-4">
                                 <Activity size={16} className="text-[#E31837]" />
                                 <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Censos Horarios</h2>
@@ -161,7 +161,7 @@ export default function AdminStats() {
 
                         {/* Candidates */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            className="bg-white rounded-xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                             <div className="flex items-center gap-2 mb-4">
                                 <CheckCircle2 size={16} className="text-[#E31837]" />
                                 <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a]">Reporte E-14 (Escrutinio)</h2>
@@ -177,7 +177,7 @@ export default function AdminStats() {
 
                     {/* Municipalities */}
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                        className="bg-white rounded-xl flex flex-col h-[520px]" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                        className="bg-white rounded-xl flex flex-col max-h-[520px]" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
                         <div className="p-5" style={{ borderBottom: '1px solid #F1F5F9' }}>
                             <div className="flex items-center gap-2">
                                 <Map size={16} className="text-[#E31837]" />

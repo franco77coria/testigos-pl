@@ -95,7 +95,7 @@ export default function AdminPanel() {
       <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
 
       {/* Header */}
-      <div className="bg-white py-8 px-6 sm:px-10" style={{ borderBottom: '1px solid #D1D5DB', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      <div className="bg-white py-8 px-6 sm:px-10" style={{ borderBottom: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
         <div className="max-w-5xl mx-auto">
           <Link href="/" className="inline-flex items-center gap-1.5 text-xs font-medium text-[#94A3B8] hover:text-[#E31837] transition-colors mb-6">
             <ArrowLeft size={14} /> Volver al portal
@@ -152,7 +152,7 @@ export default function AdminPanel() {
           <div className="lg:col-span-2 space-y-4">
             <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#4a5568] tracking-tight pl-0.5">Flujo de Trabajo</h3>
 
-            <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
               {/* Testigos */}
               <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#F8F9FA] transition-colors" style={{ borderBottom: '1px solid #F1F5F9' }}>
                 <div className="flex gap-3">
@@ -233,7 +233,7 @@ export default function AdminPanel() {
           <div className="space-y-4">
             <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#4a5568] tracking-tight pl-0.5">Seguridad</h3>
 
-            <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
               <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-4" style={{ background: 'rgba(227,24,55,0.08)' }}>
                 <Key size={18} className="text-[#E31837]" />
               </div>
