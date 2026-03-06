@@ -37,6 +37,36 @@ export default function MonitorPage() {
     const [refreshing, setRefreshing] = useState(false)
     const [expandedPuesto, setExpandedPuesto] = useState<string | null>(null)
 
+    // Auth gate
+    const [authorized, setAuthorized] = useState(false)
+    const [gateCedula, setGateCedula] = useState('')
+    const [gateLoading, setGateLoading] = useState(false)
+    const [gateError, setGateError] = useState('')
+
+    async function verifyAccess() {
+        setGateLoading(true)
+        setGateError('')
+        try {
+            // Check if cedula is in admins table OR estadisticas_acceso
+            const res = await fetch('/api/admin/verify-super', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cedula: gateCedula }),
+            })
+            const json = await res.json()
+            if (json.exito) {
+                // Both 'super' and 'viewer' roles can see the monitor
+                setAuthorized(true)
+                fetchData()
+            } else {
+                setGateError('No tiene acceso al monitor. Contacte al Super Admin.')
+            }
+        } catch {
+            setGateError('Error de conexión.')
+        }
+        setGateLoading(false)
+    }
+
     async function fetchData(muni?: string) {
         setRefreshing(true)
         try {
@@ -54,10 +84,11 @@ export default function MonitorPage() {
     }
 
     useEffect(() => {
-        fetchData()
-        const interval = setInterval(() => fetchData(filtro || undefined), 30000)
-        return () => clearInterval(interval)
-    }, [])
+        if (authorized) {
+            const interval = setInterval(() => fetchData(filtro || undefined), 30000)
+            return () => clearInterval(interval)
+        }
+    }, [authorized, filtro])
 
     function handleFiltro(muni: string) {
         setFiltro(muni)
@@ -69,6 +100,73 @@ export default function MonitorPage() {
         ? Math.round((resumen.completadas / resumen.totalMesas) * 100)
         : 0
 
+    // ========== AUTH GATE ==========
+    if (!authorized) {
+        return (
+            <div style={{
+                minHeight: '100vh', background: '#F8FAFC',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '24px', fontFamily: "'Inter', system-ui, sans-serif",
+            }}>
+                <div style={{
+                    width: '100%', maxWidth: '380px',
+                    background: '#FFFFFF', borderRadius: '24px',
+                    padding: '40px 32px', textAlign: 'center',
+                    boxShadow: '0 8px 40px rgba(0,0,0,0.06)',
+                    border: '1px solid #E2E8F0',
+                }}>
+                    <div style={{
+                        width: '56px', height: '56px', borderRadius: '50%',
+                        background: 'rgba(206,17,38,0.06)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        margin: '0 auto 16px',
+                    }}>
+                        <span style={{ fontSize: '24px' }}>📊</span>
+                    </div>
+                    <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#0F172A', marginBottom: '6px' }}>
+                        Monitor de Mesas
+                    </h1>
+                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#64748B', marginBottom: '24px' }}>
+                        Ingrese su cédula para acceder al monitor.
+                    </p>
+                    <input
+                        type="text" inputMode="numeric"
+                        placeholder="Cédula"
+                        value={gateCedula}
+                        onChange={e => setGateCedula(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && verifyAccess()}
+                        style={{
+                            width: '100%', padding: '14px 16px', borderRadius: '14px',
+                            border: '1px solid #E2E8F0', background: '#F8FAFC',
+                            fontSize: '16px', fontWeight: 500, color: '#0F172A',
+                            textAlign: 'center', outline: 'none', boxSizing: 'border-box',
+                            fontFamily: "'Inter', system-ui, sans-serif", marginBottom: '12px',
+                        }}
+                    />
+                    <button onClick={verifyAccess}
+                        disabled={gateLoading || !gateCedula.trim()}
+                        style={{
+                            width: '100%', padding: '15px', borderRadius: '14px',
+                            border: 'none', background: '#CE1126', color: 'white',
+                            fontSize: '15px', fontWeight: 700, cursor: 'pointer',
+                            fontFamily: "'Inter', system-ui, sans-serif",
+                            boxShadow: '0 4px 14px rgba(206,17,38,0.2)',
+                            opacity: (!gateCedula.trim() || gateLoading) ? 0.5 : 1,
+                        }}
+                    >{gateLoading ? 'Verificando...' : 'Acceder'}</button>
+                    {gateError && (
+                        <p style={{ marginTop: '14px', fontSize: '12px', fontWeight: 600, color: '#DC2626' }}>{gateError}</p>
+                    )}
+                    <Link href="/" style={{
+                        display: 'block', marginTop: '20px', fontSize: '13px',
+                        fontWeight: 600, color: '#94A3B8', textDecoration: 'none',
+                    }}>← Volver al portal</Link>
+                </div>
+            </div>
+        )
+    }
+
+    // ========== LOADING ==========
     if (loading) {
         return (
             <div style={{
