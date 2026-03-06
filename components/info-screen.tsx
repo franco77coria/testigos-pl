@@ -60,10 +60,10 @@ export default function InfoScreen({ sesion, onMesaClaimed }: Props) {
       const data = await res.json()
       if (data.exito) {
         setSuccessMsg(`¡Mesa ${mesaNum} reservada!`)
-        // Refresh mesas list
+        // Refresh mesas list to show updated state
         await fetchMesas()
-        // Wait a moment then go to dashboard
-        setTimeout(() => onMesaClaimed(), 1200)
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMsg(null), 3000)
       } else {
         setError(data.mensaje)
         await fetchMesas() // refresh to see if status changed
