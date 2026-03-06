@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pl-red: #E31837;
-  --color-pl-red-dark: #C41530;
-  --color-pl-red-light: #FEF2F2;
-  --color-pl-red-deep: #8B0A1E;
-  --color-navy: #1E3A8A;
-  --color-navy-light: #3B5BA5;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F5F6FA;
-  --color-text-primary: #111827;
-  --color-text-secondary: #374151;
-  --color-text-muted: #6B7280;
-  --color-success: #059669;
-  --color-success-light: #ECFDF5;
-  --color-warning: #D97706;
-  --color-warning-light: #FFFBEB;
-  --color-info: #2563EB;
-  --color-info-light: #EFF6FF;
-  --color-border: #D1D5DB;
-  --color-border-light: #E5E7EB;
+  --color-primary: #CE1126;
+  --color-primary-dark: #B71C1C;
+  --color-background-light: #F8FAFC;
+  --color-background-dark: #0F172A;
+  --color-card-light: #FFFFFF;
+  --color-card-dark: #1E293B;
+  --color-text-light: #1F2937;
+  --color-text-main-light: #0F172A;
+  --color-text-dark: #F9FAFB;
+  --color-text-main-dark: #F8FAFC;
+  --color-text-muted-light: #64748B;
+  --color-muted-light: #6B7280;
+  --color-text-muted-dark: #94A3B8;
+  --color-muted-dark: #9CA3AF;
+  --color-border-light: #E2E8F0;
+  --color-border-dark: #374151;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -54,6 +54,13 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
 }
 
 ::-webkit-scrollbar {

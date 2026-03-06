@@ -1,0 +1,2 @@
+components/mesa-card.tsx(258,19): error TS2322: Type 'string | boolean | null' is not assignable to type 'boolean | undefined'.
+  Type 'null' is not assignable to type 'boolean | undefined'.

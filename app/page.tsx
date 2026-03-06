@@ -25,12 +25,16 @@ export default function Home() {
 
     if (data.exito) {
       if (data.esCoordinador) {
-        // Redirigir al panel de administrador
         router.push('/admin')
         return { exito: true, esCoordinador: true }
       } else {
         setSesion(data.sesion)
-        setPantalla('info')
+        // Skip info screen if testigo already has claimed mesas
+        if (data.sesion.mesas && data.sesion.mesas.length > 0) {
+          setPantalla('dashboard')
+        } else {
+          setPantalla('info')
+        }
         return { exito: true }
       }
     } else {
@@ -47,19 +51,20 @@ export default function Home() {
     setPantalla('login')
   }
 
-  async function handleMesasConfirm(numeros: number[]): Promise<{ exito: boolean; mensaje?: string }> {
-    const res = await fetch('/api/mesas/confirmar', {
+  // When a mesa is claimed, reload session data and go to dashboard
+  async function handleMesaClaimed() {
+    if (!sesion) return
+    // Re-fetch session with updated mesas
+    const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cedula: sesion!.cedula, mesas: numeros }),
+      body: JSON.stringify({ cedula: sesion.cedula }),
     })
     const data = await res.json()
-    if (data.exito) {
-      setSesion({ ...sesion!, mesas: data.mesas })
-      setPantalla('dashboard')
-      return { exito: true }
+    if (data.exito && data.sesion) {
+      setSesion(data.sesion)
     }
-    return { exito: false, mensaje: data.mensaje }
+    setPantalla('dashboard')
   }
 
   function handleMesasUpdate(mesas: MesaDashboard[]) {
@@ -77,7 +82,7 @@ export default function Home() {
       )}
 
       {pantalla === 'info' && sesion && (
-        <InfoScreen sesion={sesion} onConfirm={handleMesasConfirm} />
+        <InfoScreen sesion={sesion} onMesaClaimed={handleMesaClaimed} />
       )}
 
       {pantalla === 'dashboard' && sesion && (
@@ -85,6 +90,7 @@ export default function Home() {
           sesion={sesion}
           onLogout={handleLogout}
           onMesasUpdate={handleMesasUpdate}
+          onAddMesa={() => setPantalla('info')}
         />
       )}
     </>

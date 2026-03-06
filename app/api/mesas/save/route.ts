@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServiceClient } from '@/lib/supabase'
-import { SECCIONES } from '@/lib/types'
+import { CAMARA_CANDIDATOS, SENADO_CANDIDATOS } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    const { cedula, mesa_numero, seccion, datos } = await request.json()
+    const { cedula, mesa_numero, datos } = await request.json()
 
-    if (!cedula || !mesa_numero || !seccion || !datos) {
+    if (!cedula || !mesa_numero || !datos) {
       return NextResponse.json({ exito: false, mensaje: 'Datos incompletos.' })
     }
 
@@ -26,53 +26,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ exito: false, mensaje: 'Mesa no encontrada.' })
     }
 
-    // Validar cascada: la sección anterior debe estar completa
-    if (seccion > 1) {
-      const seccionAnterior = SECCIONES.find((s) => s.id === seccion - 1)
-      if (seccionAnterior) {
-        const camposAnteriores = seccionAnterior.campos
-        const faltante = camposAnteriores.some((c) => !resultado[c])
-        if (faltante) {
-          return NextResponse.json({
-            exito: false,
-            mensaje: 'Debe completar la sección anterior primero.',
-          })
-        }
-      }
-    }
-
-    // Construir update
+    // Construir update con todos los campos numericos y validacion
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
+      confirmacion_e14: datos.confirmacion_e14 === true
     }
 
-    // Solo permitir campos de la sección correspondiente
-    const seccionDef = SECCIONES.find((s) => s.id === seccion)
-    if (!seccionDef) {
-      return NextResponse.json({ exito: false, mensaje: 'Sección inválida.' })
-    }
+    // Camara
+    CAMARA_CANDIDATOS.forEach(c => { updateData[c.code] = typeof datos[c.code] === 'number' ? datos[c.code] : 0 })
+    updateData.votos_camara_partido = typeof datos.votos_camara_partido === 'number' ? datos.votos_camara_partido : 0
 
-    for (const campo of seccionDef.campos) {
-      if (datos[campo] !== undefined && datos[campo] !== '') {
-        updateData[campo] = parseInt(datos[campo])
-      }
-    }
+    // Senado
+    SENADO_CANDIDATOS.forEach(c => { updateData[c.code] = typeof datos[c.code] === 'number' ? datos[c.code] : 0 })
+    updateData.votos_senado_partido = typeof datos.votos_senado_partido === 'number' ? datos.votos_senado_partido : 0
 
     // Calcular estado
     const merged = { ...resultado, ...updateData }
-    const tieneTodo =
-      merged.cantidad_votantes_mesa != null &&
-      merged.votantes_10am != null &&
-      merged.votantes_1pm != null &&
-      merged.votos_alex_p != null &&
-      merged.votos_camara_cun_pl != null &&
-      merged.votos_oscar_sanchez_senado != null &&
-      merged.votos_senado_pl != null
 
-    if (tieneTodo && merged.foto_camara && merged.foto_senado) {
+    // Verificamos si completó todo lo requerido
+    const tieneVotosCamara = merged.votos_camara_l101 != null && merged.votos_camara_partido != null
+    const tieneVotosSenado = merged.votos_senado_1 != null && merged.votos_senado_partido != null
+
+    if (tieneVotosCamara && tieneVotosSenado && merged.foto_camara && merged.foto_senado && merged.confirmacion_e14) {
       updateData.estado = 'completada'
-    } else if (merged.cantidad_votantes_mesa != null) {
-      updateData.estado = 'en_progreso'
+    } else {
+      updateData.estado = 'pendiente' // Se vuelve pendiente si no tiene todo
     }
 
     const { error: updateError } = await supabase
@@ -88,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       exito: true,
-      mensaje: `Mesa ${mesa_numero} — ${seccionDef.nombre} guardado.`,
+      mensaje: `Resultados de Mesa ${mesa_numero} guardados.`,
     })
   } catch (error) {
     console.error('Error guardando mesa:', error)

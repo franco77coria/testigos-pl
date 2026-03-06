@@ -77,7 +77,6 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
           ref={inputRef}
           type="file"
           accept="image/*"
-          capture="environment"
           onChange={handleFile}
           className="hidden"
         />

@@ -42,6 +42,33 @@ export async function POST(request: NextRequest) {
         mensaje: 'Cedula no encontrada. Verifique su numero o contacte al coordinador.',
       })
     }
+    // 3. Check if testigo already has mesa assignments
+    const { data: asignaciones } = await supabase
+      .from('mesa_asignaciones')
+      .select('mesa_numero, municipio, puesto')
+      .eq('testigo_cedula', cedulaClean)
+
+    let mesas: any[] = []
+
+    if (asignaciones && asignaciones.length > 0) {
+      // Load resultados for assigned mesas
+      const mesaNums = asignaciones.map(a => a.mesa_numero)
+      const { data: resultados } = await supabase
+        .from('resultados')
+        .select('*')
+        .eq('testigo_cedula', cedulaClean)
+        .in('mesa_numero', mesaNums)
+
+      mesas = asignaciones.map(a => {
+        const resultado = resultados?.find(r => r.mesa_numero === a.mesa_numero) || {}
+        return {
+          mesa_numero: a.mesa_numero,
+          municipio: a.municipio,
+          puesto: a.puesto,
+          ...resultado,
+        }
+      })
+    }
 
     return NextResponse.json({
       exito: true,
@@ -49,7 +76,7 @@ export async function POST(request: NextRequest) {
       sesion: {
         cedula: cedulaClean,
         testigo,
-        mesas: [],
+        mesas,
       },
     })
   } catch (error) {

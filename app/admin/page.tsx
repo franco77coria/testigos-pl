@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Loader2, ArrowLeft, UploadCloud, Users, Map, Cpu, CheckCircle2, Activity, Key, ShieldAlert } from 'lucide-react'
+import { Loader2, ArrowLeft, UploadCloud, Users, Map, Cpu, CheckCircle2, Activity, Key, ShieldAlert, UserCog } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -22,8 +22,55 @@ export default function AdminPanel() {
   const [newAdminCedula, setNewAdminCedula] = useState('')
   const [adminMensaje, setAdminMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
 
+  // Senado config
+  const [senadoNames, setSenadoNames] = useState<string[]>(['', '', '', '', ''])
+  const [senadoMensaje, setSenadoMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
+
+  // Reset elections
+  const [resetCedula, setResetCedula] = useState('')
+  const [resetConfirm, setResetConfirm] = useState('')
+  const [resetMensaje, setResetMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
+
   const testigosRef = useRef<HTMLInputElement>(null)
   const semaforoRef = useRef<HTMLInputElement>(null)
+
+  // Load senado candidates on mount
+  useEffect(() => {
+    fetch('/api/admin/config')
+      .then(r => r.json())
+      .then(data => {
+        if (data.exito && data.candidatos) {
+          setSenadoNames(data.candidatos.map((c: { title: string }) => c.title))
+        }
+      })
+      .catch(() => { })
+  }, [])
+
+  async function handleSaveSenadoConfig(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading('senado_config')
+    setSenadoMensaje(null)
+    try {
+      const candidatos = senadoNames.map((name, i) => ({
+        code: `votos_senado_${i + 1}`,
+        title: name.trim() || `Senado Candidato ${i + 1}`,
+      }))
+      const res = await fetch('/api/admin/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidatos }),
+      })
+      const data = await res.json()
+      if (data.exito) {
+        setSenadoMensaje({ tipo: 'ok', texto: data.mensaje })
+      } else {
+        setSenadoMensaje({ tipo: 'err', texto: data.mensaje })
+      }
+    } catch {
+      setSenadoMensaje({ tipo: 'err', texto: 'Error de conexión.' })
+    }
+    setLoading('')
+  }
 
   async function handleAddAdmin(e: React.FormEvent) {
     e.preventDefault()
@@ -115,6 +162,31 @@ export default function AdminPanel() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 sm:px-10 mt-6 space-y-5">
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => router.push('/admin/monitor')}
+            className="p-4 rounded-xl text-left transition-all hover:shadow-md"
+            style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', cursor: 'pointer' }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Activity size={16} className="text-[#CE1126]" />
+              <span className="font-bold text-sm text-[#111827]">Monitor de Mesas</span>
+            </div>
+            <p className="text-[10px] text-[#94A3B8] font-medium">Vista de líder provincial</p>
+          </button>
+          <button
+            onClick={() => router.push('/admin/dashboard')}
+            className="p-4 rounded-xl text-left transition-all hover:shadow-md"
+            style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', cursor: 'pointer' }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Map size={16} className="text-[#CE1126]" />
+              <span className="font-bold text-sm text-[#111827]">Estadísticas en Vivo</span>
+            </div>
+            <p className="text-[10px] text-[#94A3B8] font-medium">Dashboard de escrutinio</p>
+          </button>
+        </div>
         {/* Alert */}
         {mensaje && (
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
@@ -229,7 +301,7 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          {/* Right: Security */}
+          {/* Right: Security + Senado Config */}
           <div className="space-y-4">
             <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#4a5568] tracking-tight pl-0.5">Seguridad</h3>
 
@@ -268,6 +340,126 @@ export default function AdminPanel() {
                 </button>
               </form>
             </div>
+
+            {/* Senado Candidates Config */}
+            <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#4a5568] tracking-tight pl-0.5 mt-6">Configuración Senado</h3>
+
+            <div className="bg-white rounded-2xl p-5" style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-4" style={{ background: 'rgba(59,130,246,0.08)' }}>
+                <UserCog size={18} className="text-[#3B82F6]" />
+              </div>
+              <h4 className="font-semibold text-[#1a1a1a] text-sm mb-1">Candidatos al Senado</h4>
+              <p className="text-xs text-[#718096] mb-5">Configura los nombres de los 5 candidatos al Senado apoyados.</p>
+
+              {senadoMensaje && (
+                <div className={`mb-4 p-3 rounded-xl text-xs font-medium flex items-start gap-2 ${senadoMensaje.tipo === 'ok' ? 'bg-[#ECFDF5] text-emerald-700' : 'bg-[#FEF2F2] text-red-600'}`}
+                  style={{ border: `1px solid ${senadoMensaje.tipo === 'ok' ? 'rgba(16,185,129,0.2)' : 'rgba(227,24,55,0.15)'}` }}
+                >
+                  {senadoMensaje.tipo === 'ok' ? <CheckCircle2 size={14} className="shrink-0 mt-0.5" /> : <ShieldAlert size={14} className="shrink-0 mt-0.5" />}
+                  {senadoMensaje.texto}
+                </div>
+              )}
+
+              <form onSubmit={handleSaveSenadoConfig} className="space-y-3">
+                {senadoNames.map((name, i) => (
+                  <div key={i}>
+                    <label className="block text-[10px] font-semibold text-[#718096] uppercase tracking-wider mb-1.5">Candidato {i + 1}</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => {
+                        const newNames = [...senadoNames]
+                        newNames[i] = e.target.value
+                        setSenadoNames(newNames)
+                      }}
+                      placeholder={`Nombre candidato ${i + 1}`}
+                      className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#D1D5DB] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/10 outline-none transition-all"
+                      style={{ minHeight: '44px' }}
+                    />
+                  </div>
+                ))}
+                <button type="submit" disabled={loading === 'senado_config'}
+                  className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 text-white flex items-center justify-center gap-2 mt-1 active:scale-[0.98]"
+                  style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)', boxShadow: '0 4px 12px rgba(59,130,246,0.25)', minHeight: '44px' }}
+                >
+                  {loading === 'senado_config' ? <><Loader2 size={14} className="animate-spin" /> Guardando...</> : <>Guardar Candidatos Senado</>}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {/* Reset Elections - DANGER ZONE */}
+        <div className="bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #FCA5A5', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+          <div className="p-5" style={{ borderBottom: '1px solid #FCA5A5', background: 'rgba(239,68,68,0.04)' }}>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(239,68,68,0.15)' }}>
+                <ShieldAlert size={16} className="text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-red-700">Zona de Peligro</h3>
+                <p className="text-[10px] text-red-400 font-medium">Borrar datos de elecciones cargados</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-5 space-y-3">
+            <p className="text-[11px] text-[#718096] leading-relaxed">
+              Esta acción borrará <strong>todos los resultados cargados</strong> (votos, fotos E-14 y asignaciones de mesas). Los testigos y el semáforo municipal NO se borrarán. Solo el super admin puede ejecutar esta acción.
+            </p>
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="Cédula super admin"
+              value={resetCedula}
+              onChange={(e) => setResetCedula(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#D1D5DB] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-500/10 outline-none transition-all"
+              style={{ minHeight: '44px' }}
+            />
+            <input
+              type="text"
+              placeholder='Escriba BORRAR para confirmar'
+              value={resetConfirm}
+              onChange={(e) => setResetConfirm(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-[#F8F9FA] border border-[#D1D5DB] rounded-xl text-sm font-medium text-[#1a1a1a] focus:bg-white focus:border-red-400 focus:ring-2 focus:ring-red-500/10 outline-none transition-all"
+              style={{ minHeight: '44px' }}
+            />
+            <button
+              onClick={async () => {
+                if (resetConfirm !== 'BORRAR') {
+                  setResetMensaje({ tipo: 'err', texto: 'Debe escribir BORRAR para confirmar.' })
+                  return
+                }
+                setLoading('reset')
+                setResetMensaje(null)
+                try {
+                  const res = await fetch('/api/admin/reset-elecciones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cedula: resetCedula }),
+                  })
+                  const data = await res.json()
+                  setResetMensaje({ tipo: data.exito ? 'ok' : 'err', texto: data.mensaje })
+                  if (data.exito) {
+                    setResetCedula('')
+                    setResetConfirm('')
+                  }
+                } catch {
+                  setResetMensaje({ tipo: 'err', texto: 'Error de conexión.' })
+                }
+                setLoading('')
+              }}
+              disabled={loading === 'reset' || !resetCedula.trim() || resetConfirm !== 'BORRAR'}
+              className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 text-white flex items-center justify-center gap-2 active:scale-[0.98]"
+              style={{ background: 'linear-gradient(135deg, #EF4444, #DC2626)', boxShadow: '0 4px 12px rgba(239,68,68,0.25)', minHeight: '44px' }}
+            >
+              {loading === 'reset' ? <><Loader2 size={14} className="animate-spin" /> Borrando...</> : <>🗑️ Borrar Todos los Datos de Elecciones</>}
+            </button>
+            {resetMensaje && (
+              <div className={`flex items-center gap-1.5 text-xs font-semibold p-2.5 rounded-lg ${resetMensaje.tipo === 'ok' ? 'text-emerald-700 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
+                {resetMensaje.tipo === 'ok' ? <CheckCircle2 size={14} /> : <ShieldAlert size={14} />}
+                {resetMensaje.texto}
+              </div>
+            )}
           </div>
         </div>
       </div>

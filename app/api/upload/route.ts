@@ -11,7 +11,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ exito: false, mensaje: 'Datos incompletos.' })
     }
 
-    if (tipo !== 'camara' && tipo !== 'senado') {
+    const validTypes = ['camara', 'senado', 'camara_2', 'senado_2']
+    if (!validTypes.includes(tipo)) {
       return NextResponse.json({ exito: false, mensaje: 'Tipo de foto inválido.' })
     }
 
@@ -46,7 +47,13 @@ export async function POST(request: NextRequest) {
     const publicUrl = urlData.publicUrl
 
     // Actualizar resultado con la URL
-    const updateField = tipo === 'camara' ? 'foto_camara' : 'foto_senado'
+    const fieldMap: Record<string, string> = {
+      camara: 'foto_camara',
+      camara_2: 'foto_camara_2',
+      senado: 'foto_senado',
+      senado_2: 'foto_senado_2',
+    }
+    const updateField = fieldMap[tipo]
     const { error: updateError } = await supabase
       .from('resultados')
       .update({
@@ -69,16 +76,10 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (resultado) {
-      const tieneTodo =
-        resultado.cantidad_votantes_mesa != null &&
-        resultado.votantes_10am != null &&
-        resultado.votantes_1pm != null &&
-        resultado.votos_alex_p != null &&
-        resultado.votos_camara_cun_pl != null &&
-        resultado.votos_oscar_sanchez_senado != null &&
-        resultado.votos_senado_pl != null &&
-        resultado.foto_camara &&
-        resultado.foto_senado
+      const tieneVotosCamara = resultado.votos_camara_l101 != null && resultado.votos_camara_partido != null
+      const tieneVotosSenado = resultado.votos_senado_1 != null && resultado.votos_senado_partido != null
+      const tieneTodo = tieneVotosCamara && tieneVotosSenado &&
+        resultado.foto_camara && resultado.foto_senado && resultado.confirmacion_e14
 
       if (tieneTodo) {
         await supabase

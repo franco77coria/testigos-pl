@@ -94,43 +94,53 @@ export async function POST(request: NextRequest) {
     }
 
     if (tipo === 'semaforo') {
-      // Parse SEMAFORO CSV
-      // Columns: (empty),MUNICIPIO,MESAS,Testigos,VOTANTES,MESAS POR TESTIGO,META,TESTIGOS A CONSEGUIR
+      // Parse CUNDINAMARCA CSV (puestos de votación)
+      // Columns: dd,mm,zz,pp,departamento,municipio,punto de votacion,mujeres,hombres,total,mesas,comuna,dirección
       const rows = lines.slice(1)
 
-      // Clear existing municipios
-      await supabase.from('municipios').delete().neq('municipio', '')
+      // Clear existing municipios/puestos
+      await supabase.from('municipios').delete().gte('created_at', '1970-01-01')
 
-      const municipios: Record<string, unknown>[] = []
+      const puestos: Record<string, unknown>[] = []
+      const seen = new Set<string>()
 
       for (const line of rows) {
         const cols = parseCSVLine(line)
-        const municipio = (cols[1] || '').trim()
-        if (!municipio) continue
+        const municipio = (cols[5] || '').trim()
+        const puesto = (cols[6] || '').trim()
+        if (!municipio || !puesto) continue
 
-        const mesasPorTestigo = (cols[5] || '').trim()
+        const key = `${municipio}||${puesto}`
+        if (seen.has(key)) continue
+        seen.add(key)
 
-        municipios.push({
+        puestos.push({
+          departamento: (cols[4] || '').trim() || 'CUNDINAMARCA',
           municipio,
-          mesas: parseInt(cols[2]) || 0,
-          testigos: parseInt(cols[3]) || 0,
-          votantes: parseInt(cols[4]) || 0,
-          mesas_por_testigo: mesasPorTestigo === 'null' ? null : parseFloat(mesasPorTestigo) || null,
-          meta: parseInt(cols[6]) || 0,
-          testigos_a_conseguir: parseInt(cols[7]) || null,
+          puesto,
+          mesas: parseInt(cols[10]) || 0,
+          votantes: parseInt(cols[9]) || 0,
+          direccion: (cols[12] || '').trim() || null,
         })
       }
 
-      const { error } = await supabase.from('municipios').insert(municipios)
-      if (error) {
-        console.error('Error inserting municipios:', error)
-        return NextResponse.json({ exito: false, mensaje: error.message })
+      // Insert in batches
+      for (let i = 0; i < puestos.length; i += 500) {
+        const batch = puestos.slice(i, i + 500)
+        const { error } = await supabase.from('municipios').insert(batch)
+        if (error) {
+          console.error('Error inserting puestos batch:', error)
+          return NextResponse.json({
+            exito: false,
+            mensaje: `Error en lote ${i / 500 + 1}: ${error.message}`,
+          })
+        }
       }
 
       return NextResponse.json({
         exito: true,
-        mensaje: `${municipios.length} municipios importados correctamente.`,
-        total: municipios.length,
+        mensaje: `${puestos.length} puestos de votación importados correctamente.`,
+        total: puestos.length,
       })
     }
 

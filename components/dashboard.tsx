@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { LogOut, RefreshCw, BarChart3, CheckCircle2, Clock, Layers } from 'lucide-react'
 import type { SesionTestigo, MesaDashboard } from '@/lib/types'
-import { calcularEstado } from '@/lib/types'
+import { calcularEstado, SENADO_CANDIDATOS } from '@/lib/types'
 import MesaCard from './mesa-card'
 import { horaActual } from '@/lib/utils'
 
@@ -12,6 +10,7 @@ interface Props {
   sesion: SesionTestigo
   onLogout: () => void
   onMesasUpdate: (mesas: MesaDashboard[]) => void
+  onAddMesa?: () => void
 }
 
 function AnimatedNumber({ value }: { value: number }) {
@@ -36,15 +35,27 @@ function AnimatedNumber({ value }: { value: number }) {
   return <>{display}</>
 }
 
-export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
+export default function Dashboard({ sesion, onLogout, onMesasUpdate, onAddMesa }: Props) {
   const [refreshing, setRefreshing] = useState(false)
   const [ultimaAct, setUltimaAct] = useState(horaActual())
+  const [senadoCandidatos, setSenadoCandidatos] = useState(SENADO_CANDIDATOS)
 
   const { testigo, mesas } = sesion
 
   const total = mesas.length
   const completadas = mesas.filter((m) => calcularEstado(m) === 'completada').length
-  const enProgreso = mesas.filter((m) => calcularEstado(m) === 'en_progreso').length
+  const pendientes = total - completadas
+
+  useEffect(() => {
+    fetch('/api/admin/config')
+      .then(r => r.json())
+      .then(data => {
+        if (data.exito && data.candidatos) {
+          setSenadoCandidatos(data.candidatos)
+        }
+      })
+      .catch(() => { })
+  }, [])
 
   async function refrescar() {
     setRefreshing(true)
@@ -68,159 +79,215 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#F0F2F5' }}>
-      {/* Navbar */}
-      <nav className="bg-white sticky top-0 z-40" style={{ borderBottom: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex justify-between h-14 items-center">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #E31837, #C41530)' }}>
-                <BarChart3 size={16} />
-              </div>
-              <div>
-                <span style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-sm font-bold text-[#1a1a1a] tracking-tight">
-                  Testigos <span className="text-[#E31837]">PL</span>
-                </span>
-              </div>
-            </div>
+    <div style={{
+      background: '#F0F2F5',
+      minHeight: '100vh',
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+      WebkitFontSmoothing: 'antialiased',
+      display: 'flex',
+      justifyContent: 'center',
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '448px',
+        background: '#F0F2F5',
+        minHeight: '100vh',
+        position: 'relative',
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        {/* Red accent bar */}
+        <div style={{ height: '3px', background: '#CE1126', width: '100%' }} />
 
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:block text-right max-w-[220px]">
-                <p className="text-sm font-semibold text-[#1a1a1a] leading-tight truncate">
+        {/* Header */}
+        <header style={{
+          background: '#FFFFFF',
+          padding: '12px 16px',
+          borderBottom: '1px solid #E5E7EB',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              background: '#CE1126',
+              color: 'white',
+              width: '32px', height: '32px',
+              borderRadius: '8px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 700, fontSize: '18px', lineHeight: 1,
+            }}>
+              L
+            </div>
+            <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>
+              <span style={{ color: '#111827' }}>Testigos</span>
+              <span style={{ color: '#CE1126', marginLeft: '4px' }}>PL</span>
+            </h1>
+          </div>
+          <button
+            onClick={onLogout}
+            style={{
+              background: 'none', border: 'none', color: '#94A3B8',
+              cursor: 'pointer', padding: '4px', borderRadius: '6px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+            title="Cerrar sesión"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
+          </button>
+        </header>
+
+        {/* Main */}
+        <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '96px' }}>
+          {/* User info bar */}
+          <div style={{
+            background: '#FFFFFF',
+            padding: '16px',
+            marginBottom: '16px',
+            borderBottom: '1px solid #E5E7EB',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{
+                  fontSize: '13px', fontWeight: 700, color: '#111827',
+                  letterSpacing: '0.05em', textTransform: 'uppercase',
+                  marginBottom: '4px', margin: 0,
+                }}>
                   {testigo.nombre1} {testigo.apellido1}
-                </p>
-                <p className="text-[11px] text-[#718096] truncate">
-                  {testigo.puesto}
+                </h2>
+                <p style={{
+                  fontSize: '11px', color: '#94A3B8',
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                  textTransform: 'uppercase', fontWeight: 500, margin: 0, marginTop: '4px',
+                }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>
+                  {testigo.municipio} - {testigo.puesto}
                 </p>
               </div>
-              <div className="w-px h-7 bg-[#D1D5DB] hidden sm:block" />
               <button
-                onClick={onLogout}
-                className="flex items-center gap-1.5 text-sm text-[#718096] hover:text-[#E31837] transition-colors"
-                title="Cerrar sesion"
+                onClick={refrescar}
+                disabled={refreshing}
+                style={{
+                  color: '#CE1126', background: 'rgba(206,17,38,0.1)',
+                  padding: '8px', borderRadius: '50%', border: 'none',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center',
+                  opacity: refreshing ? 0.5 : 1,
+                }}
               >
-                <LogOut size={16} />
-                <span className="hidden sm:inline text-xs font-semibold">Salir</span>
+                <span className="material-symbols-outlined" style={{ fontSize: '20px', animation: refreshing ? 'spin 1s linear infinite' : 'none' }}>sync</span>
               </button>
             </div>
           </div>
-        </div>
-      </nav>
 
-      {/* Main */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+          {/* Stats cards */}
+          <div style={{ padding: '0 16px', marginBottom: '24px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            <div style={{
+              background: '#FFFFFF', borderTop: '4px solid #E5E7EB',
+              borderRadius: '0 0 8px 8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              border: '1px solid #E5E7EB', borderTopColor: '#E5E7EB',
+              padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span className="material-symbols-outlined" style={{ color: '#94A3B8', fontSize: '18px', marginBottom: '4px' }}>list_alt</span>
+              <span style={{ fontSize: '24px', fontWeight: 700, color: '#111827', lineHeight: 1, marginBottom: '4px' }}>
+                <AnimatedNumber value={total} />
+              </span>
+              <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em' }}>Total</span>
+            </div>
+            <div style={{
+              background: '#FFFFFF', borderTop: '4px solid #10B981',
+              borderRadius: '0 0 8px 8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              border: '1px solid #E5E7EB', borderTopColor: '#10B981',
+              padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span className="material-symbols-outlined" style={{ color: '#10B981', fontSize: '18px', marginBottom: '4px' }}>check_circle</span>
+              <span style={{ fontSize: '24px', fontWeight: 700, color: '#10B981', lineHeight: 1, marginBottom: '4px' }}>
+                <AnimatedNumber value={completadas} />
+              </span>
+              <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em' }}>Listas</span>
+            </div>
+            <div style={{
+              background: '#FFFFFF', borderTop: '4px solid #F59E0B',
+              borderRadius: '0 0 8px 8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              border: '1px solid #E5E7EB', borderTopColor: '#F59E0B',
+              padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span className="material-symbols-outlined" style={{ color: '#F59E0B', fontSize: '18px', marginBottom: '4px' }}>schedule</span>
+              <span style={{ fontSize: '24px', fontWeight: 700, color: '#F59E0B', lineHeight: 1, marginBottom: '4px' }}>
+                <AnimatedNumber value={pendientes} />
+              </span>
+              <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#94A3B8', letterSpacing: '0.08em' }}>Pendientes</span>
+            </div>
+          </div>
 
-        {/* Mobile User Info */}
-        <div className="sm:hidden mb-5 bg-white p-4 rounded-xl flex items-center justify-between" style={{ border: '1px solid #D1D5DB', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-          <div>
-            <p className="text-sm font-semibold text-[#1a1a1a]">
-              {testigo.nombre1} {testigo.apellido1}
+          {/* Mesa List */}
+          <div style={{ padding: '0 16px', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>Mis Mesas</h3>
+              {onAddMesa && (
+                <button
+                  onClick={onAddMesa}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    background: '#CE1126', color: 'white',
+                    padding: '8px 14px', borderRadius: '10px',
+                    border: 'none', cursor: 'pointer',
+                    fontSize: '12px', fontWeight: 700,
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    boxShadow: '0 2px 8px rgba(206,17,38,0.25)',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>
+                  Más Mesa
+                </button>
+              )}
+            </div>
+
+            {mesas.length === 0 ? (
+              <div style={{
+                background: '#FFFFFF', borderRadius: '12px', padding: '32px',
+                textAlign: 'center', border: '1px solid #E5E7EB',
+              }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'rgba(148,163,184,0.3)', marginBottom: '8px' }}>inbox</span>
+                <p style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}>No tiene mesas asignadas aún.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {mesas.map((mesa) => (
+                  <MesaCard
+                    key={mesa.mesa_numero}
+                    mesa={mesa}
+                    cedula={sesion.cedula}
+                    onUpdate={handleMesaUpdate}
+                    senadoCandidatos={senadoCandidatos}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer info */}
+          <div style={{ padding: '0 16px', marginTop: '32px', paddingBottom: '16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '10px', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Última actualización: {ultimaAct}
             </p>
-            <p className="text-[11px] text-[#718096]">
-              {testigo.municipio} · {testigo.puesto}
+            <p style={{ fontSize: '10px', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '4px' }}>
+              {completadas}/{total} reportes enviados
             </p>
           </div>
-        </div>
+        </main>
+      </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="bg-white rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center relative overflow-hidden"
-            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-          >
-            <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'linear-gradient(90deg, #E31837, #EF4444)' }} />
-            <Layers size={16} className="text-[#718096] mb-2" />
-            <span className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] leading-none mb-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              <AnimatedNumber value={total} />
-            </span>
-            <span className="text-[10px] font-semibold text-[#718096] uppercase tracking-wider">Total</span>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center relative overflow-hidden"
-            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-          >
-            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500" />
-            <CheckCircle2 size={16} className="text-emerald-500 mb-2" />
-            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 leading-none mb-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              <AnimatedNumber value={completadas} />
-            </span>
-            <span className="text-[10px] font-semibold text-[#718096] uppercase tracking-wider">Listas</span>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="bg-white rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center relative overflow-hidden"
-            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-          >
-            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-400" />
-            <Clock size={16} className="text-amber-500 mb-2" />
-            <span className="text-2xl sm:text-3xl font-bold text-amber-500 leading-none mb-0.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              <AnimatedNumber value={enProgreso} />
-            </span>
-            <span className="text-[10px] font-semibold text-[#718096] uppercase tracking-wider">Activas</span>
-          </motion.div>
-        </div>
-
-        {/* Section header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-base font-bold text-[#1a1a1a]">
-            Mis Mesas
-          </h2>
-          <button
-            onClick={refrescar}
-            disabled={refreshing}
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#718096] bg-white px-3 py-2 rounded-lg hover:text-[#E31837] transition-all disabled:opacity-40"
-            style={{ border: '1px solid #D1D5DB' }}
-          >
-            <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
-            <span className="hidden sm:inline">Actualizar</span>
-          </button>
-        </div>
-
-        {/* Mesa Grid */}
-        {mesas.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl p-10 text-center"
-            style={{ border: '1px solid #D1D5DB', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-          >
-            <Layers size={36} className="mx-auto text-[#CBD5E1] mb-3" />
-            <h3 style={{ fontFamily: 'Montserrat, sans-serif' }} className="text-base font-bold text-[#1a1a1a] mb-1">Sin mesas asignadas</h3>
-            <p className="text-sm text-[#718096]">Aún no tiene mesas de votación registradas.</p>
-          </motion.div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {mesas.map((mesa, i) => (
-              <motion.div
-                key={mesa.mesa_numero}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <MesaCard
-                  mesa={mesa}
-                  cedula={sesion.cedula}
-                  onUpdate={handleMesaUpdate}
-                />
-              </motion.div>
-            ))}
-          </div>
-        )}
-
-        <p className="text-center mt-8 text-[11px] text-[#94A3B8]">
-          Ultima actualizacion: {ultimaAct}
-        </p>
-      </main>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }

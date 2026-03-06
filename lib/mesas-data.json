@@ -1,0 +1,3422 @@
+[
+  {
+    "municipio": "AGUA DE DIOS",
+    "punto": "IED SALESIANO MIGUEL UNIA",
+    "mesas": 20
+  },
+  {
+    "municipio": "AGUA DE DIOS",
+    "punto": "CEN. CULTURAL ARMANDO RODRIGUEZ JIMENEZ",
+    "mesas": 10
+  },
+  {
+    "municipio": "ALBAN",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "ALBAN",
+    "punto": "COLEGIO CHIMBE",
+    "mesas": 1
+  },
+  {
+    "municipio": "ANAPOIMA",
+    "punto": "POLIDEPORTIVO JULIO CESAR SANCHEZ",
+    "mesas": 23
+  },
+  {
+    "municipio": "ANAPOIMA",
+    "punto": "CASA DE LA CULTURA",
+    "mesas": 10
+  },
+  {
+    "municipio": "ANAPOIMA",
+    "punto": "LA PAZ",
+    "mesas": 4
+  },
+  {
+    "municipio": "ANAPOIMA",
+    "punto": "SAN ANTONIO",
+    "mesas": 4
+  },
+  {
+    "municipio": "ANOLAIMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 29
+  },
+  {
+    "municipio": "ANOLAIMA",
+    "punto": "LA FLORIDA",
+    "mesas": 5
+  },
+  {
+    "municipio": "ANOLAIMA",
+    "punto": "CORRALEJAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "ANOLAIMA",
+    "punto": "REVENTONES",
+    "mesas": 3
+  },
+  {
+    "municipio": "ARBELAEZ",
+    "punto": "CTRO COLISEO RAFAEL DIONISIO PARRA REYES",
+    "mesas": 29
+  },
+  {
+    "municipio": "ARBELAEZ",
+    "punto": "IE DEPARTAMENTAL JOHN F. KENNEDY",
+    "mesas": 2
+  },
+  {
+    "municipio": "BELTRAN",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 3
+  },
+  {
+    "municipio": "BELTRAN",
+    "punto": "PAQUILO",
+    "mesas": 3
+  },
+  {
+    "municipio": "BELTRAN",
+    "punto": "PUERTO DE GRAMALOTAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "BITUIMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "BITUIMA",
+    "punto": "LA PLAZUELA",
+    "mesas": 1
+  },
+  {
+    "municipio": "BITUIMA",
+    "punto": "BOQUERON DE ILO (VDA RINCON SANTO)",
+    "mesas": 1
+  },
+  {
+    "municipio": "BOJACA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 23
+  },
+  {
+    "municipio": "CABRERA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 11
+  },
+  {
+    "municipio": "CABRERA",
+    "punto": "SALON COMUNAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "CACHIPAY",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 27
+  },
+  {
+    "municipio": "CACHIPAY",
+    "punto": "PEÑA NEGRA",
+    "mesas": 4
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "ESCUELA EL MISTERIO",
+    "mesas": 18
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "COLEGIO RINCON SANTO",
+    "mesas": 20
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "COLEGIO PABLO HERRERA",
+    "mesas": 22
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "I.E.D CAPELLANIA",
+    "mesas": 9
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "COLISEO FORTALEZA DE PIEDRA",
+    "mesas": 19
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "CENTRO CULTURAL CAJICA",
+    "mesas": 27
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "COLEGIO ANTONIO NARIÑO",
+    "mesas": 25
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "SALON COMUNAL LAS PALMAS",
+    "mesas": 15
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "SALON COMUNAL BARRIO GRANJITAS",
+    "mesas": 6
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "IED POMPILIO MARTINEZ",
+    "mesas": 17
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "CLUB EDAD DE ORO",
+    "mesas": 20
+  },
+  {
+    "municipio": "CAJICA",
+    "punto": "IE DEPARTAMENTAL SAN GABRIEL",
+    "mesas": 3
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 20
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "CAMBRAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "CANCHIMAY",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "CACERES",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "CORDOBA",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "EL CAMBULO",
+    "mesas": 2
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "EL DINDAL",
+    "mesas": 2
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "LA AZAUNCHA",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "SAN CARLOS",
+    "mesas": 3
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "SAN PEDRO",
+    "mesas": 3
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "TATI",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAPARRAPI",
+    "punto": "SAN RAMON ALTO",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAQUEZA",
+    "punto": "COLISEO GERMAN ROJAS URREGO",
+    "mesas": 29
+  },
+  {
+    "municipio": "CAQUEZA",
+    "punto": "CONCENTRACION MARILANDA",
+    "mesas": 17
+  },
+  {
+    "municipio": "CAQUEZA",
+    "punto": "CARCEL",
+    "mesas": 1
+  },
+  {
+    "municipio": "CAQUEZA",
+    "punto": "SALON COMUNAL GIRON DE BLANCOS",
+    "mesas": 1
+  },
+  {
+    "municipio": "CARMEN DE CARUPA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 18
+  },
+  {
+    "municipio": "CARMEN DE CARUPA",
+    "punto": "HATO",
+    "mesas": 2
+  },
+  {
+    "municipio": "CARMEN DE CARUPA",
+    "punto": "SUCRE (CAPILLA DE SUCRE)",
+    "mesas": 1
+  },
+  {
+    "municipio": "COGUA",
+    "punto": "COLEGIO LAS VILLAS",
+    "mesas": 33
+  },
+  {
+    "municipio": "COGUA",
+    "punto": "POLIDEPORTIVO MUNICIPAL",
+    "mesas": 18
+  },
+  {
+    "municipio": "COGUA",
+    "punto": "VEREDA LA PLAZUELA",
+    "mesas": 1
+  },
+  {
+    "municipio": "COTA",
+    "punto": "IED ENRIQUE PARDO PARRA SD BACHILLERATO",
+    "mesas": 26
+  },
+  {
+    "municipio": "COTA",
+    "punto": "IE DEPARTAMENTAL CAMILO TORRES",
+    "mesas": 27
+  },
+  {
+    "municipio": "COTA",
+    "punto": "IE DEPARTAMENTAL PARCELAS",
+    "mesas": 10
+  },
+  {
+    "municipio": "COTA",
+    "punto": "I.E.PUEBLO VIEJO",
+    "mesas": 18
+  },
+  {
+    "municipio": "COTA",
+    "punto": "I.E LA MOYA",
+    "mesas": 15
+  },
+  {
+    "municipio": "CUCUNUBA",
+    "punto": "POLIDEPORTIVO MUNICIPAL",
+    "mesas": 12
+  },
+  {
+    "municipio": "CUCUNUBA",
+    "punto": "CENTRO  INTERACTIVO CULTURAL CILAB",
+    "mesas": 3
+  },
+  {
+    "municipio": "CUCUNUBA",
+    "punto": "PEÑAS (LA PLUMA)",
+    "mesas": 2
+  },
+  {
+    "municipio": "CHAGUANI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 13
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "INST. EDUC. DIVERSIFICADA SANTA LUCIA",
+    "mesas": 28
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "COLEGIO NACIONAL DIVERSIFICADO",
+    "mesas": 33
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "COLEGIO STELLA MATUTINA",
+    "mesas": 20
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "COLEGIO MARIA AUXILIADORA",
+    "mesas": 21
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "VEREDA LA BALSA",
+    "mesas": 8
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "INSTITUCION EDUCATIVA CERCA DE PIEDRA",
+    "mesas": 7
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "INSTITUCION EDUCATIVA FONQUETA",
+    "mesas": 4
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "IE JOSE ESCRIVA DE BALAGUER SEDE SAMARIA",
+    "mesas": 6
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "COLISEO DE LA LUNA",
+    "mesas": 28
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "IE JOSE ESCRIVA BALAGUER",
+    "mesas": 24
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "UNIVERSIDAD DE CUNDINAMARCA",
+    "mesas": 28
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "IE EL CERRO",
+    "mesas": 6
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "CONCHA ACUSTICA",
+    "mesas": 33
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "INST. EDUCATIVA FAGUA SECTOR TIQUIZA",
+    "mesas": 10
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "CENTRO COMERCIAL FONTANAR",
+    "mesas": 25
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "INSTITUCION EDUCATIVA DIOSA CHIA",
+    "mesas": 5
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "COLEGIO JOSE JOAQUIN CASAS",
+    "mesas": 12
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "COLEGIO CELESTIN FREINET",
+    "mesas": 13
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "CENTRO  COMERCIAL CENTRO CHIA",
+    "mesas": 9
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "CENTRO CULTURAL Y ARTISTICO JUMBO",
+    "mesas": 8
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "UNIDAD DEPORTIVA LA LORENA",
+    "mesas": 2
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "UNIDAD DEPORTIVA FAGUA",
+    "mesas": 2
+  },
+  {
+    "municipio": "CHIA",
+    "punto": "INST.EDUC.LAURA VICUÑA",
+    "mesas": 28
+  },
+  {
+    "municipio": "CHIPAQUE",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 26
+  },
+  {
+    "municipio": "CHOACHI",
+    "punto": "IED IGNACIO PESCADOR",
+    "mesas": 30
+  },
+  {
+    "municipio": "CHOACHI",
+    "punto": "COLISEO POLIDEPORTIVO EL BOSQUE",
+    "mesas": 5
+  },
+  {
+    "municipio": "CHOACHI",
+    "punto": "EL ALTO DEL PALO",
+    "mesas": 2
+  },
+  {
+    "municipio": "CHOACHI",
+    "punto": "POTRERO GRANDE",
+    "mesas": 1
+  },
+  {
+    "municipio": "CHOCONTA",
+    "punto": "IED AGROINDUSTRIAL SANTIAGO DE CHOCONTA",
+    "mesas": 34
+  },
+  {
+    "municipio": "CHOCONTA",
+    "punto": "IED RUFINO CUERVO",
+    "mesas": 18
+  },
+  {
+    "municipio": "CHOCONTA",
+    "punto": "CARCEL",
+    "mesas": 1
+  },
+  {
+    "municipio": "EL COLEGIO",
+    "punto": "ESC. URB. FRANCISCO JULIAN OLAYA",
+    "mesas": 28
+  },
+  {
+    "municipio": "EL COLEGIO",
+    "punto": "VILLA OLIMPICA",
+    "mesas": 23
+  },
+  {
+    "municipio": "EL COLEGIO",
+    "punto": "JARDIN INFANTIL DEPTAL CARLOS JIMENEZ G.",
+    "mesas": 6
+  },
+  {
+    "municipio": "EL COLEGIO",
+    "punto": "EL TRIUNFO",
+    "mesas": 5
+  },
+  {
+    "municipio": "EL COLEGIO",
+    "punto": "IED LA VICTORIA",
+    "mesas": 7
+  },
+  {
+    "municipio": "EL COLEGIO",
+    "punto": "INSPECCION PRADILLA SALON COMUNAL",
+    "mesas": 4
+  },
+  {
+    "municipio": "EL PEÑON",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 10
+  },
+  {
+    "municipio": "EL PEÑON",
+    "punto": "GUAYABAL DE TOLEDO",
+    "mesas": 2
+  },
+  {
+    "municipio": "EL PEÑON",
+    "punto": "TALAUTA",
+    "mesas": 3
+  },
+  {
+    "municipio": "EL ROSAL",
+    "punto": "COLISEO MUNICIPAL",
+    "mesas": 28
+  },
+  {
+    "municipio": "EL ROSAL",
+    "punto": "IED CAMPO ALEGRE",
+    "mesas": 3
+  },
+  {
+    "municipio": "EL ROSAL",
+    "punto": "MEGA COLEGIO",
+    "mesas": 29
+  },
+  {
+    "municipio": "EL ROSAL",
+    "punto": "ESCUELA RURAL LA PIÑUELA",
+    "mesas": 1
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO DEPTAL CARTAGENITA",
+    "mesas": 23
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO MANABLANCA",
+    "mesas": 9
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO JOHN F. KENNEDY",
+    "mesas": 25
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "CENTRO DE DESARROLLO SOCIAL",
+    "mesas": 17
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO SAN AGUSTIN",
+    "mesas": 16
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO SILVERIA ESPINOSA",
+    "mesas": 19
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "EL PORTAL DE TUS SUEÑOS",
+    "mesas": 11
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "ESC. PRIM. SD SAN CRIST. JOHN F KENNEDY",
+    "mesas": 3
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO SD MOLINOS - MANUELA AYALA",
+    "mesas": 2
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COL. CARTAGENITA BLOQUE D SEDE PRIMARIA",
+    "mesas": 5
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "CTRO DE DISCAPACIDAD MANUEL GONZALEZ C.",
+    "mesas": 1
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "INSTITUTO  TECNICO  INDUSTRIAL",
+    "mesas": 25
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "ESCUELA RAFAEL POMBO",
+    "mesas": 21
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO MANUELA AYALA DE GAITAN",
+    "mesas": 27
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO SANTA RITA",
+    "mesas": 26
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO NACIONAL EMILIO CIFUENTES",
+    "mesas": 27
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "INDUSTRIAL SEDE TALLERES",
+    "mesas": 20
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "CTRO EDU LA CONCEPCION",
+    "mesas": 9
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "UNIVERSIDAD CUNDINAMARCA",
+    "mesas": 8
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO ARBOLEDA SEDE ARBOLEDA",
+    "mesas": 6
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO ARBOLEDA S  JUAN PABLO II",
+    "mesas": 21
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "CTRO RECLUSION POLICIA NAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "COLEGIO JUAN XXIII",
+    "mesas": 2
+  },
+  {
+    "municipio": "FACATATIVA",
+    "punto": "ESCUELA ANTIGUA MANCILLA",
+    "mesas": 1
+  },
+  {
+    "municipio": "FOMEQUE",
+    "punto": "IED MONSEÑOR AGUSTIN GUTIERREZ",
+    "mesas": 24
+  },
+  {
+    "municipio": "FOMEQUE",
+    "punto": "POLIDEPORTIVO MUNICIPAL",
+    "mesas": 5
+  },
+  {
+    "municipio": "FOMEQUE",
+    "punto": "LA UNION",
+    "mesas": 2
+  },
+  {
+    "municipio": "FOMEQUE",
+    "punto": "SAN LORENZO",
+    "mesas": 1
+  },
+  {
+    "municipio": "FOSCA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "FOSCA",
+    "punto": "PUEBLO VIEJO",
+    "mesas": 1
+  },
+  {
+    "municipio": "FOSCA",
+    "punto": "SANAME",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL MIL CNEL JUAN JOSE RONDON",
+    "mesas": 27
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL TEC IND CORAZON DE MARIA",
+    "mesas": 11
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "IED JARDIN SOCIAL SERREZUELITA",
+    "mesas": 8
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL MIGUEL ANTONIO CARO",
+    "mesas": 24
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL FURATENA",
+    "mesas": 12
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COLISEO MUNICIPAL",
+    "mesas": 15
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "I E SERREZUELITA",
+    "mesas": 7
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "I E EL HATO",
+    "mesas": 4
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "IE DEPARTAMENTAL DE FUNZA",
+    "mesas": 2
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL SAN JOSE",
+    "mesas": 17
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL NUESTRA SEÑORA DEL ROSARIO",
+    "mesas": 10
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL SANTANA",
+    "mesas": 7
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL PARROQUIAL SANTIAGO APOSTOL",
+    "mesas": 5
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL CRISTIANO INTEGRAL",
+    "mesas": 13
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "ESC SAN ANDRES",
+    "mesas": 8
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL COOPERATIVO COMUNAL",
+    "mesas": 22
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL LA UNIDAD BASICA",
+    "mesas": 19
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "I E SAN MARCOS",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "COL BICENTENARIO",
+    "mesas": 21
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "JARDIN INFANTIL VILLA PAUL",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "JARDIN INFANTIL LA AURORA",
+    "mesas": 2
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "IE MARIA INMACULADA",
+    "mesas": 9
+  },
+  {
+    "municipio": "FUNZA",
+    "punto": "CARCEL MUNICIPAL FUNZA",
+    "mesas": 1
+  },
+  {
+    "municipio": "FUQUENE",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 6
+  },
+  {
+    "municipio": "FUQUENE",
+    "punto": "CAPELLANIA",
+    "mesas": 6
+  },
+  {
+    "municipio": "FUQUENE",
+    "punto": "NUEVO FUQUENE",
+    "mesas": 1
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESCUELA JULIO SABOGAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COLEGIO ACCION COMUNAL",
+    "mesas": 20
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COLEGIO MANUEL HUMBERTO CARDENAS VELEZ",
+    "mesas": 4
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESCUELA MANUELA BELTRAN",
+    "mesas": 2
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "CTRO DE INNOVACION E INTEGRACION SOCIAL",
+    "mesas": 7
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COLISEO FUTSAL COBURGO",
+    "mesas": 24
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESCUELA GUSTAVO VEGA",
+    "mesas": 15
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESCUELA CAMILO TORRES",
+    "mesas": 5
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESCUELA GENERAL SANTANDER",
+    "mesas": 2
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "PARROQUIA NTRA.SRA.DE BELEN",
+    "mesas": 14
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "FUND.DE EDUC.EN SALUD MARIE POUSSEPIN",
+    "mesas": 20
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "CENTRO DE DESARROLLO INFANTIL",
+    "mesas": 7
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESCUELA FUSACATAN",
+    "mesas": 13
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COL CARLOS LOZANO Y LOZANO",
+    "mesas": 21
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COL JOSE C MUTIS",
+    "mesas": 14
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESC. SUPERIOR DE ADMON PUBLICA-ESAP",
+    "mesas": 10
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COL. JOSE CELESTINO MUTIS SD LUSITANIA",
+    "mesas": 11
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "UNIVERSIDAD DE CUNDINAMARCA",
+    "mesas": 25
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COLEGIO RICAURTE",
+    "mesas": 25
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "UNIVERSIDAD ABIERTA Y A DISTANCIA UNAD",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "CENTRO ACADEMICO DEPORTIVO CERCUN",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "ESC REFUGIO INFANTIL",
+    "mesas": 17
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "POLIDEPORTIVO EBENEZER",
+    "mesas": 10
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "CENTRO DE INTEGRACION CIUDADANA",
+    "mesas": 6
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "IEM CIUDAD EBEN-EZER",
+    "mesas": 12
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "POLIDEPORTIVO LLANO LARGO",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COL.TEODORO AYA VILLAVECES",
+    "mesas": 12
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "CARCEL CIRCUITO JUDICIAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "LA AGUADITA",
+    "mesas": 6
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "LOS SAUCES",
+    "mesas": 5
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "CUCHARAL",
+    "mesas": 12
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COLEGIO AGRICOLA VALSALICE",
+    "mesas": 1
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "BOCHICA (LA TRINIDAD)",
+    "mesas": 9
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "COLEGIO ESPINALITO ALTO",
+    "mesas": 2
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "EL TRIUNFO (BOQUERON)",
+    "mesas": 3
+  },
+  {
+    "municipio": "FUSAGASUGA",
+    "punto": "LA PUERTA (CHINAUTA)",
+    "mesas": 12
+  },
+  {
+    "municipio": "GACHALA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 13
+  },
+  {
+    "municipio": "GACHALA",
+    "punto": "INSPECCION LOS ALPES",
+    "mesas": 3
+  },
+  {
+    "municipio": "GACHALA",
+    "punto": "CORREGIMIENTO  MONTECRISTO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GACHALA",
+    "punto": "CORREGIMIENTO  SANTA RITA DE RIONEGRO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GACHALA",
+    "punto": "VEREDA MURCA",
+    "mesas": 1
+  },
+  {
+    "municipio": "GACHANCIPA",
+    "punto": "COL. CARLOS GARAVITO - SEDE CIUDADELA",
+    "mesas": 32
+  },
+  {
+    "municipio": "GACHANCIPA",
+    "punto": "AULA MULTIPLE COLEGIO SEDE CIUDADELA",
+    "mesas": 6
+  },
+  {
+    "municipio": "GACHETA",
+    "punto": "CAMPO DEPORTIVO LA COLOMBIA",
+    "mesas": 17
+  },
+  {
+    "municipio": "GACHETA",
+    "punto": "ESCUELA JHON F KENNEDY",
+    "mesas": 10
+  },
+  {
+    "municipio": "GACHETA",
+    "punto": "CARCEL",
+    "mesas": 1
+  },
+  {
+    "municipio": "GACHETA",
+    "punto": "LOS LOPEZ",
+    "mesas": 1
+  },
+  {
+    "municipio": "GAMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "GAMA",
+    "punto": "SAN ROQUE",
+    "mesas": 1
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLEGIO AMERICANO",
+    "mesas": 24
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLEGIO LA PRESENTACION",
+    "mesas": 18
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLEGIO NUESTRA SEÑORA DEL PILAR",
+    "mesas": 15
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "CASA DE LA CULTURA",
+    "mesas": 3
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "IE FUNDADORES RAMON BUENO Y JOSE TRIANA",
+    "mesas": 1
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "I.E. NUEVO HORIZONTE",
+    "mesas": 24
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "LICEO LOS ANDES",
+    "mesas": 8
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "SEDE FRANCISCO J DE CALDAS",
+    "mesas": 13
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "CTRO EDU ANTONIO NARIÑO",
+    "mesas": 13
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COL MAYOR MARTHA CATALINA",
+    "mesas": 20
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "JARDIN INFANTIL CHIQUITOS",
+    "mesas": 2
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "JARDIN INFANTIL CHEPITA MENDEZ",
+    "mesas": 3
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "IET FRANCISCO MANZANERA HENRIQUEZ",
+    "mesas": 5
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLISEO CENTENARIO",
+    "mesas": 3
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "ESC. NORMAL SUPERIOR MARIA AUX",
+    "mesas": 19
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLEGIO ATANASIO GIRARDOT",
+    "mesas": 18
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLISEO BARRIO SAN JORGE",
+    "mesas": 15
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLISEO BARRIO KENNEDY",
+    "mesas": 11
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "IE POLICARPA SALAVARRIETA",
+    "mesas": 19
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "SENA",
+    "mesas": 4
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "IE SEDE INTEGRADORA",
+    "mesas": 2
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "FUNDACION CAMPESTRE EL PEÑON",
+    "mesas": 2
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLEGIO ESPIRITU SANTO",
+    "mesas": 5
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "COLISEO DEFERIAS Y EXPOSICION",
+    "mesas": 8
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "PENITENCIARIA NACIONAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "BARZALOSA Y PIAMONTE",
+    "mesas": 10
+  },
+  {
+    "municipio": "GIRARDOT",
+    "punto": "SAN LORENZO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUACHETA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 29
+  },
+  {
+    "municipio": "GUACHETA",
+    "punto": "MONROY",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "IED MIGUEL SAMPER AGUDELO",
+    "mesas": 36
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "IED MIGUEL SAMPER SEDE BENJAMIN HERRERA",
+    "mesas": 18
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "JARDIN INFANTIL MI PEQUEÑO MUNDO-MIMOS1",
+    "mesas": 2
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "IED MIGUEL SAMPER AGUDELO SD URB. FJM",
+    "mesas": 2
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "PENIT. DE MEDIANA SEG. LA ESPERANZA",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "LA PAZ",
+    "mesas": 3
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "CUATRO ESQUINAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "GUADUERO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "SEDE RURAL CEDRALES",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "IED PUERTO BOGOTA SEDE PRINCIPAL",
+    "mesas": 8
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "VEREDA TAUCHIRAL ESCUELA SEDE SAN GIL",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "EL ESCRITORIO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "MALAMBO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUADUAS",
+    "punto": "ESCUELA RURAL MADRIGAL Y CHAPAIMA",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUASCA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 37
+  },
+  {
+    "municipio": "GUASCA",
+    "punto": "INSTITUCION EDUCATIVA EL CARMEN",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUATAQUI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "GUATAVITA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 17
+  },
+  {
+    "municipio": "GUAYABAL DE SIQUIMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "GUAYABAL DE SIQUIMA",
+    "punto": "SALON COMUNAL EL TRIGO",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUAYABAL DE SIQUIMA",
+    "punto": "ESCUELA RURAL LA CONCORDIA",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUAYABETAL",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "GUAYABETAL",
+    "punto": "TUNQUE DEL NARANJAL (TUNQUE)",
+    "mesas": 1
+  },
+  {
+    "municipio": "GUTIERREZ",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "GRANADA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 21
+  },
+  {
+    "municipio": "JERUSALEN",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "JUNIN",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 12
+  },
+  {
+    "municipio": "JUNIN",
+    "punto": "CLARAVAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "JUNIN",
+    "punto": "CHUSCALES",
+    "mesas": 2
+  },
+  {
+    "municipio": "JUNIN",
+    "punto": "EL SALITRICO (SUEVA)",
+    "mesas": 3
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "POLIDEPORTIVO  LA PORTADA",
+    "mesas": 17
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "SALON COMUNAL MARQUEZ",
+    "mesas": 3
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "ESCUELA JUAN XXIII",
+    "mesas": 41
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "ESCUELA EL SALITRE",
+    "mesas": 5
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "POLIDEPORTIVO PASEO REAL",
+    "mesas": 7
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "CASA DE LA CULTURA",
+    "mesas": 3
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "MUNDO NUEVO",
+    "mesas": 2
+  },
+  {
+    "municipio": "LA CALERA",
+    "punto": "TREINTA Y SEIS",
+    "mesas": 2
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "POLIDEP. LUIS CARLOS GALAN SARMIENTO",
+    "mesas": 16
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "I.E. D. FRANCISCO JULIAN OLAYA SEDE A",
+    "mesas": 16
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "SABIO MUTIS SEDE ANTIGUA",
+    "mesas": 20
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "I.E. D. FRANCISCO JULIAN OLAYA SEDE C",
+    "mesas": 18
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "CARCEL",
+    "mesas": 1
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "LA ESPERANZA",
+    "mesas": 5
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "SAN JOAQUIN",
+    "mesas": 7
+  },
+  {
+    "municipio": "LA MESA",
+    "punto": "SAN JAVIER",
+    "mesas": 4
+  },
+  {
+    "municipio": "LA PALMA",
+    "punto": "ESC. NORMAL SUPERIOR DIVINA PROVIDENCIA",
+    "mesas": 22
+  },
+  {
+    "municipio": "LA PALMA",
+    "punto": "MINIPI QUIJANO",
+    "mesas": 2
+  },
+  {
+    "municipio": "LA PALMA",
+    "punto": "ESCUELA RURAL HINCHE BAJO",
+    "mesas": 1
+  },
+  {
+    "municipio": "LA PALMA",
+    "punto": "MURCA",
+    "mesas": 2
+  },
+  {
+    "municipio": "LA PALMA",
+    "punto": "LA HOYA DE TUDELA",
+    "mesas": 1
+  },
+  {
+    "municipio": "LA PEÑA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 18
+  },
+  {
+    "municipio": "LA PEÑA",
+    "punto": "CASA DE LA MUJER",
+    "mesas": 1
+  },
+  {
+    "municipio": "LA PEÑA",
+    "punto": "COLEGIO POLIDEPORTIVO AGUA BLANCA",
+    "mesas": 1
+  },
+  {
+    "municipio": "LA VEGA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 42
+  },
+  {
+    "municipio": "LA VEGA",
+    "punto": "EL VINO",
+    "mesas": 2
+  },
+  {
+    "municipio": "LENGUAZAQUE",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 22
+  },
+  {
+    "municipio": "LENGUAZAQUE",
+    "punto": "IE DEPARTAMENTAL RURAL SIMON BOLIVAR",
+    "mesas": 2
+  },
+  {
+    "municipio": "MACHETA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 20
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLISEO  CUBIERTO MUNICIPAL",
+    "mesas": 22
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO SAN PEDRO",
+    "mesas": 18
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "SALON  COMUNAL  ALCAPARROS",
+    "mesas": 9
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO LA MAGNOLIA",
+    "mesas": 8
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "LICEO HACIENDA CASABLANCA",
+    "mesas": 19
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO TIBAITATA",
+    "mesas": 22
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO PEDAGOGICO INGLES",
+    "mesas": 10
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "JARDIN INFANTIL CAMPO DE ILUSIONES",
+    "mesas": 3
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "PARQUE DE LAS FLORES",
+    "mesas": 5
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "CONCENTRACION URBANA EL CORTIJO",
+    "mesas": 11
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO GABRIEL ECHAVARRIA",
+    "mesas": 13
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO DEPTAL SERREZUELA",
+    "mesas": 21
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO TECNOLOGICO DE MADRID",
+    "mesas": 13
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "I.E.NUESTA SRA DEL LORETO",
+    "mesas": 12
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO MARIA TERESA ORTIZ",
+    "mesas": 19
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO  SAN  JOSE",
+    "mesas": 15
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "BLOQUE 2 - COLEGIO TECNOLOGICO",
+    "mesas": 15
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO SANTO TOMAS",
+    "mesas": 11
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "COLEGIO LA PROSPERIDAD",
+    "mesas": 14
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "CONCENTRACION URBANA ANTONIO NARIÑO",
+    "mesas": 3
+  },
+  {
+    "municipio": "MADRID",
+    "punto": "IE DEPTAL SAN PATRICIO PUENTE DE  PIEDRA",
+    "mesas": 10
+  },
+  {
+    "municipio": "MANTA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 13
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "EL ARENAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "LA ESMERALDA",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "GAZATAVENA",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "SAN MARCOS",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "PERIQUITO",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "LOS ALPES",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "LA MESA DE LOS REYES",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "SAN FRANCISCO DE GAZADUJE",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "SAN PEDRO DE GUAJARAY",
+    "mesas": 1
+  },
+  {
+    "municipio": "MEDINA",
+    "punto": "SANTA TERESITA",
+    "mesas": 1
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "NUEVO COLISEO MUNICIPAL",
+    "mesas": 23
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE JUAN LUIS LONDOÑO",
+    "mesas": 20
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "COLEGIO LA PAZ",
+    "mesas": 26
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "ESCUELA EL DIAMANTE",
+    "mesas": 8
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "COL MAYOR DE MOSQUERA",
+    "mesas": 13
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE LA AMISTAD",
+    "mesas": 11
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "ESCUELA LOS PUENTES",
+    "mesas": 1
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE LA MERCED",
+    "mesas": 12
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE ANTONIO NARIÑO",
+    "mesas": 4
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "SECTOR NOVATERRA",
+    "mesas": 9
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "COLEGIO ROBERTO VELANDIA",
+    "mesas": 29
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE LA ARMONIA",
+    "mesas": 27
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "JARDIN INF VILLA MARCELA",
+    "mesas": 27
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "EL TREBOL COL COMPARTIR",
+    "mesas": 30
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "COL LA FRATERNIDAD",
+    "mesas": 23
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE FRANCISCO DE PAULA SANTANDER",
+    "mesas": 6
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "IE NUEVO MILENIO",
+    "mesas": 10
+  },
+  {
+    "municipio": "MOSQUERA",
+    "punto": "CC ECOPLAZA",
+    "mesas": 13
+  },
+  {
+    "municipio": "NARIÑO",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "NEMOCON",
+    "punto": "POLIDEPORTIVO FRAY IGNACIO MARIÑO",
+    "mesas": 21
+  },
+  {
+    "municipio": "NEMOCON",
+    "punto": "IE DEPARTAMENTAL ALFONSO LOPEZ PUMAREJO",
+    "mesas": 8
+  },
+  {
+    "municipio": "NEMOCON",
+    "punto": "VEREDA PATIO BONITO",
+    "mesas": 6
+  },
+  {
+    "municipio": "NILO",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "NILO",
+    "punto": "IED PUEBLO NUEVO",
+    "mesas": 3
+  },
+  {
+    "municipio": "NILO",
+    "punto": "IED LA ESMERALDA",
+    "mesas": 3
+  },
+  {
+    "municipio": "NIMAIMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 7
+  },
+  {
+    "municipio": "NIMAIMA",
+    "punto": "TOBIA",
+    "mesas": 4
+  },
+  {
+    "municipio": "NIMAIMA",
+    "punto": "EL CERRO",
+    "mesas": 1
+  },
+  {
+    "municipio": "NOCAIMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 17
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "COLISEO CUBIERTO LORENZO DE TERRONES",
+    "mesas": 23
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "I.E.D. AQUILEO PARRA",
+    "mesas": 16
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "IED ANA FRANCISCA LARA SD ANTONIO NARIÑO",
+    "mesas": 3
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "I.E. D. ANA FRANCISCA LARA SD SAN JOSE",
+    "mesas": 17
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "I.E.D. ANA FRANCISCA LARA SEDE BOLIVAR",
+    "mesas": 8
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "IED INST TEC AGRIC SD CNIA ALBERTO NIETO",
+    "mesas": 5
+  },
+  {
+    "municipio": "PACHO",
+    "punto": "INSTITUCION EDUCATIVA PASUNCHA",
+    "mesas": 3
+  },
+  {
+    "municipio": "PAIME",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 8
+  },
+  {
+    "municipio": "PAIME",
+    "punto": "CUATRO CAMINOS",
+    "mesas": 2
+  },
+  {
+    "municipio": "PAIME",
+    "punto": "EL PLOMO (EL PARAISO)",
+    "mesas": 1
+  },
+  {
+    "municipio": "PAIME",
+    "punto": "TUDELA",
+    "mesas": 4
+  },
+  {
+    "municipio": "PAIME",
+    "punto": "VENECIA",
+    "mesas": 1
+  },
+  {
+    "municipio": "PANDI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "EL ENGAÑO",
+    "mesas": 1
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "GUAICARAMO",
+    "mesas": 1
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "MAYA",
+    "mesas": 4
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "SANTA CECILIA",
+    "mesas": 2
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "VILLA PACHELLY",
+    "mesas": 1
+  },
+  {
+    "municipio": "PARATEBUENO (LA NAGUAYA)",
+    "punto": "CENTRO POBLADO JAPON",
+    "mesas": 1
+  },
+  {
+    "municipio": "PASCA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 26
+  },
+  {
+    "municipio": "PUERTO SALGAR",
+    "punto": "COLEGIO TECNICO DEPARTAMENTAL MIXTO",
+    "mesas": 25
+  },
+  {
+    "municipio": "PUERTO SALGAR",
+    "punto": "IED POLICARPA SALAVARRIETA",
+    "mesas": 12
+  },
+  {
+    "municipio": "PUERTO SALGAR",
+    "punto": "COLORADOS",
+    "mesas": 1
+  },
+  {
+    "municipio": "PUERTO SALGAR",
+    "punto": "LA REINES",
+    "mesas": 1
+  },
+  {
+    "municipio": "PUERTO SALGAR",
+    "punto": "PUERTO LIBRE",
+    "mesas": 3
+  },
+  {
+    "municipio": "PULI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 8
+  },
+  {
+    "municipio": "PULI",
+    "punto": "VALPARAISO",
+    "mesas": 1
+  },
+  {
+    "municipio": "PULI",
+    "punto": "PALESTINA",
+    "mesas": 2
+  },
+  {
+    "municipio": "PULI",
+    "punto": "ESCUELA RURAL CABRERA",
+    "mesas": 1
+  },
+  {
+    "municipio": "QUEBRADANEGRA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 5
+  },
+  {
+    "municipio": "QUEBRADANEGRA",
+    "punto": "LA MAGDALENA",
+    "mesas": 6
+  },
+  {
+    "municipio": "QUEBRADANEGRA",
+    "punto": "SAN CARLOS",
+    "mesas": 2
+  },
+  {
+    "municipio": "QUEBRADANEGRA",
+    "punto": "TOBIA",
+    "mesas": 1
+  },
+  {
+    "municipio": "QUETAME",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 10
+  },
+  {
+    "municipio": "QUETAME",
+    "punto": "PUENTE QUETAME - PUENTE CLAVIJO",
+    "mesas": 8
+  },
+  {
+    "municipio": "QUIPILE",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 10
+  },
+  {
+    "municipio": "QUIPILE",
+    "punto": "LA SIERRA",
+    "mesas": 3
+  },
+  {
+    "municipio": "QUIPILE",
+    "punto": "LA VIRGEN",
+    "mesas": 3
+  },
+  {
+    "municipio": "QUIPILE",
+    "punto": "LA BOTICA",
+    "mesas": 3
+  },
+  {
+    "municipio": "QUIPILE",
+    "punto": "SANTA MARTA",
+    "mesas": 2
+  },
+  {
+    "municipio": "APULO",
+    "punto": "POLIDEPORTIVO MUNICIPAL APULO",
+    "mesas": 19
+  },
+  {
+    "municipio": "APULO",
+    "punto": "IED ANTONIO NARIÑO",
+    "mesas": 4
+  },
+  {
+    "municipio": "RICAURTE",
+    "punto": "MEGA COLEGIO ANTONIO RICAURTE",
+    "mesas": 24
+  },
+  {
+    "municipio": "RICAURTE",
+    "punto": "UNIDAD DEPORTIVA",
+    "mesas": 15
+  },
+  {
+    "municipio": "RICAURTE",
+    "punto": "CIC SACUDETE VEREDA LLANO DEL POZO",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN ANTONIO DEL TEQUENDAMA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "SAN ANTONIO DEL TEQUENDAMA",
+    "punto": "SANTANDERCITO",
+    "mesas": 12
+  },
+  {
+    "municipio": "SAN BERNARDO",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 23
+  },
+  {
+    "municipio": "SAN BERNARDO",
+    "punto": "CASA DE GOBIERNO PORTONES",
+    "mesas": 2
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 7
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "CAMANCHA",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "CUIBUCO",
+    "mesas": 2
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "LAGUNA VERDE",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "LAS MERCEDES",
+    "mesas": 2
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "PINIPAY",
+    "mesas": 2
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "REMANSO",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN CAYETANO",
+    "punto": "EL ALBERGUE",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN FRANCISCO",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 28
+  },
+  {
+    "municipio": "SAN FRANCISCO",
+    "punto": "ESCUELA RURAL EL BOSQUE",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN FRANCISCO",
+    "punto": "ESCUELA RURAL SAN LUIS",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN FRANCISCO",
+    "punto": "ESCUELA RURAL SAN MIGUEL",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN FRANCISCO",
+    "punto": "ESCUELA RURAL SAN ANTONIO",
+    "mesas": 1
+  },
+  {
+    "municipio": "SAN JUAN DE RIOSECO",
+    "punto": "CIC ANTIGUO POLIDEPORTIVO",
+    "mesas": 17
+  },
+  {
+    "municipio": "SAN JUAN DE RIOSECO",
+    "punto": "IED SAN JUAN DE RIOSECO ESCUELA ANEXA",
+    "mesas": 6
+  },
+  {
+    "municipio": "SAN JUAN DE RIOSECO",
+    "punto": "IERD DIEGO URIBE VARGAS DE CAMBAO",
+    "mesas": 4
+  },
+  {
+    "municipio": "SAN JUAN DE RIOSECO",
+    "punto": "SAN NICOLAS",
+    "mesas": 2
+  },
+  {
+    "municipio": "SAN JUAN DE RIOSECO",
+    "punto": "I.E.D RURAL LAGUNITAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "SASAIMA",
+    "punto": "AUDITORIO MUNICIPAL",
+    "mesas": 20
+  },
+  {
+    "municipio": "SASAIMA",
+    "punto": "IED NUESTRA SEÑORA DE FATIMA",
+    "mesas": 7
+  },
+  {
+    "municipio": "SASAIMA",
+    "punto": "LA VICTORIA",
+    "mesas": 3
+  },
+  {
+    "municipio": "SESQUILE",
+    "punto": "COLISEO MUNICIPAL",
+    "mesas": 24
+  },
+  {
+    "municipio": "SESQUILE",
+    "punto": "COMPLEJO DEPORTIVO",
+    "mesas": 6
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "IED GRAL SANTANDER SEDE BTO",
+    "mesas": 23
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "IED PABLO NERUDA",
+    "mesas": 14
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "COLISEO XIUA",
+    "mesas": 7
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "POLIDEPORTIVO SANTA ISABEL",
+    "mesas": 5
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "C.I.C BALCONES DE SAN JOSE",
+    "mesas": 18
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "POLIDEPORTIVO SAN RAFAEL",
+    "mesas": 15
+  },
+  {
+    "municipio": "SIBATE",
+    "punto": "IED GRAL SANTANDER SEDE PRIMARIA",
+    "mesas": 7
+  },
+  {
+    "municipio": "SILVANIA",
+    "punto": "COLISEO MUNICIPAL",
+    "mesas": 30
+  },
+  {
+    "municipio": "SILVANIA",
+    "punto": "COLEGIO NUEVO SANTA INES",
+    "mesas": 19
+  },
+  {
+    "municipio": "SILVANIA",
+    "punto": "AGUA BONITA",
+    "mesas": 4
+  },
+  {
+    "municipio": "SILVANIA",
+    "punto": "SUBIA",
+    "mesas": 9
+  },
+  {
+    "municipio": "SIMIJACA",
+    "punto": "COLEGIO AGUSTIN PARRA SEDE PRIMARIA",
+    "mesas": 16
+  },
+  {
+    "municipio": "SIMIJACA",
+    "punto": "COLEGIO AGUSTIN PARRA SEDE BACHILLERATO",
+    "mesas": 16
+  },
+  {
+    "municipio": "SIMIJACA",
+    "punto": "EL SALITRE",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I. E. SANTA ANA - ANTONIO NARIÑO",
+    "mesas": 24
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. COMPARTIR",
+    "mesas": 33
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. CIUDAD LATINA",
+    "mesas": 30
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE. NUEVO COMPARTIR",
+    "mesas": 14
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CONCENTRACION ESCOLAR SAN NICOLAS",
+    "mesas": 16
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. COMPARTIR PRIMARIA",
+    "mesas": 30
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE JUAN PABLO SEGUNDO SOACHA",
+    "mesas": 15
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLEGIO COLSUBSIDIO - MAIPORE",
+    "mesas": 7
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. PAZ Y ESPERANZA",
+    "mesas": 7
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "SALON COMUNAL VILLA ITALIA",
+    "mesas": 3
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLEGIO MILITAR LICEO SOCIAL COMPARTIR",
+    "mesas": 16
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. GENERAL SANTANDER",
+    "mesas": 36
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE GENERAL SANTANDER SD MI TIERNA EDAD",
+    "mesas": 19
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. INTEGRADO DE SOACHA",
+    "mesas": 33
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLISEO GENERAL SANTANDER",
+    "mesas": 21
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CONCENTRACION CAMILO TORRES",
+    "mesas": 18
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I E GENERAL SANTANDER SEDE LA VEREDITA",
+    "mesas": 7
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "SALON COMUNAL CIUDAD SATELITE",
+    "mesas": 13
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "UNIVER. DE CUNDINAMARCA EXTENSION SOACHA",
+    "mesas": 25
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CENTRO DE DESARROLLO INFANTIL COMPENSAR",
+    "mesas": 7
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. VIDA NUEVA",
+    "mesas": 22
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CDI JARDIN SOCIAL SOL Y LUNA",
+    "mesas": 9
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE LUIS HENRIQUEZ",
+    "mesas": 6
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLEGIO COOPERATIVO EUGENIO DIAZ CASTRO",
+    "mesas": 6
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CENTRO DEPORTIVO PARQUE DE LOS LOCOS",
+    "mesas": 25
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LA DESPENSA",
+    "mesas": 10
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. MANUELA BELTRAN",
+    "mesas": 8
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LEON XIII",
+    "mesas": 27
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CENTRO COMERCIAL GRAN PLAZA",
+    "mesas": 31
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLISEO LEON XIII",
+    "mesas": 25
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LA DESPENSA - CIUDAD VERDE",
+    "mesas": 17
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LEON XIII - CHILOE",
+    "mesas": 33
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LA DESPENSA - MARCO FIDEL SUAREZ",
+    "mesas": 3
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. SOACHA AVANZA LA UNIDAD",
+    "mesas": 28
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLEGIO MINUTO DE DIOS CIUDAD VERDE",
+    "mesas": 26
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE BENEDICTO XVI",
+    "mesas": 2
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CENTRO COMERCIAL MERCURIO",
+    "mesas": 23
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LUIS CARLOS GALAN",
+    "mesas": 9
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. CIUDADELA SUCRE",
+    "mesas": 24
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LA ISLA",
+    "mesas": 10
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I E JULIO CESAR TURBAY AYALA",
+    "mesas": 20
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I. E. GABRIEL GARCIA MARQUEZ",
+    "mesas": 4
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE LUIS C. GALAN-SD VILLAS DE CASALOMA",
+    "mesas": 3
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "BIBLIOTECA MUNICIPAL LA ISLA",
+    "mesas": 4
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE BUENOS AIRES SEDE A",
+    "mesas": 4
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "LICEO NUEVA VIDA",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CTRO REG. DE ATENCION A VICTIMAS CRAV",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CENTRO COMERCIAL VENTURA TERREROS",
+    "mesas": 29
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. EL BOSQUE",
+    "mesas": 28
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. SAN MATEO SEDE A",
+    "mesas": 30
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. SAN MATEO SEDE B",
+    "mesas": 21
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LICEO MAYOR DE SOACHA",
+    "mesas": 25
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CTRO DE ATENCION A PERSONAS CON DISCAP.",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "CENTRO COMERCIAL UNISUR",
+    "mesas": 8
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LAS VILLAS- SEDE BARON DEL SOL",
+    "mesas": 28
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. LAS VILLAS - SEDE LIBERTADORES",
+    "mesas": 6
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. SOL NACIENTE",
+    "mesas": 24
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. SAN MATEO - MARISCAL SUCRE",
+    "mesas": 14
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I E EDUARDO SANTOS SEDE PANAMERICANA",
+    "mesas": 16
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I.E. SOACHA PARA VIVIR MEJOR",
+    "mesas": 5
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "SALON COMUNAL ALTOS DE LA FLORIDA",
+    "mesas": 3
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "LICEO CRISTIANO VIDA NUEVA",
+    "mesas": 5
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE EDUARDO SANTOS",
+    "mesas": 5
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE RICAURTE SEDE PORVENIR",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "IE RICAURTE SEDE ESPAÑA",
+    "mesas": 10
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "COLEGIO BOLIVAR PRIMARIA",
+    "mesas": 11
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I. E. EUGENIO DIAZ CASTRO SEDE CHACUA",
+    "mesas": 2
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I. E. EUGENIO DIAZ CASTRO SAN JORGE",
+    "mesas": 3
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "SALON COMUNAL VEREDA FUSUNGA",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "I. E. EUGENIO DIAZ CASTRO SEDE PRIMARIA",
+    "mesas": 4
+  },
+  {
+    "municipio": "SOACHA",
+    "punto": "SALON COMUNAL SAN FRANCISCO",
+    "mesas": 1
+  },
+  {
+    "municipio": "SOPO",
+    "punto": "COLISEO MUNICIPAL",
+    "mesas": 24
+  },
+  {
+    "municipio": "SOPO",
+    "punto": "C ACONDICIONAMIENTO Y PRE FISICA CAPF II",
+    "mesas": 26
+  },
+  {
+    "municipio": "SOPO",
+    "punto": "ESCENARIO COMUN. INTEGRAL EL CHUSCAL",
+    "mesas": 6
+  },
+  {
+    "municipio": "SOPO",
+    "punto": "COLEGIO COOPERATIVO SOPO",
+    "mesas": 2
+  },
+  {
+    "municipio": "SOPO",
+    "punto": "BRICEÑO",
+    "mesas": 6
+  },
+  {
+    "municipio": "SOPO",
+    "punto": "LA VIOLETA",
+    "mesas": 1
+  },
+  {
+    "municipio": "SUBACHOQUE",
+    "punto": "IED RICARDO GONZALEZ SEDE A",
+    "mesas": 25
+  },
+  {
+    "municipio": "SUBACHOQUE",
+    "punto": "COLISEO MUNICIPAL SUBACHOQUE",
+    "mesas": 12
+  },
+  {
+    "municipio": "SUBACHOQUE",
+    "punto": "LA PRADERA",
+    "mesas": 3
+  },
+  {
+    "municipio": "SUBACHOQUE",
+    "punto": "EL GUAMAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "SUESCA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 33
+  },
+  {
+    "municipio": "SUESCA",
+    "punto": "HATO GRANDE",
+    "mesas": 2
+  },
+  {
+    "municipio": "SUESCA",
+    "punto": "SANTA ROSITA",
+    "mesas": 2
+  },
+  {
+    "municipio": "SUESCA",
+    "punto": "IE DPTAL CACICAZGO",
+    "mesas": 1
+  },
+  {
+    "municipio": "SUPATA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 15
+  },
+  {
+    "municipio": "SUSA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 17
+  },
+  {
+    "municipio": "SUTATAUSA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 12
+  },
+  {
+    "municipio": "SUTATAUSA",
+    "punto": "LAS PEÑAS",
+    "mesas": 2
+  },
+  {
+    "municipio": "TABIO",
+    "punto": "POLIDEPORTIVO MUNICIPAL - TABIO",
+    "mesas": 25
+  },
+  {
+    "municipio": "TABIO",
+    "punto": "CASA DE LA CULTURA",
+    "mesas": 16
+  },
+  {
+    "municipio": "TABIO",
+    "punto": "COLEGIO GIMNASIO MODERNO SANTA BARBARA",
+    "mesas": 14
+  },
+  {
+    "municipio": "TABIO",
+    "punto": "IED JOSE DE SAN MARTIN",
+    "mesas": 2
+  },
+  {
+    "municipio": "TABIO",
+    "punto": "IEDR DIEGO GOMEZ DE MENA",
+    "mesas": 1
+  },
+  {
+    "municipio": "TAUSA",
+    "punto": "POLIDEPORTIVO MUNICIPAL",
+    "mesas": 15
+  },
+  {
+    "municipio": "TAUSA",
+    "punto": "IEDIT-IE DPTAL INTEGRADA DE TAUSA",
+    "mesas": 4
+  },
+  {
+    "municipio": "TAUSA",
+    "punto": "EL SALITRE",
+    "mesas": 1
+  },
+  {
+    "municipio": "TAUSA",
+    "punto": "PARAMO ALTO",
+    "mesas": 1
+  },
+  {
+    "municipio": "TENA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "TENA",
+    "punto": "PUESTO INSPECCION LA GRAN VIA",
+    "mesas": 10
+  },
+  {
+    "municipio": "TENJO",
+    "punto": "POLIDEPORTIVO MUNICIPAL",
+    "mesas": 27
+  },
+  {
+    "municipio": "TENJO",
+    "punto": "IED GENERAL SANTANDER",
+    "mesas": 20
+  },
+  {
+    "municipio": "TENJO",
+    "punto": "SALON MULTIFUNCIONAL CASA DE LA MUJER",
+    "mesas": 7
+  },
+  {
+    "municipio": "TENJO",
+    "punto": "LA PUNTA",
+    "mesas": 4
+  },
+  {
+    "municipio": "TIBACUY",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 7
+  },
+  {
+    "municipio": "TIBACUY",
+    "punto": "CUMACA",
+    "mesas": 5
+  },
+  {
+    "municipio": "TIBACUY",
+    "punto": "SALON COMUNAL BATEAS",
+    "mesas": 3
+  },
+  {
+    "municipio": "TIBIRITA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 10
+  },
+  {
+    "municipio": "TOCAIMA",
+    "punto": "POLIDEPORTIVO PEPE ZABALA",
+    "mesas": 21
+  },
+  {
+    "municipio": "TOCAIMA",
+    "punto": "CENTRO DE INTEGRACION CIUDADANA",
+    "mesas": 19
+  },
+  {
+    "municipio": "TOCAIMA",
+    "punto": "PUBENZA",
+    "mesas": 1
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "COLEGIO SAN LUIS GONZAGA",
+    "mesas": 24
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "INS. EDUCATIVA LA FUENTE",
+    "mesas": 13
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "INST EDU DEPARTAMENTAL TECNICO COMERCIAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "COLISEO MUNICIPAL DE TOCANCIPA",
+    "mesas": 7
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "I. E. DPTAL TECNICO INDUSTRIAL",
+    "mesas": 19
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "INSTITUCION EDUCATIVA CANAVITA",
+    "mesas": 12
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "CENTRO DE INTEGRACION CIUDADANA CIC",
+    "mesas": 22
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "SALON COMUNAL DE CANAVITA",
+    "mesas": 5
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "SALON COMUNAL TORRES DE SAN JUAN",
+    "mesas": 4
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "ESCUELA RURAL LA ESMERALDA",
+    "mesas": 3
+  },
+  {
+    "municipio": "TOCANCIPA",
+    "punto": "SALON COMUNAL LA ESMERALDA",
+    "mesas": 1
+  },
+  {
+    "municipio": "TOPAIPI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 9
+  },
+  {
+    "municipio": "TOPAIPI",
+    "punto": "SAN ANTONIO DE AGUILERA",
+    "mesas": 3
+  },
+  {
+    "municipio": "TOPAIPI",
+    "punto": "EL NARANJAL",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 17
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "VEREDA SANTA BARBARA",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "LA PLAYA",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "LAGUNA AZUL",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "VEREDA SAN PEDRO",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "MAMBITA",
+    "mesas": 3
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "VEREDA SAN JUAN",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "PEÑAS BLANCAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "VEREDA RIO NEGRO",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "SAN PEDRO DE JAGUA",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "LA MESA",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "SANTA ROSA",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "INSTITUCION EDUCATIVA SOYA",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBALA",
+    "punto": "INSTITUCION EDUCATIVA LAS MARGARITAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBAQUE",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 19
+  },
+  {
+    "municipio": "UBAQUE",
+    "punto": "PUESTO VEREDA SABANILLA",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "UNIVERSIDAD CUNDINAMARCA",
+    "mesas": 23
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "CENTRO COMERCIAL LA SEGUNDA",
+    "mesas": 13
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "MEGA COLEGIO BARRIO SAN JOSE",
+    "mesas": 8
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "UNIDAD BASICA",
+    "mesas": 14
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "ESCUELA NORMAL SUPERIOR",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "INSTITUTO BOLIVAR",
+    "mesas": 21
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "COLISEO MUNICIPAL",
+    "mesas": 27
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "COLEGIO SANTA MARIA",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "CARCEL",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "VIENTO LIBRE",
+    "mesas": 2
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "BRUSELAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "VOLCAN DOS",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "ESCUELA RURAL TAUSAVITA",
+    "mesas": 1
+  },
+  {
+    "municipio": "UBATE",
+    "punto": "GUATANCUY",
+    "mesas": 3
+  },
+  {
+    "municipio": "UNE",
+    "punto": "COLISEO POLIDEPORTIVO GUSTAVO MOYA ANGEL",
+    "mesas": 21
+  },
+  {
+    "municipio": "UNE",
+    "punto": "ESCUELA PEDRO ELISEO CRUZ",
+    "mesas": 1
+  },
+  {
+    "municipio": "UNE",
+    "punto": "INSPECCION DE POLICIA EL RAMAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "UTICA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "VENECIA",
+    "punto": "COLISEO DE DEPORTES",
+    "mesas": 11
+  },
+  {
+    "municipio": "VENECIA",
+    "punto": "ESCUELA SAN ANTONIO",
+    "mesas": 1
+  },
+  {
+    "municipio": "VENECIA",
+    "punto": "APOSENTOS",
+    "mesas": 1
+  },
+  {
+    "municipio": "VENECIA",
+    "punto": "ESCUELA LAS BRISAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 16
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "CERINZA",
+    "mesas": 1
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "CORCEGA",
+    "mesas": 1
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "CHONTEGRANDE",
+    "mesas": 2
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "GUACAMAYAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "LLANO GRANDE",
+    "mesas": 2
+  },
+  {
+    "municipio": "VERGARA",
+    "punto": "VILLA OLARTE (FLANDES)",
+    "mesas": 1
+  },
+  {
+    "municipio": "VIANI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 14
+  },
+  {
+    "municipio": "VILLAGOMEZ",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 7
+  },
+  {
+    "municipio": "VILLAGOMEZ",
+    "punto": "CERRO AZUL",
+    "mesas": 1
+  },
+  {
+    "municipio": "VILLAPINZON",
+    "punto": "PLAZA DE MERCADO",
+    "mesas": 34
+  },
+  {
+    "municipio": "VILLAPINZON",
+    "punto": "COL. MPAL FRANCISCO DE VARGAS FIGUEROA",
+    "mesas": 11
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "ESCUELA LA VALENCIA",
+    "mesas": 19
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "SENA",
+    "mesas": 18
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "CONC. POLICARPA SALAVARRIETA",
+    "mesas": 19
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "ESCUELA CARLOS LLERAS",
+    "mesas": 14
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "IED PROMOCION SOCIAL",
+    "mesas": 4
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "CARCEL MUNICIPAL",
+    "mesas": 1
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "IED COLEGIO CUNE",
+    "mesas": 1
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "BAGAZAL",
+    "mesas": 3
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "CHAPAIMA",
+    "mesas": 1
+  },
+  {
+    "municipio": "VILLETA",
+    "punto": "ILO GRANDE",
+    "mesas": 1
+  },
+  {
+    "municipio": "VIOTA",
+    "punto": "CENTRO POLIDEPORTIVO MUNICIPAL",
+    "mesas": 17
+  },
+  {
+    "municipio": "VIOTA",
+    "punto": "ESCUELA MARIA INMACULADA",
+    "mesas": 12
+  },
+  {
+    "municipio": "VIOTA",
+    "punto": "SAN GABRIEL",
+    "mesas": 4
+  },
+  {
+    "municipio": "VIOTA",
+    "punto": "BRASIL",
+    "mesas": 3
+  },
+  {
+    "municipio": "VIOTA",
+    "punto": "EL PIÑAL",
+    "mesas": 2
+  },
+  {
+    "municipio": "VIOTA",
+    "punto": "IED BAJO PALMAR",
+    "mesas": 1
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 18
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "ALSACIA",
+    "mesas": 2
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "ALTO DE CAÑAS",
+    "mesas": 1
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "APOSENTOS",
+    "mesas": 1
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "EL CHAPON (LAS LOMAS)",
+    "mesas": 1
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "GUADUALITO",
+    "mesas": 2
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "CABO VERDE",
+    "mesas": 1
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "ESCUELA GUAYABALES",
+    "mesas": 2
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "IBAMA",
+    "mesas": 2
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "LLANO MATEO",
+    "mesas": 3
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "PATEVACA",
+    "mesas": 2
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "PUEBLO NUEVO",
+    "mesas": 1
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "TERAN",
+    "mesas": 2
+  },
+  {
+    "municipio": "YACOPI",
+    "punto": "VEREDA EL CASTILLO",
+    "mesas": 1
+  },
+  {
+    "municipio": "ZIPACON",
+    "punto": "PUESTO CABECERA MUNICIPAL",
+    "mesas": 10
+  },
+  {
+    "municipio": "ZIPACON",
+    "punto": "EL OCASO",
+    "mesas": 3
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "IEM CUNDINAMARCA",
+    "mesas": 33
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "COLEGIO RAFAEL POMBO",
+    "mesas": 12
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "ESCUELA QUEVEDO Z",
+    "mesas": 44
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "SEDE EDU SIMON BOLIVAR",
+    "mesas": 32
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "IEM SAN JUAN BAUTISTA DE SALLE SD PRIMAR",
+    "mesas": 13
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "SALON COMUNAL SANJUANITO",
+    "mesas": 9
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "IEM TEC LUIS ORJUELA SEDE MARISCAL SUCRE",
+    "mesas": 3
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "ESCUELA FRANCISCO DE PAULA SANTANDER",
+    "mesas": 1
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "IEM GUILLERMO QUEVEDO Z SD LA 14",
+    "mesas": 3
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CIC DE PRADOS DEL MIRADOR",
+    "mesas": 3
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "COLEGIO LICEO INTEGRADO",
+    "mesas": 37
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "INST.EDUC.SANTIAGO PEREZ",
+    "mesas": 38
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "GABRIELA MISTRAL SEDE NUEVA",
+    "mesas": 25
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CAMI PAUZ",
+    "mesas": 7
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "COLEGIO DE LA PRESENTACION",
+    "mesas": 14
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "COLISEO ARENA DE SAL",
+    "mesas": 12
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CIC DE BARANDILLAS",
+    "mesas": 2
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "I.E. DPTAL TECNICO INDUSTRIAL",
+    "mesas": 21
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CORREGIMIENTO 1 ESC SAN ISIDRO",
+    "mesas": 4
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CORREGIMIENTO 2 (ESC BARANDILLAS)",
+    "mesas": 18
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CORREGIMIENTO 3 (ESC SAN JORGE)",
+    "mesas": 4
+  },
+  {
+    "municipio": "ZIPAQUIRA",
+    "punto": "CORREGIMIENTO 2 ESCUELA SAN MIGUEL",
+    "mesas": 1
+  }
+]
