@@ -7,7 +7,8 @@
 -- 1. Tabla de testigos (importada desde CSV)
 CREATE TABLE IF NOT EXISTS testigos (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  cedula TEXT UNIQUE NOT NULL,
+  cedula TE
+  XT UNIQUE NOT NULL,
   nombre1 TEXT NOT NULL DEFAULT '',
   nombre2 TEXT,
   apellido1 TEXT NOT NULL DEFAULT '',

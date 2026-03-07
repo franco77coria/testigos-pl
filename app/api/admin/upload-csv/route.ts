@@ -152,7 +152,9 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // 3. Crear resultados vacíos (sin sobrescribir datos existentes)
+      // 3. Limpiar y crear resultados vacíos
+      await supabase.from('resultados').delete().neq('testigo_cedula', '')
+
       const resultadosRows = asignaciones.map(a => ({
         testigo_cedula: a.cedula,
         mesa_numero: a.mesa_numero,
@@ -163,7 +165,7 @@ export async function POST(request: NextRequest) {
       for (let i = 0; i < resultadosRows.length; i += 500) {
         await supabase
           .from('resultados')
-          .upsert(resultadosRows.slice(i, i + 500), { onConflict: 'testigo_cedula,mesa_numero', ignoreDuplicates: true })
+          .insert(resultadosRows.slice(i, i + 500))
       }
 
       return NextResponse.json({
