@@ -1,13 +1,20 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Loader2, ShieldAlert, CheckCircle2 } from 'lucide-react'
+import { Loader2, ShieldAlert, CheckCircle2, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 interface Stats {
   testigos: number
   mesas: number
+}
+
+type AccesoTab = 'lideres' | 'analysis' | 'super'
+
+interface AccesoItem {
+  cedula: string
+  nombre?: string
 }
 
 export default function AdminPanel() {
@@ -24,11 +31,17 @@ export default function AdminPanel() {
   const [mensaje, setMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
   const [stats, setStats] = useState<Stats>({ testigos: 0, mesas: 0 })
 
-  // Admin authorization
-  const [newAdminCedula, setNewAdminCedula] = useState('')
-  const [adminMensaje, setAdminMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
+  // Accesos
+  const [accesoTab, setAccesoTab] = useState<AccesoTab>('lideres')
+  const [accesoLideres, setAccesoLideres] = useState<AccesoItem[]>([])
+  const [accesoAnalysis, setAccesoAnalysis] = useState<AccesoItem[]>([])
+  const [accesoSuper, setAccesoSuper] = useState<AccesoItem[]>([])
+  const [nuevaCedula, setNuevaCedula] = useState('')
+  const [nuevoNombre, setNuevoNombre] = useState('')
+  const [accesoMensaje, setAccesoMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
+  const [accesoLoading, setAccesoLoading] = useState(false)
 
-  // Reset elections
+  // Reset
   const [resetConfirm, setResetConfirm] = useState('')
   const [resetMensaje, setResetMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
 
@@ -56,6 +69,93 @@ export default function AdminPanel() {
     setGateLoading(false)
   }
 
+  // ---- Load accesos ----
+  useEffect(() => {
+    if (!authorized) return
+    loadAccesos()
+  }, [authorized])
+
+  async function loadAccesos() {
+    try {
+      const [rL, rA, rS] = await Promise.all([
+        fetch('/api/admin/acceso-stats').then(r => r.json()),
+        fetch('/api/admin/acceso-analysis').then(r => r.json()),
+        fetch('/api/admin/acceso-super').then(r => r.json()),
+      ])
+      if (rL.exito) setAccesoLideres(rL.accesos)
+      if (rA.exito) setAccesoAnalysis(rA.accesos)
+      if (rS.exito) setAccesoSuper(rS.accesos)
+    } catch { /* silent */ }
+  }
+
+  function endpointForTab(tab: AccesoTab) {
+    if (tab === 'lideres') return '/api/admin/acceso-stats'
+    if (tab === 'analysis') return '/api/admin/acceso-analysis'
+    return '/api/admin/acceso-super'
+  }
+
+  function setListForTab(tab: AccesoTab, items: AccesoItem[]) {
+    if (tab === 'lideres') setAccesoLideres(items)
+    else if (tab === 'analysis') setAccesoAnalysis(items)
+    else setAccesoSuper(items)
+  }
+
+  function getListForTab(tab: AccesoTab) {
+    if (tab === 'lideres') return accesoLideres
+    if (tab === 'analysis') return accesoAnalysis
+    return accesoSuper
+  }
+
+  async function handleAddAcceso(e: React.FormEvent) {
+    e.preventDefault()
+    if (!nuevaCedula.trim()) return
+    setAccesoLoading(true)
+    setAccesoMensaje(null)
+    try {
+      const res = await fetch(endpointForTab(accesoTab), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ super_cedula: gateCedula, cedula_nueva: nuevaCedula, nombre: nuevoNombre }),
+      })
+      const data = await res.json()
+      if (data.exito) {
+        setAccesoMensaje({ tipo: 'ok', texto: data.mensaje })
+        setNuevaCedula('')
+        setNuevoNombre('')
+        // Refetch this tab
+        const r = await fetch(endpointForTab(accesoTab)).then(r => r.json())
+        if (r.exito) setListForTab(accesoTab, r.accesos)
+      } else {
+        setAccesoMensaje({ tipo: 'err', texto: data.mensaje })
+      }
+    } catch {
+      setAccesoMensaje({ tipo: 'err', texto: 'Error de conexión.' })
+    }
+    setAccesoLoading(false)
+  }
+
+  async function handleRevokeAcceso(cedula: string) {
+    setAccesoLoading(true)
+    setAccesoMensaje(null)
+    try {
+      const res = await fetch(endpointForTab(accesoTab), {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ super_cedula: gateCedula, cedula }),
+      })
+      const data = await res.json()
+      if (data.exito) {
+        setListForTab(accesoTab, getListForTab(accesoTab).filter(a => a.cedula !== cedula))
+        setAccesoMensaje({ tipo: 'ok', texto: data.mensaje })
+      } else {
+        setAccesoMensaje({ tipo: 'err', texto: data.mensaje })
+      }
+    } catch {
+      setAccesoMensaje({ tipo: 'err', texto: 'Error de conexión.' })
+    }
+    setAccesoLoading(false)
+  }
+
   // ---- CSV Upload ----
   async function uploadCSV(file: File) {
     setLoading('testigos')
@@ -76,30 +176,6 @@ export default function AdminPanel() {
       }
     } catch {
       setMensaje({ tipo: 'err', texto: 'Error de conexión.' })
-    }
-    setLoading('')
-  }
-
-  // ---- Add Admin ----
-  async function handleAddAdmin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading('add_admin')
-    setAdminMensaje(null)
-    try {
-      const res = await fetch('/api/admin/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cedula_admin: gateCedula, nueva_cedula: newAdminCedula }),
-      })
-      const data = await res.json()
-      if (data.exito) {
-        setAdminMensaje({ tipo: 'ok', texto: data.mensaje })
-        setNewAdminCedula('')
-      } else {
-        setAdminMensaje({ tipo: 'err', texto: data.mensaje })
-      }
-    } catch {
-      setAdminMensaje({ tipo: 'err', texto: 'Error de conexión.' })
     }
     setLoading('')
   }
@@ -125,6 +201,12 @@ export default function AdminPanel() {
       setResetMensaje({ tipo: 'err', texto: 'Error de conexión.' })
     }
     setLoading('')
+  }
+
+  const TAB_LABELS: Record<AccesoTab, { label: string; desc: string; color: string }> = {
+    lideres: { label: 'Líderes', desc: 'Acceso al Monitor de Estadísticas', color: '#3B82F6' },
+    analysis: { label: 'Analysis Center', desc: 'Acceso al Centro de Análisis', color: '#8B5CF6' },
+    super: { label: 'Super Admin', desc: 'Acceso total al panel de control', color: '#CE1126' },
   }
 
   // ===================== GATE SCREEN =====================
@@ -165,13 +247,14 @@ export default function AdminPanel() {
   }
 
   // ===================== MAIN PANEL =====================
+  const currentList = getListForTab(accesoTab)
+  const tabInfo = TAB_LABELS[accesoTab]
+
   return (
     <div style={styles.page}>
-      {/* Top red accent */}
       <div style={styles.topAccent} />
 
       <div style={styles.container}>
-        {/* Back link */}
         <Link href="/" style={styles.backLink}>← Volver al portal</Link>
 
         {/* Header */}
@@ -201,11 +284,7 @@ export default function AdminPanel() {
         )}
 
         {/* =================== MONITOR CARD =================== */}
-        <div
-          style={styles.monitorCard}
-          onClick={() => router.push('/admin/dashboard')}
-        >
-          {/* EN VIVO badge */}
+        <div style={styles.monitorCard} onClick={() => router.push('/admin/dashboard')}>
           <div style={styles.liveBadge}>
             <span style={styles.liveDot} />
             <span style={styles.liveText}>EN VIVO</span>
@@ -224,7 +303,6 @@ export default function AdminPanel() {
         {/* =================== FLUJO DE TRABAJO =================== */}
         <div style={styles.sectionHeader}>FLUJO DE TRABAJO</div>
         <div style={styles.workflowCard}>
-          {/* Censo de Testigos */}
           <div style={styles.workflowRow}>
             <div style={styles.workflowLeft}>
               <div style={{ ...styles.workflowIconCircle, background: 'rgba(59,130,246,0.08)' }}>
@@ -262,55 +340,110 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        {/* =================== SEGURIDAD =================== */}
-        <div style={styles.sectionHeader}>SEGURIDAD</div>
-        <div style={styles.securityCard}>
-          <div style={styles.securityIcon}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#CE1126" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="16" r="1" /><rect x="3" y="10" width="18" height="12" rx="2" /><path d="M7 10V7a5 5 0 0 1 10 0v3" />
-            </svg>
+        {/* =================== GESTIÓN DE ACCESOS =================== */}
+        <div style={styles.sectionHeader}>GESTIÓN DE ACCESOS</div>
+        <div style={styles.accessCard}>
+
+          {/* Tabs */}
+          <div style={styles.tabBar}>
+            {(Object.keys(TAB_LABELS) as AccesoTab[]).map(tab => (
+              <button
+                key={tab}
+                onClick={() => { setAccesoTab(tab); setAccesoMensaje(null); setNuevaCedula(''); setNuevoNombre('') }}
+                style={{
+                  ...styles.tabBtn,
+                  background: accesoTab === tab ? TAB_LABELS[tab].color : 'transparent',
+                  color: accesoTab === tab ? '#FFFFFF' : '#64748B',
+                  fontWeight: accesoTab === tab ? 700 : 500,
+                }}
+              >
+                {TAB_LABELS[tab].label}
+              </button>
+            ))}
           </div>
-          <h3 style={styles.securityTitle}>Conceder Autorización</h3>
-          <p style={styles.securityDesc}>Agrega la cédula de un nuevo supervisor.</p>
 
-          {adminMensaje && (
-            <div style={{
-              ...styles.inlineAlert,
-              background: adminMensaje.tipo === 'ok' ? '#ECFDF5' : '#FEF2F2',
-              color: adminMensaje.tipo === 'ok' ? '#065F46' : '#B91C1C',
-            }}>
-              {adminMensaje.tipo === 'ok' ? <CheckCircle2 size={14} /> : <ShieldAlert size={14} />}
-              <span>{adminMensaje.texto}</span>
-            </div>
-          )}
+          <div style={{ padding: '20px' }}>
+            {/* Tab description */}
+            <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, marginBottom: '16px' }}>
+              {tabInfo.desc}
+            </p>
 
-          <form onSubmit={handleAddAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div>
-              <label style={styles.inputLabel}>TU CÉDULA</label>
-              <input type="text" inputMode="numeric"
-                value={gateCedula} readOnly
-                style={{ ...styles.input, background: '#F1F5F9', color: '#64748B' }}
-              />
-            </div>
-            <div>
-              <label style={styles.inputLabel}>NUEVO ADMIN</label>
-              <input type="text" inputMode="numeric"
-                value={newAdminCedula}
-                onChange={e => setNewAdminCedula(e.target.value)}
-                placeholder="Cédula a autorizar"
+            {/* Feedback */}
+            {accesoMensaje && (
+              <div style={{
+                ...styles.inlineAlert,
+                background: accesoMensaje.tipo === 'ok' ? '#ECFDF5' : '#FEF2F2',
+                color: accesoMensaje.tipo === 'ok' ? '#065F46' : '#B91C1C',
+                marginBottom: '16px',
+              }}>
+                {accesoMensaje.tipo === 'ok' ? <CheckCircle2 size={14} /> : <ShieldAlert size={14} />}
+                <span>{accesoMensaje.texto}</span>
+              </div>
+            )}
+
+            {/* Add form */}
+            <form onSubmit={handleAddAcceso} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              <input
+                type="text" inputMode="numeric"
+                placeholder="Cédula"
+                value={nuevaCedula}
+                onChange={e => setNuevaCedula(e.target.value)}
                 style={styles.input}
               />
+              <input
+                type="text"
+                placeholder="Nombre (opcional)"
+                value={nuevoNombre}
+                onChange={e => setNuevoNombre(e.target.value)}
+                style={styles.input}
+              />
+              <button
+                type="submit"
+                disabled={accesoLoading || !nuevaCedula.trim()}
+                style={{
+                  ...styles.addBtn,
+                  background: tabInfo.color,
+                  opacity: accesoLoading || !nuevaCedula.trim() ? 0.5 : 1,
+                  cursor: accesoLoading || !nuevaCedula.trim() ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {accesoLoading ? <><Loader2 size={14} className="animate-spin" /> Guardando...</> : '+ Agregar acceso'}
+              </button>
+            </form>
+
+            {/* List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {currentList.length === 0 ? (
+                <p style={{ fontSize: '12px', color: '#94A3B8', textAlign: 'center', padding: '16px 0', fontWeight: 500 }}>
+                  No hay accesos registrados.
+                </p>
+              ) : (
+                currentList.map(item => (
+                  <div key={item.cedula} style={styles.accesoRow}>
+                    <div style={styles.accesoInfo}>
+                      <div style={{ ...styles.accesoAvatar, background: tabInfo.color }}>
+                        {(item.nombre || item.cedula).charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        {item.nombre && (
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>{item.nombre}</div>
+                        )}
+                        <div style={{ fontSize: '12px', color: '#64748B', fontWeight: 500 }}>{item.cedula}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRevokeAcceso(item.cedula)}
+                      disabled={accesoLoading}
+                      title="Revocar acceso"
+                      style={styles.revokeBtn}
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
-            <button type="submit" disabled={loading === 'add_admin' || !newAdminCedula.trim()}
-              style={{
-                ...styles.redButton,
-                opacity: (loading === 'add_admin' || !newAdminCedula.trim()) ? 0.5 : 1,
-              }}>
-              {loading === 'add_admin' ? (
-                <><Loader2 size={16} className="animate-spin" /> Registrando...</>
-              ) : 'Autorizar Cédula'}
-            </button>
-          </form>
+          </div>
         </div>
 
         {/* =================== ZONA DE PELIGRO =================== */}
@@ -323,7 +456,7 @@ export default function AdminPanel() {
           </div>
           <h3 style={styles.dangerTitle}>Borrar datos de elecciones cargados</h3>
           <p style={styles.dangerDesc}>
-            Esta acción borrará <strong>todos los resultados</strong> (votos, fotos E-14 y asignaciones de mesas). Los testigos y el semáforo municipal NO se borrarán.
+            Esta acción borrará <strong>todos los resultados</strong> (votos, fotos E-14 y asignaciones de mesas). Los testigos NO se borrarán.
           </p>
 
           {resetMensaje && (
@@ -360,7 +493,6 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        {/* Bottom spacer */}
         <div style={{ height: '48px' }} />
       </div>
     </div>
@@ -369,7 +501,6 @@ export default function AdminPanel() {
 
 // ===================== STYLES =====================
 const styles: Record<string, React.CSSProperties> = {
-  // Page
   page: {
     minHeight: '100vh',
     background: '#FFFFFF',
@@ -386,8 +517,6 @@ const styles: Record<string, React.CSSProperties> = {
     margin: '0 auto',
     padding: '20px 20px 40px',
   },
-
-  // Back link
   backLink: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -398,8 +527,6 @@ const styles: Record<string, React.CSSProperties> = {
     textDecoration: 'none',
     marginBottom: '20px',
   },
-
-  // Header
   header: {
     display: 'flex',
     alignItems: 'center',
@@ -432,8 +559,6 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     marginTop: '2px',
   },
-
-  // Alert
   alert: {
     display: 'flex',
     alignItems: 'center',
@@ -445,8 +570,6 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid',
     marginBottom: '20px',
   },
-
-  // Monitor card
   monitorCard: {
     background: 'linear-gradient(160deg, #1E293B 0%, #0F172A 100%)',
     borderRadius: '24px',
@@ -471,7 +594,6 @@ const styles: Record<string, React.CSSProperties> = {
     height: '7px',
     borderRadius: '50%',
     background: '#10B981',
-    animation: 'pulse 2s infinite',
   },
   liveText: {
     fontSize: '10px',
@@ -484,8 +606,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '20px',
     fontWeight: 800,
     color: '#FFFFFF',
-    marginBottom: '8px',
-    lineHeight: 1.25,
     margin: '0 0 8px',
   },
   monitorDesc: {
@@ -493,7 +613,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 500,
     color: 'rgba(148,163,184,0.9)',
     lineHeight: 1.5,
-    marginBottom: '20px',
     margin: '0 0 20px',
   },
   monitorIcon: {
@@ -505,8 +624,6 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  // Section header
   sectionHeader: {
     fontSize: '11px',
     fontWeight: 800,
@@ -516,8 +633,6 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: '12px',
     paddingLeft: '2px',
   },
-
-  // Workflow card
   workflowCard: {
     background: '#FFFFFF',
     borderRadius: '20px',
@@ -573,11 +688,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '10px',
     fontWeight: 700,
   },
-  workflowDivider: {
-    height: '1px',
-    background: '#F1F5F9',
-    margin: '0 20px',
-  },
   csvButton: {
     display: 'flex',
     alignItems: 'center',
@@ -594,56 +704,90 @@ const styles: Record<string, React.CSSProperties> = {
     flexShrink: 0,
     fontFamily: "'Inter', system-ui, sans-serif",
   },
-
-  // Security
-  securityCard: {
+  // Access card
+  accessCard: {
     background: '#FFFFFF',
-    borderRadius: '24px',
+    borderRadius: '20px',
     border: '1px solid #E2E8F0',
-    padding: '28px 24px',
+    overflow: 'hidden',
     marginBottom: '32px',
     boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
   },
-  securityIcon: {
-    width: '44px',
-    height: '44px',
-    borderRadius: '50%',
-    background: 'rgba(206,17,38,0.06)',
+  tabBar: {
+    display: 'flex',
+    borderBottom: '1px solid #E2E8F0',
+    padding: '8px 8px 0',
+    gap: '4px',
+  },
+  tabBtn: {
+    flex: 1,
+    padding: '8px 6px',
+    borderRadius: '10px 10px 0 0',
+    border: 'none',
+    fontSize: '11px',
+    cursor: 'pointer',
+    fontFamily: "'Inter', system-ui, sans-serif",
+    letterSpacing: '0.01em',
+    transition: 'all 0.15s',
+  },
+  accesoRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '10px 12px',
+    borderRadius: '10px',
+    background: '#F8FAFC',
+    border: '1px solid #E2E8F0',
+  },
+  accesoInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  },
+  accesoAvatar: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '8px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '16px',
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 700,
+    flexShrink: 0,
   },
-  securityTitle: {
-    fontSize: '18px',
-    fontWeight: 800,
-    color: '#0F172A',
-    marginBottom: '6px',
-    margin: '0 0 6px',
+  revokeBtn: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '8px',
+    border: 'none',
+    background: 'rgba(239,68,68,0.08)',
+    color: '#EF4444',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    flexShrink: 0,
   },
-  securityDesc: {
+  addBtn: {
+    width: '100%',
+    padding: '12px',
+    borderRadius: '12px',
+    border: 'none',
+    color: '#FFFFFF',
     fontSize: '13px',
-    fontWeight: 500,
-    color: '#64748B',
-    marginBottom: '20px',
-    lineHeight: 1.5,
-    margin: '0 0 20px',
+    fontWeight: 700,
+    fontFamily: "'Inter', system-ui, sans-serif",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
   },
-
   // Input
-  inputLabel: {
-    display: 'block',
-    fontSize: '10px',
-    fontWeight: 800,
-    color: '#475569',
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase' as const,
-    marginBottom: '8px',
-  },
   input: {
     width: '100%',
-    padding: '14px 16px',
-    borderRadius: '14px',
+    padding: '12px 14px',
+    borderRadius: '12px',
     border: '1px solid #E2E8F0',
     background: '#F8FAFC',
     fontSize: '14px',
@@ -653,25 +797,16 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: "'Inter', system-ui, sans-serif",
     boxSizing: 'border-box' as const,
   },
-  redButton: {
-    width: '100%',
-    padding: '15px',
-    borderRadius: '14px',
-    border: 'none',
-    background: '#CE1126',
-    color: '#FFFFFF',
-    fontSize: '14px',
-    fontWeight: 700,
-    cursor: 'pointer',
-    fontFamily: "'Inter', system-ui, sans-serif",
+  // Inline alert
+  inlineAlert: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
     gap: '8px',
-    marginTop: '4px',
-    boxShadow: '0 4px 14px rgba(206,17,38,0.2)',
+    padding: '10px 14px',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 600,
   },
-
   // Danger zone
   dangerCard: {
     background: '#FFFFFF',
@@ -695,14 +830,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '18px',
     fontWeight: 800,
     color: '#0F172A',
-    marginBottom: '6px',
     margin: '0 0 6px',
   },
   dangerDesc: {
     fontSize: '13px',
     fontWeight: 500,
     color: '#64748B',
-    marginBottom: '20px',
     lineHeight: 1.5,
     margin: '0 0 20px',
   },
@@ -723,19 +856,6 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '8px',
     boxShadow: '0 4px 14px rgba(220,38,38,0.2)',
   },
-
-  // Inline alert
-  inlineAlert: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 14px',
-    borderRadius: '12px',
-    fontSize: '12px',
-    fontWeight: 600,
-    marginBottom: '16px',
-  },
-
   // Gate
   gateWrapper: {
     minHeight: '100vh',
@@ -770,14 +890,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '20px',
     fontWeight: 800,
     color: '#0F172A',
-    marginBottom: '6px',
     margin: '0 0 6px',
   },
   gateSubtitle: {
     fontSize: '13px',
     fontWeight: 500,
     color: '#64748B',
-    marginBottom: '24px',
     margin: '0 0 24px',
   },
   gateInput: {
