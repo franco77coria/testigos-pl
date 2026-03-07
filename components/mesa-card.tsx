@@ -309,7 +309,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                   }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3B82F6' }} />
                     <h5 style={{ fontWeight: 700, color: '#111827', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em', margin: 0 }}>
-                      Conteo de Votantes por Hora
+                      Cantidad de Votantes
                     </h5>
                   </div>
 
