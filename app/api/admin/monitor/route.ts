@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
         let query = supabase
             .from('resultados')
             .select('*')
+            .limit(10000)
 
         if (filtroMunicipio) {
             query = query.eq('municipio', filtroMunicipio)
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
         let asigQuery = supabase
             .from('mesa_asignaciones')
             .select('*, testigos!inner(nombre1, apellido1)')
+            .limit(10000)
 
         if (filtroMunicipio) {
             asigQuery = asigQuery.eq('municipio', filtroMunicipio)
@@ -38,6 +40,7 @@ export async function GET(request: NextRequest) {
         const { data: allMunicipios } = await supabase
             .from('mesa_asignaciones')
             .select('municipio')
+            .limit(10000)
 
         const municipioSet = new Set<string>()
         allMunicipios?.forEach(m => municipioSet.add(m.municipio))

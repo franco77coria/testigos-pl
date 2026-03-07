@@ -13,7 +13,7 @@ export async function GET() {
         const { count: totalMunicipios } = await supabase.from('municipios').select('*', { count: 'exact', head: true })
 
         // 2. Fetch Progress Metrics
-        const { data: resultados, error: resError } = await supabase.from('resultados').select('*')
+        const { data: resultados, error: resError } = await supabase.from('resultados').select('*').limit(10000)
         if (resError) throw resError
 
         let mesasPendientes = 0

@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     let asigQuery = supabase
       .from('mesa_asignaciones')
       .select('*, testigos!inner(nombre1, apellido1)')
+      .limit(10000)
 
     if (filtroMunicipio) {
       asigQuery = asigQuery.eq('municipio', filtroMunicipio)
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
       .select(
         'testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados'
       )
+      .limit(10000)
 
     if (filtroMunicipio) {
       resQuery = resQuery.eq('municipio', filtroMunicipio)
