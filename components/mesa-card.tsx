@@ -316,7 +316,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {FRANJAS_HORARIAS.map((f, idx) => {
                       const guardada = isFranjaGuardada(f.key)
-                      const habilitada = isFranjaHabilitada(f.key)
+                      const habilitada = datosFinalesBloqueados ? false : isFranjaHabilitada(f.key)
                       const valorGuardado = mesa[`votantes_${f.key}` as keyof MesaDashboard]
 
                       return (
@@ -477,8 +477,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                         <span style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500 }}>(hasta 2)</span>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                        <PhotoCapture label="Foto 1" existingUrl={mesa.foto_camara} onCapture={(b64) => handleUploadPhoto(b64, 'camara')} />
-                        <PhotoCapture label="Foto 2" existingUrl={mesa.foto_camara_2} onCapture={(b64) => handleUploadPhoto(b64, 'camara_2')} />
+                        <PhotoCapture label="Foto 1" existingUrl={mesa.foto_camara} onCapture={(b64) => handleUploadPhoto(b64, 'camara')} disabled={datosFinalesBloqueados} />
+                        <PhotoCapture label="Foto 2" existingUrl={mesa.foto_camara_2} onCapture={(b64) => handleUploadPhoto(b64, 'camara_2')} disabled={datosFinalesBloqueados} />
                       </div>
                     </div>
                   </div>
@@ -556,8 +556,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                         <span style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500 }}>(hasta 2)</span>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                        <PhotoCapture label="Foto 1" existingUrl={mesa.foto_senado} onCapture={(b64) => handleUploadPhoto(b64, 'senado')} />
-                        <PhotoCapture label="Foto 2" existingUrl={mesa.foto_senado_2} onCapture={(b64) => handleUploadPhoto(b64, 'senado_2')} />
+                        <PhotoCapture label="Foto 1" existingUrl={mesa.foto_senado} onCapture={(b64) => handleUploadPhoto(b64, 'senado')} disabled={datosFinalesBloqueados} />
+                        <PhotoCapture label="Foto 2" existingUrl={mesa.foto_senado_2} onCapture={(b64) => handleUploadPhoto(b64, 'senado_2')} disabled={datosFinalesBloqueados} />
                       </div>
                     </div>
                   </div>
