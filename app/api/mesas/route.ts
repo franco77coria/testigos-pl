@@ -33,6 +33,15 @@ export async function GET(request: NextRequest) {
         confirmacion_e14: r.confirmacion_e14,
         votos_camara_partido: r.votos_camara_partido,
         votos_senado_partido: r.votos_senado_partido,
+        // Conteo por hora
+        votantes_8am: r.votantes_8am,
+        votantes_11am: r.votantes_11am,
+        votantes_1pm: r.votantes_1pm,
+        // Flags de bloqueo
+        datos_8am_guardados: r.datos_8am_guardados || false,
+        datos_11am_guardados: r.datos_11am_guardados || false,
+        datos_1pm_guardados: r.datos_1pm_guardados || false,
+        datos_finales_guardados: r.datos_finales_guardados || false,
         estado: r.estado || 'pendiente',
       }
       CAMARA_CANDIDATOS.forEach(c => { mesa[c.code] = r[c.code] })

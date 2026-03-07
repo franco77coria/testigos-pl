@@ -61,6 +61,15 @@ export interface Resultado {
   votos_senado_4: number | null
   votos_senado_5: number | null
   votos_senado_partido: number | null
+  // Conteo por hora
+  votantes_8am: number | null
+  votantes_11am: number | null
+  votantes_1pm: number | null
+  // Flags de bloqueo (una sola vez)
+  datos_8am_guardados: boolean
+  datos_11am_guardados: boolean
+  datos_1pm_guardados: boolean
+  datos_finales_guardados: boolean
   // Evidencia
   confirmacion_e14: boolean | null
   foto_camara: string | null
@@ -99,6 +108,15 @@ export interface MesaDashboard {
   votos_senado_4: number | null
   votos_senado_5: number | null
   votos_senado_partido: number | null
+  // Conteo por hora
+  votantes_8am: number | null
+  votantes_11am: number | null
+  votantes_1pm: number | null
+  // Flags de bloqueo
+  datos_8am_guardados: boolean
+  datos_11am_guardados: boolean
+  datos_1pm_guardados: boolean
+  datos_finales_guardados: boolean
   // Evidencia
   confirmacion_e14: boolean | null
   foto_camara: string | null
@@ -127,6 +145,14 @@ export const SENADO_CANDIDATOS = [
   { code: 'votos_senado_5', title: 'Senado Candidato 5' }
 ]
 
+export type FranjaHoraria = '8am' | '11am' | '1pm'
+
+export const FRANJAS_HORARIAS: { key: FranjaHoraria; label: string; hora: string }[] = [
+  { key: '8am', label: 'Conteo 8:00 AM', hora: '08:00' },
+  { key: '11am', label: 'Conteo 11:00 AM', hora: '11:00' },
+  { key: '1pm', label: 'Conteo 1:00 PM', hora: '13:00' },
+]
+
 export function calcularEstado(mesa: MesaDashboard): 'pendiente' | 'completada' {
   const tieneVotosCamara = mesa.votos_camara_l101 != null && mesa.votos_camara_partido != null;
   const tieneVotosSenado = mesa.votos_senado_1 != null && mesa.votos_senado_partido != null;
@@ -135,4 +161,3 @@ export function calcularEstado(mesa: MesaDashboard): 'pendiente' | 'completada' 
   }
   return 'pendiente'
 }
-

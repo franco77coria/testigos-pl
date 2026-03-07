@@ -29,7 +29,18 @@ ALTER TABLE resultados ADD COLUMN IF NOT EXISTS confirmacion_e14 BOOLEAN DEFAULT
 ALTER TABLE resultados ADD COLUMN IF NOT EXISTS foto_camara_2 TEXT;
 ALTER TABLE resultados ADD COLUMN IF NOT EXISTS foto_senado_2 TEXT;
 
--- 5. Verificar que el campo updated_at existe
+-- 5. Agregar columnas de conteo de votantes por hora
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS votantes_8am INT;
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS votantes_11am INT;
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS votantes_1pm INT;
+
+-- 6. Flags para bloquear datos ya guardados (una sola vez)
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS datos_8am_guardados BOOLEAN DEFAULT false;
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS datos_11am_guardados BOOLEAN DEFAULT false;
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS datos_1pm_guardados BOOLEAN DEFAULT false;
+ALTER TABLE resultados ADD COLUMN IF NOT EXISTS datos_finales_guardados BOOLEAN DEFAULT false;
+
+-- 7. Verificar que el campo updated_at existe
 ALTER TABLE resultados ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 -- =====================================================

@@ -26,10 +26,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ exito: false, mensaje: 'Mesa no encontrada.' })
     }
 
+    // Verificar que no se hayan guardado ya los datos finales (una sola vez)
+    if (resultado.datos_finales_guardados === true) {
+      return NextResponse.json({ exito: false, mensaje: 'Los resultados finales ya fueron registrados. No se pueden modificar.' })
+    }
+
     // Construir update con todos los campos numericos y validacion
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
-      confirmacion_e14: datos.confirmacion_e14 === true
+      confirmacion_e14: datos.confirmacion_e14 === true,
+      datos_finales_guardados: true, // Marcar como guardado (una sola vez)
     }
 
     // Camara
