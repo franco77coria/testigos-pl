@@ -143,7 +143,7 @@ export const CAMARA_CANDIDATOS = [
 
 // Solo 1 candidato de Senado
 export const SENADO_CANDIDATOS = [
-  { code: 'votos_senado_1', title: 'L10 OSCAR SANCHEZ' }
+  { code: 'votos_senado_1', title: 'L10 OSCAR SÁNCHEZ' }
 ]
 
 export type FranjaHoraria = '8am' | '11am' | '1pm'
