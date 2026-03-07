@@ -10,7 +10,6 @@ interface Props {
   sesion: SesionTestigo
   onLogout: () => void
   onMesasUpdate: (mesas: MesaDashboard[]) => void
-  onAddMesa?: () => void
 }
 
 function AnimatedNumber({ value }: { value: number }) {
@@ -35,7 +34,7 @@ function AnimatedNumber({ value }: { value: number }) {
   return <>{display}</>
 }
 
-export default function Dashboard({ sesion, onLogout, onMesasUpdate, onAddMesa }: Props) {
+export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
   const [refreshing, setRefreshing] = useState(false)
   const [ultimaAct, setUltimaAct] = useState(horaActual())
   const [senadoCandidatos, setSenadoCandidatos] = useState(SENADO_CANDIDATOS)
@@ -224,26 +223,19 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate, onAddMesa }
             </div>
           </div>
 
-          {/* Mesa List */}
+          {/* Mesa List — solo pendientes */}
           <div style={{ padding: '0 16px', marginBottom: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>Mis Mesas</h3>
-              {onAddMesa && (
-                <button
-                  onClick={onAddMesa}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                    background: '#CE1126', color: 'white',
-                    padding: '8px 14px', borderRadius: '10px',
-                    border: 'none', cursor: 'pointer',
-                    fontSize: '12px', fontWeight: 700,
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    boxShadow: '0 2px 8px rgba(206,17,38,0.25)',
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>
-                  Más Mesa
-                </button>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>
+                Mesas Pendientes
+              </h3>
+              {completadas > 0 && (
+                <span style={{
+                  fontSize: '11px', fontWeight: 600, color: '#10B981',
+                  background: 'rgba(16,185,129,0.1)', padding: '4px 10px', borderRadius: '12px',
+                }}>
+                  {completadas} completada{completadas > 1 ? 's' : ''}
+                </span>
               )}
             </div>
 
@@ -253,11 +245,20 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate, onAddMesa }
                 textAlign: 'center', border: '1px solid #E5E7EB',
               }}>
                 <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'rgba(148,163,184,0.3)', marginBottom: '8px' }}>inbox</span>
-                <p style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}>No tiene mesas asignadas aún.</p>
+                <p style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}>No tiene mesas asignadas.</p>
+              </div>
+            ) : pendientes === 0 ? (
+              <div style={{
+                background: 'rgba(16,185,129,0.06)', borderRadius: '12px', padding: '32px',
+                textAlign: 'center', border: '1px solid rgba(16,185,129,0.2)',
+              }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#10B981', marginBottom: '8px', display: 'block' }}>task_alt</span>
+                <p style={{ fontSize: '14px', fontWeight: 700, color: '#10B981' }}>Todas las mesas completadas</p>
+                <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '4px' }}>{completadas} de {total} reportes enviados</p>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {mesas.map((mesa) => (
+                {mesas.filter(m => calcularEstado(m) === 'pendiente').map((mesa) => (
                   <MesaCard
                     key={mesa.mesa_numero}
                     mesa={mesa}

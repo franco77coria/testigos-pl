@@ -65,10 +65,12 @@ export interface Resultado {
   votantes_8am: number | null
   votantes_11am: number | null
   votantes_1pm: number | null
-  // Flags de bloqueo (una sola vez)
+  // Flags de bloqueo
   datos_8am_guardados: boolean
   datos_11am_guardados: boolean
   datos_1pm_guardados: boolean
+  datos_camara_guardados: boolean
+  datos_senado_guardados: boolean
   datos_finales_guardados: boolean
   // Evidencia
   confirmacion_e14: boolean | null
@@ -116,6 +118,8 @@ export interface MesaDashboard {
   datos_8am_guardados: boolean
   datos_11am_guardados: boolean
   datos_1pm_guardados: boolean
+  datos_camara_guardados: boolean
+  datos_senado_guardados: boolean
   datos_finales_guardados: boolean
   // Evidencia
   confirmacion_e14: boolean | null
@@ -137,31 +141,21 @@ export const CAMARA_CANDIDATOS = [
   { code: 'votos_camara_l107', title: 'L107 JEISON ALBERTO AREVALO ROJAS' }
 ]
 
+// Solo 1 candidato de Senado
 export const SENADO_CANDIDATOS = [
-  { code: 'votos_senado_1', title: 'Senado Candidato 1' },
-  { code: 'votos_senado_2', title: 'Senado Candidato 2' },
-  { code: 'votos_senado_3', title: 'Senado Candidato 3' },
-  { code: 'votos_senado_4', title: 'Senado Candidato 4' },
-  { code: 'votos_senado_5', title: 'Senado Candidato 5' }
+  { code: 'votos_senado_1', title: 'L10 OSCAR SANCHEZ' }
 ]
 
 export type FranjaHoraria = '8am' | '11am' | '1pm'
 
 export const FRANJAS_HORARIAS: { key: FranjaHoraria; label: string; hora: string }[] = [
-  { key: '8am', label: 'Cantidad de Votantes 8 AM', hora: '08:00' },
-  { key: '11am', label: 'Cantidad de Votantes 11 AM', hora: '11:00' },
-  { key: '1pm', label: 'Cantidad de Votantes 1 PM', hora: '13:00' },
+  { key: '8am', label: 'ELECTORES HABILITADOS', hora: '08:00' },
+  { key: '11am', label: 'CANTIDAD VOTANTES', hora: '11:00' },
+  { key: '1pm', label: 'CANTIDAD VOTANTES', hora: '13:00' },
 ]
 
 export function calcularEstado(mesa: MesaDashboard): 'pendiente' | 'completada' {
-  // Si ya se guardaron los resultados finales, siempre es completada
-  if (mesa.datos_finales_guardados) {
-    return 'completada'
-  }
-  const tieneVotosCamara = mesa.votos_camara_l101 != null && mesa.votos_camara_partido != null;
-  const tieneVotosSenado = mesa.votos_senado_1 != null && mesa.votos_senado_partido != null;
-  if (tieneVotosCamara && tieneVotosSenado && mesa.foto_camara && mesa.foto_senado && mesa.confirmacion_e14) {
-    return 'completada'
-  }
+  if (mesa.datos_finales_guardados) return 'completada'
+  if (mesa.datos_camara_guardados && mesa.datos_senado_guardados) return 'completada'
   return 'pendiente'
 }

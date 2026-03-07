@@ -16,18 +16,19 @@ interface Props {
 }
 
 export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: Props) {
-  const activeSenado = senadoCandidatos || SENADO_CANDIDATOS
+  const activeSenado = senadoCandidatos?.length ? senadoCandidatos : SENADO_CANDIDATOS
   const [expanded, setExpanded] = useState(false)
   const [saving, setSaving] = useState(false)
   const [valores, setValores] = useState<Record<string, string>>({})
   const [confirmResumen, setConfirmResumen] = useState<{ label: string; valor: string }[] | null>(null)
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null)
-
-  // Valores por hora
   const [valHorario, setValHorario] = useState<Record<string, string>>({})
 
   const estado = calcularEstado(mesa)
   const isCompletada = estado === 'completada'
+  const camaraGuardada = mesa.datos_camara_guardados === true
+  const senadoGuardado = mesa.datos_senado_guardados === true
+  const datosFinalesBloqueados = isCompletada
 
   function handleToggle() {
     if (!expanded) {
@@ -36,10 +37,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
       init.votos_camara_partido = mesa.votos_camara_partido?.toString() || '0'
       activeSenado.forEach(c => { init[c.code] = mesa[c.code as keyof MesaDashboard]?.toString() || '0' })
       init.votos_senado_partido = mesa.votos_senado_partido?.toString() || '0'
-      init.confirmacion_e14 = mesa.confirmacion_e14 ? 'true' : 'false'
       setValores(init)
 
-      // Inicializar valores horarios
       const initH: Record<string, string> = {}
       FRANJAS_HORARIAS.forEach(f => {
         initH[f.key] = mesa[`votantes_${f.key}` as keyof MesaDashboard]?.toString() || ''
@@ -49,14 +48,11 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
     setExpanded(!expanded)
   }
 
-  // ---- GUARDAR CONTEO HORARIO ----
+  // ---- CONTEO HORARIO ----
   function handlePreSaveHorario(franja: FranjaHoraria) {
     const franjaInfo = FRANJAS_HORARIAS.find(f => f.key === franja)!
     const valor = valHorario[franja] || '0'
-    const resumen = [
-      { label: franjaInfo.label, valor: `${valor} votantes` },
-    ]
-    setConfirmResumen(resumen)
+    setConfirmResumen([{ label: franjaInfo.label, valor: `${valor} personas` }])
     setConfirmAction(() => () => doSaveHorario(franja))
   }
 
@@ -69,74 +65,82 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          cedula,
-          mesa_numero: mesa.mesa_numero,
-          franja,
+          cedula, mesa_numero: mesa.mesa_numero, franja,
           votantes: parseInt(valHorario[franja]) || 0,
         }),
       })
       const data = await res.json()
-      if (!data.exito) {
-        toast('err', data.mensaje || 'Error al guardar.')
-        return
-      }
+      if (!data.exito) { toast('err', data.mensaje || 'Error al guardar.'); return }
       toast('ok', data.mensaje || 'Conteo guardado.')
       await refreshMesa()
-    } catch {
-      toast('err', 'Error de conexión.')
-    } finally {
-      setSaving(false)
-    }
+    } catch { toast('err', 'Error de conexión.') }
+    finally { setSaving(false) }
   }
 
-  // ---- GUARDAR RESULTADOS FINALES ----
-  function handlePreSave() {
-    if (mesa.datos_finales_guardados) {
-      toast('err', 'Los resultados finales ya fueron registrados.')
-      return
-    }
+  // ---- GUARDAR SENADO ----
+  function handlePreSaveSenado() {
+    if (senadoGuardado) { toast('err', 'Los registros de Senado ya fueron guardados.'); return }
+    if (!mesa.foto_senado) { toast('err', 'Suba la foto del acta de Senado antes de guardar.'); return }
     const resumen: { label: string; valor: string }[] = []
-    resumen.push({ label: '--- CÁMARA ---', valor: '' })
-    CAMARA_CANDIDATOS.forEach(c => resumen.push({ label: c.title, valor: valores[c.code] || '0' }))
-    resumen.push({ label: 'Votos Partido Cámara', valor: valores.votos_camara_partido || '0' })
     resumen.push({ label: '--- SENADO ---', valor: '' })
     activeSenado.forEach(c => resumen.push({ label: c.title, valor: valores[c.code] || '0' }))
-    resumen.push({ label: 'Votos Partido Senado', valor: valores.votos_senado_partido || '0' })
-    resumen.push({ label: 'Confirmación E-14 física', valor: valores.confirmacion_e14 === 'true' ? 'Sí' : 'No' })
+    resumen.push({ label: 'VOTOS POR EL PARTIDO LIBERAL', valor: valores.votos_senado_partido || '0' })
     setConfirmResumen(resumen)
-    setConfirmAction(() => () => doSaveFinal())
+    setConfirmAction(() => () => doSaveSenado())
   }
 
-  async function doSaveFinal() {
+  async function doSaveSenado() {
     setConfirmResumen(null)
     setConfirmAction(null)
     setSaving(true)
-
     try {
       const payload: Record<string, any> = {}
-      CAMARA_CANDIDATOS.forEach(c => { payload[c.code] = valores[c.code] ? parseInt(valores[c.code]) : 0 })
-      payload.votos_camara_partido = valores.votos_camara_partido ? parseInt(valores.votos_camara_partido) : 0
-      activeSenado.forEach(c => { payload[c.code] = valores[c.code] ? parseInt(valores[c.code]) : 0 })
-      payload.votos_senado_partido = valores.votos_senado_partido ? parseInt(valores.votos_senado_partido) : 0
-      payload.confirmacion_e14 = valores.confirmacion_e14 === 'true'
-
-      const res = await fetch('/api/mesas/save', {
+      activeSenado.forEach(c => { payload[c.code] = parseInt(valores[c.code]) || 0 })
+      payload.votos_senado_partido = parseInt(valores.votos_senado_partido) || 0
+      const res = await fetch('/api/mesas/save-senado', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cedula, mesa_numero: mesa.mesa_numero, datos: payload }),
       })
       const data = await res.json()
-      if (!data.exito) {
-        toast('err', data.mensaje || 'Error al guardar.')
-        return
-      }
-      toast('ok', 'Resultados guardados exitosamente.')
+      if (!data.exito) { toast('err', data.mensaje || 'Error al guardar.'); return }
+      toast('ok', 'Registros de Senado guardados.')
       await refreshMesa()
-    } catch {
-      toast('err', 'Error de conexión.')
-    } finally {
-      setSaving(false)
-    }
+    } catch { toast('err', 'Error de conexión.') }
+    finally { setSaving(false) }
+  }
+
+  // ---- GUARDAR CÁMARA ----
+  function handlePreSaveCamara() {
+    if (camaraGuardada) { toast('err', 'Los registros de Cámara ya fueron guardados.'); return }
+    if (!mesa.foto_camara) { toast('err', 'Suba la foto del acta de Cámara antes de guardar.'); return }
+    const resumen: { label: string; valor: string }[] = []
+    resumen.push({ label: '--- CÁMARA ---', valor: '' })
+    CAMARA_CANDIDATOS.forEach(c => resumen.push({ label: c.title, valor: valores[c.code] || '0' }))
+    resumen.push({ label: 'Votos por la LISTA DEL PARTIDO LIBERAL', valor: valores.votos_camara_partido || '0' })
+    setConfirmResumen(resumen)
+    setConfirmAction(() => () => doSaveCamara())
+  }
+
+  async function doSaveCamara() {
+    setConfirmResumen(null)
+    setConfirmAction(null)
+    setSaving(true)
+    try {
+      const payload: Record<string, any> = {}
+      CAMARA_CANDIDATOS.forEach(c => { payload[c.code] = parseInt(valores[c.code]) || 0 })
+      payload.votos_camara_partido = parseInt(valores.votos_camara_partido) || 0
+      const res = await fetch('/api/mesas/save-camara', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cedula, mesa_numero: mesa.mesa_numero, datos: payload }),
+      })
+      const data = await res.json()
+      if (!data.exito) { toast('err', data.mensaje || 'Error al guardar.'); return }
+      toast('ok', 'Registros de Cámara guardados.')
+      await refreshMesa()
+    } catch { toast('err', 'Error de conexión.') }
+    finally { setSaving(false) }
   }
 
   async function handleUploadPhoto(base64: string, tipo: 'camara' | 'senado' | 'camara_2' | 'senado_2') {
@@ -149,57 +153,36 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
       })
       const data = await res.json()
       if (data.exito) {
-        toast('ok', `Foto E-14 ${tipo.includes('camara') ? 'Cámara' : 'Senado'} subida con éxito.`)
+        toast('ok', `Foto ${tipo.includes('camara') ? 'Cámara' : 'Senado'} subida.`)
         await refreshMesa()
       } else {
-        toast('err', `Error subiendo foto ${tipo}.`)
+        toast('err', 'Error subiendo foto.')
       }
-    } catch {
-      toast('err', `Error subiendo foto ${tipo}.`)
-    } finally {
-      setSaving(false)
-      setExpanded(true)
-    }
+    } catch { toast('err', 'Error subiendo foto.') }
+    finally { setSaving(false); setExpanded(true) }
   }
 
   async function refreshMesa() {
-    const refreshRes = await fetch(`/api/mesas?cedula=${cedula}`)
-    const refreshData = await refreshRes.json()
-    if (refreshData.exito) {
-      const updated = refreshData.mesas.find((m: MesaDashboard) => m.mesa_numero === mesa.mesa_numero)
-      if (updated) {
-        onUpdate(updated)
-      }
+    const res = await fetch(`/api/mesas?cedula=${cedula}`)
+    const data = await res.json()
+    if (data.exito) {
+      const updated = data.mesas.find((m: MesaDashboard) => m.mesa_numero === mesa.mesa_numero)
+      if (updated) onUpdate(updated)
     }
   }
 
-  const allPhotosUploaded = !!mesa.foto_camara && !!mesa.foto_senado
-  const datosFinalesBloqueados = mesa.datos_finales_guardados === true
-
   const inputStyle: React.CSSProperties = {
-    width: '100%',
-    background: '#FFFFFF',
-    border: '1px solid #E5E7EB',
-    borderRadius: '8px',
-    textAlign: 'center',
-    fontWeight: 600,
-    fontSize: '14px',
-    height: '40px',
-    outline: 'none',
-    color: '#111827',
+    width: '100%', background: '#FFFFFF', border: '1px solid #E5E7EB',
+    borderRadius: '8px', textAlign: 'center', fontWeight: 600, fontSize: '14px',
+    height: '40px', outline: 'none', color: '#111827',
     fontFamily: "'Inter', system-ui, sans-serif",
   }
-
   const disabledInputStyle: React.CSSProperties = {
-    ...inputStyle,
-    background: '#F3F4F6',
-    color: '#9CA3AF',
-    cursor: 'not-allowed',
+    ...inputStyle, background: '#F3F4F6', color: '#9CA3AF', cursor: 'not-allowed',
   }
 
-  // Determinar qué franjas están habilitadas
   function isFranjaHabilitada(franja: FranjaHoraria): boolean {
-    if (mesa[`datos_${franja}_guardados` as keyof MesaDashboard]) return false // ya guardada
+    if (mesa[`datos_${franja}_guardados` as keyof MesaDashboard]) return false
     if (franja === '8am') return true
     if (franja === '11am') return mesa.datos_8am_guardados === true
     if (franja === '1pm') return mesa.datos_11am_guardados === true
@@ -213,24 +196,18 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
   return (
     <>
       <div style={{
-        background: '#FFFFFF',
-        borderRadius: '12px',
+        background: '#FFFFFF', borderRadius: '12px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-        border: '1px solid #E5E7EB',
-        overflow: 'hidden',
+        border: '1px solid #E5E7EB', overflow: 'hidden',
       }}>
-        {/* Header toggle */}
+        {/* Header */}
         <div
           onClick={handleToggle}
           style={{
-            padding: '16px',
-            display: 'flex',
-            alignItems: 'center',
+            padding: '16px', display: 'flex', alignItems: 'center',
             justifyContent: 'space-between',
             borderBottom: expanded ? '1px solid #E5E7EB' : 'none',
-            cursor: 'pointer',
-            background: '#FAFBFC',
-            transition: 'background 0.15s',
+            cursor: 'pointer', background: '#FAFBFC', transition: 'background 0.15s',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -238,8 +215,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
               width: '40px', height: '40px', borderRadius: '8px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 700, fontSize: '18px',
-              background: isCompletada ? '#10B981' : '#CE1126',
-              color: 'white',
+              background: isCompletada ? '#10B981' : '#CE1126', color: 'white',
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
             }}>
               {mesa.mesa_numero}
@@ -250,26 +226,17 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
               </h4>
               <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
                 <span style={{
-                  display: 'inline-block',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
+                  display: 'inline-block', padding: '2px 8px', borderRadius: '12px',
+                  fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em',
                   background: isCompletada ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
                   color: isCompletada ? '#10B981' : '#F59E0B',
                 }}>
                   {isCompletada ? 'Completado' : 'Pendiente'}
                 </span>
-                {/* Mini badges for hourly progress */}
                 {FRANJAS_HORARIAS.map(f => (
                   <span key={f.key} style={{
-                    display: 'inline-block',
-                    padding: '2px 6px',
-                    borderRadius: '12px',
-                    fontSize: '9px',
-                    fontWeight: 700,
+                    display: 'inline-block', padding: '2px 6px', borderRadius: '12px',
+                    fontSize: '9px', fontWeight: 700,
                     background: isFranjaGuardada(f.key) ? 'rgba(16,185,129,0.1)' : 'rgba(148,163,184,0.1)',
                     color: isFranjaGuardada(f.key) ? '#10B981' : '#94A3B8',
                   }}>
@@ -280,15 +247,12 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
             </div>
           </div>
           <span className="material-symbols-outlined" style={{
-            color: '#94A3B8',
-            transition: 'transform 0.2s',
+            color: '#94A3B8', transition: 'transform 0.2s',
             transform: expanded ? 'rotate(180deg)' : 'rotate(0)',
-          }}>
-            expand_more
-          </span>
+          }}>expand_more</span>
         </div>
 
-        {/* Expandable Body */}
+        {/* Body expandible */}
         <AnimatePresence>
           {expanded && (
             <motion.div
@@ -300,21 +264,11 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
             >
               <div style={{ padding: '16px' }}>
 
-                {/* ========== SECCIÓN 1: CONTEO POR HORA ========== */}
+                {/* ===== SECCIÓN 1: CONTEO HORARIO ===== */}
                 <div style={{ marginBottom: '24px' }}>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '8px',
-                    marginBottom: '12px', paddingBottom: '8px',
-                    borderBottom: '1px solid #E5E7EB',
-                  }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3B82F6' }} />
-                    <h5 style={{ fontWeight: 700, color: '#111827', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em', margin: 0 }}>
-                      Cantidad de Votantes
-                    </h5>
-                  </div>
-
+                  <SectionTitle color="#3B82F6" title="Conteo de Votantes" />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {FRANJAS_HORARIAS.map((f, idx) => {
+                    {FRANJAS_HORARIAS.map((f) => {
                       const guardada = isFranjaGuardada(f.key)
                       const habilitada = datosFinalesBloqueados ? false : isFranjaHabilitada(f.key)
                       const valorGuardado = mesa[`votantes_${f.key}` as keyof MesaDashboard]
@@ -323,50 +277,44 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                         <div key={f.key} style={{
                           background: guardada ? 'rgba(16,185,129,0.04)' : habilitada ? '#FFFFFF' : '#F9FAFB',
                           border: `1px solid ${guardada ? '#10B981' : habilitada ? '#3B82F6' : '#E5E7EB'}`,
-                          borderRadius: '10px',
-                          padding: '12px',
+                          borderRadius: '10px', padding: '12px',
                           opacity: !habilitada && !guardada ? 0.5 : 1,
-                          transition: 'all 0.2s',
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
                             <div style={{ flex: 1 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                                 <span className="material-symbols-outlined" style={{
                                   fontSize: '16px',
-                                  color: guardada ? '#10B981' : habilitada ? '#3B82F6' : '#94A3B8'
+                                  color: guardada ? '#10B981' : habilitada ? '#3B82F6' : '#94A3B8',
                                 }}>
                                   {guardada ? 'check_circle' : habilitada ? 'schedule' : 'lock'}
                                 </span>
-                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>
-                                  {f.label}
-                                </span>
+                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{f.label}</span>
+                                <span style={{ fontSize: '11px', color: '#94A3B8' }}>({f.hora})</span>
                               </div>
                               {guardada && (
                                 <span style={{ fontSize: '11px', color: '#10B981', fontWeight: 600 }}>
-                                  ✓ Registrado: {valorGuardado} votantes
+                                  Registrado: {valorGuardado?.toString()}
                                 </span>
                               )}
                               {!guardada && !habilitada && (
-                                <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 500 }}>
-                                  Registre la franja anterior primero
+                                <span style={{ fontSize: '11px', color: '#94A3B8' }}>
+                                  Complete la franja anterior primero
                                 </span>
                               )}
                             </div>
-
                             {guardada ? (
                               <div style={{
                                 background: '#10B981', color: 'white', borderRadius: '8px',
-                                padding: '8px 12px', fontWeight: 700, fontSize: '14px', minWidth: '60px', textAlign: 'center',
+                                padding: '8px 12px', fontWeight: 700, fontSize: '14px',
+                                minWidth: '60px', textAlign: 'center',
                               }}>
-                                {valorGuardado}
+                                {valorGuardado?.toString()}
                               </div>
                             ) : habilitada ? (
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <input
-                                  type="number"
-                                  inputMode="numeric"
-                                  min="0"
-                                  placeholder="0"
+                                  type="number" inputMode="numeric" min="0" placeholder="0"
                                   value={valHorario[f.key] || ''}
                                   onChange={e => setValHorario(v => ({ ...v, [f.key]: e.target.value }))}
                                   style={{ ...inputStyle, width: '80px' }}
@@ -380,8 +328,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                                     fontWeight: 700, fontSize: '12px', cursor: 'pointer',
                                     display: 'flex', alignItems: 'center', gap: '4px',
                                     opacity: saving ? 0.5 : 1,
-                                    fontFamily: "'Inter', system-ui, sans-serif",
-                                    whiteSpace: 'nowrap',
+                                    fontFamily: "'Inter', system-ui, sans-serif", whiteSpace: 'nowrap',
                                   }}
                                 >
                                   <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>save</span>
@@ -403,215 +350,124 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                   </div>
                 </div>
 
-                {/* ========== SECCIÓN 2: CÁMARA ========== */}
+                {/* ===== SECCIÓN 2: SENADO (primero) ===== */}
                 <div style={{ marginBottom: '24px' }}>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '8px',
-                    marginBottom: '12px', paddingBottom: '8px',
-                    borderBottom: '1px solid #E5E7EB',
-                  }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#CE1126' }} />
-                    <h5 style={{ fontWeight: 700, color: '#111827', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em', margin: 0 }}>
-                      Cámara de Representantes
-                    </h5>
-                    {datosFinalesBloqueados && (
-                      <span style={{ fontSize: '10px', background: 'rgba(16,185,129,0.1)', color: '#10B981', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                        ✓ Guardado
-                      </span>
+                  <SectionTitle color="#3B82F6" title="Senado de la República" guardado={senadoGuardado} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+                    {activeSenado.map(c => (
+                      <VotoRow
+                        key={c.code}
+                        id={c.code}
+                        label={c.title}
+                        value={valores[c.code] || '0'}
+                        disabled={senadoGuardado}
+                        onChange={v => setValores(prev => ({ ...prev, [c.code]: v }))}
+                        inputStyle={inputStyle}
+                        disabledInputStyle={disabledInputStyle}
+                        guardado={senadoGuardado}
+                        highlight={false}
+                      />
+                    ))}
+
+                    <VotoRow
+                      id="votos_senado_partido"
+                      label="VOTOS POR EL PARTIDO LIBERAL"
+                      value={valores.votos_senado_partido || '0'}
+                      disabled={senadoGuardado}
+                      onChange={v => setValores(prev => ({ ...prev, votos_senado_partido: v }))}
+                      inputStyle={inputStyle}
+                      disabledInputStyle={disabledInputStyle}
+                      guardado={senadoGuardado}
+                      highlight={true}
+                      highlightColor="#3B82F6"
+                    />
+
+                    <FotoSection
+                      titulo="Fotos E-14 Senado"
+                      color="#3B82F6"
+                      foto1Url={mesa.foto_senado}
+                      foto2Url={mesa.foto_senado_2}
+                      disabled={senadoGuardado}
+                      requerida={!mesa.foto_senado && !senadoGuardado}
+                      onCapture1={b64 => handleUploadPhoto(b64, 'senado')}
+                      onCapture2={b64 => handleUploadPhoto(b64, 'senado_2')}
+                    />
+
+                    {senadoGuardado ? (
+                      <SavedBadge label="Registros de Senado Guardados" />
+                    ) : (
+                      <SaveButton
+                        label="GUARDAR REGISTROS DE SENADO"
+                        color="#3B82F6"
+                        disabled={saving || !mesa.foto_senado}
+                        missingPhoto={!mesa.foto_senado}
+                        onClick={handlePreSaveSenado}
+                        saving={saving}
+                      />
                     )}
                   </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {/* Votos partido */}
-                    <div style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
-                      background: datosFinalesBloqueados ? 'rgba(16,185,129,0.04)' : '#F8F9FA',
-                      padding: '12px', borderRadius: '8px',
-                      border: `1px solid ${datosFinalesBloqueados ? '#10B981' : '#E5E7EB'}`,
-                    }}>
-                      <label style={{ fontSize: '13px', fontWeight: 600, flex: 1, color: '#111827' }} htmlFor="votos_camara_partido">
-                        Votos solo por la lista (PL)
-                      </label>
-                      <input
-                        id="votos_camara_partido"
-                        type="number" inputMode="numeric" min="0" placeholder="0"
-                        value={valores.votos_camara_partido || '0'}
-                        onChange={e => setValores(v => ({ ...v, votos_camara_partido: e.target.value }))}
-                        disabled={datosFinalesBloqueados}
-                        style={datosFinalesBloqueados ? { ...disabledInputStyle, width: '80px' } : { ...inputStyle, width: '80px' }}
-                      />
-                    </div>
-
-                    {/* Candidatos list */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '4px' }}>
-                      {CAMARA_CANDIDATOS.map(c => (
-                        <div key={c.code} style={{
-                          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
-                          background: datosFinalesBloqueados ? 'rgba(16,185,129,0.04)' : '#F8F9FA',
-                          padding: '10px 12px', borderRadius: '8px',
-                          border: `1px solid ${datosFinalesBloqueados ? '#10B981' : '#E5E7EB'}`,
-                        }}>
-                          <label style={{ fontSize: '12px', fontWeight: 500, color: '#374151', flex: 1 }} htmlFor={c.code} title={c.title}>
-                            {c.title}
-                          </label>
-                          <input
-                            id={c.code}
-                            type="number" inputMode="numeric" min="0" placeholder="0"
-                            value={valores[c.code] || '0'}
-                            onChange={e => setValores(v => ({ ...v, [c.code]: e.target.value }))}
-                            disabled={datosFinalesBloqueados}
-                            style={datosFinalesBloqueados ? { ...disabledInputStyle, width: '80px', flexShrink: 0 } : { ...inputStyle, width: '80px', flexShrink: 0 }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Fotos Cámara — 2 fotos */}
-                    <div style={{
-                      marginTop: '12px', padding: '12px', borderRadius: '10px',
-                      background: '#FAFBFC', border: '1px solid #E5E7EB',
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#CE1126' }}>photo_camera</span>
-                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#111827' }}>Fotos E-14 Cámara</span>
-                        <span style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500 }}>(hasta 2)</span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                        <PhotoCapture label="Foto 1" existingUrl={mesa.foto_camara} onCapture={(b64) => handleUploadPhoto(b64, 'camara')} disabled={datosFinalesBloqueados} />
-                        <PhotoCapture label="Foto 2" existingUrl={mesa.foto_camara_2} onCapture={(b64) => handleUploadPhoto(b64, 'camara_2')} disabled={datosFinalesBloqueados} />
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
-                {/* ========== SECCIÓN 3: SENADO ========== */}
-                <div style={{ marginBottom: '24px' }}>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: '8px',
-                    marginBottom: '12px', paddingBottom: '8px',
-                    borderBottom: '1px solid #E5E7EB',
-                  }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#CE1126' }} />
-                    <h5 style={{ fontWeight: 700, color: '#111827', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em', margin: 0 }}>
-                      Senado de la República
-                    </h5>
-                    {datosFinalesBloqueados && (
-                      <span style={{ fontSize: '10px', background: 'rgba(16,185,129,0.1)', color: '#10B981', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                        ✓ Guardado
-                      </span>
+                {/* ===== SECCIÓN 3: CÁMARA (después) ===== */}
+                <div style={{ marginBottom: '8px' }}>
+                  <SectionTitle color="#CE1126" title="Cámara de Representantes" guardado={camaraGuardada} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+                    {CAMARA_CANDIDATOS.map(c => (
+                      <VotoRow
+                        key={c.code}
+                        id={c.code}
+                        label={c.title}
+                        value={valores[c.code] || '0'}
+                        disabled={camaraGuardada}
+                        onChange={v => setValores(prev => ({ ...prev, [c.code]: v }))}
+                        inputStyle={inputStyle}
+                        disabledInputStyle={disabledInputStyle}
+                        guardado={camaraGuardada}
+                        highlight={false}
+                      />
+                    ))}
+
+                    <VotoRow
+                      id="votos_camara_partido"
+                      label="Votos por la LISTA DEL PARTIDO LIBERAL"
+                      value={valores.votos_camara_partido || '0'}
+                      disabled={camaraGuardada}
+                      onChange={v => setValores(prev => ({ ...prev, votos_camara_partido: v }))}
+                      inputStyle={inputStyle}
+                      disabledInputStyle={disabledInputStyle}
+                      guardado={camaraGuardada}
+                      highlight={true}
+                      highlightColor="#CE1126"
+                    />
+
+                    <FotoSection
+                      titulo="Fotos E-14 Cámara"
+                      color="#CE1126"
+                      foto1Url={mesa.foto_camara}
+                      foto2Url={mesa.foto_camara_2}
+                      disabled={camaraGuardada}
+                      requerida={!mesa.foto_camara && !camaraGuardada}
+                      onCapture1={b64 => handleUploadPhoto(b64, 'camara')}
+                      onCapture2={b64 => handleUploadPhoto(b64, 'camara_2')}
+                    />
+
+                    {camaraGuardada ? (
+                      <SavedBadge label="Registros de Cámara Guardados" />
+                    ) : (
+                      <SaveButton
+                        label="GUARDAR REGISTROS DE CÁMARA"
+                        color="#CE1126"
+                        disabled={saving || !mesa.foto_camara}
+                        missingPhoto={!mesa.foto_camara}
+                        onClick={handlePreSaveCamara}
+                        saving={saving}
+                      />
                     )}
                   </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
-                      background: datosFinalesBloqueados ? 'rgba(16,185,129,0.04)' : '#F8F9FA',
-                      padding: '12px', borderRadius: '8px',
-                      border: `1px solid ${datosFinalesBloqueados ? '#10B981' : '#E5E7EB'}`,
-                    }}>
-                      <label style={{ fontSize: '13px', fontWeight: 600, flex: 1, color: '#111827' }} htmlFor="votos_senado_partido">
-                        Votos solo por la lista (PL)
-                      </label>
-                      <input
-                        id="votos_senado_partido"
-                        type="number" inputMode="numeric" min="0" placeholder="0"
-                        value={valores.votos_senado_partido || '0'}
-                        onChange={e => setValores(v => ({ ...v, votos_senado_partido: e.target.value }))}
-                        disabled={datosFinalesBloqueados}
-                        style={datosFinalesBloqueados ? { ...disabledInputStyle, width: '80px' } : { ...inputStyle, width: '80px' }}
-                      />
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '4px' }}>
-                      {activeSenado.map(c => (
-                        <div key={c.code} style={{
-                          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
-                          background: datosFinalesBloqueados ? 'rgba(16,185,129,0.04)' : '#F8F9FA',
-                          padding: '10px 12px', borderRadius: '8px',
-                          border: `1px solid ${datosFinalesBloqueados ? '#10B981' : '#E5E7EB'}`,
-                        }}>
-                          <label style={{ fontSize: '12px', fontWeight: 500, color: '#374151', flex: 1 }} htmlFor={c.code} title={c.title}>
-                            {c.title}
-                          </label>
-                          <input
-                            id={c.code}
-                            type="number" inputMode="numeric" min="0" placeholder="0"
-                            value={valores[c.code] || '0'}
-                            onChange={e => setValores(v => ({ ...v, [c.code]: e.target.value }))}
-                            disabled={datosFinalesBloqueados}
-                            style={datosFinalesBloqueados ? { ...disabledInputStyle, width: '80px', flexShrink: 0 } : { ...inputStyle, width: '80px', flexShrink: 0 }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Fotos Senado — 2 fotos */}
-                    <div style={{
-                      marginTop: '12px', padding: '12px', borderRadius: '10px',
-                      background: '#FAFBFC', border: '1px solid #E5E7EB',
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#CE1126' }}>photo_camera</span>
-                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#111827' }}>Fotos E-14 Senado</span>
-                        <span style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500 }}>(hasta 2)</span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                        <PhotoCapture label="Foto 1" existingUrl={mesa.foto_senado} onCapture={(b64) => handleUploadPhoto(b64, 'senado')} disabled={datosFinalesBloqueados} />
-                        <PhotoCapture label="Foto 2" existingUrl={mesa.foto_senado_2} onCapture={(b64) => handleUploadPhoto(b64, 'senado_2')} disabled={datosFinalesBloqueados} />
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
-                {/* ========== BOTÓN GUARDAR RESULTADOS FINALES ========== */}
-                <div style={{ marginTop: '24px' }}>
-                  {datosFinalesBloqueados ? (
-                    <div style={{
-                      width: '100%',
-                      background: '#10B981',
-                      color: 'white',
-                      fontWeight: 700,
-                      padding: '14px 16px',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      fontSize: '14px',
-                      fontFamily: "'Inter', system-ui, sans-serif",
-                    }}>
-                      <span className="material-symbols-outlined">check_circle</span>
-                      Resultados Finales Guardados
-                    </div>
-                  ) : (
-                    <button
-                      onClick={handlePreSave}
-                      disabled={saving}
-                      style={{
-                        width: '100%',
-                        background: '#CE1126',
-                        color: 'white',
-                        fontWeight: 700,
-                        padding: '14px 16px',
-                        borderRadius: '12px',
-                        boxShadow: '0 4px 14px rgba(206,17,38,0.25)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        border: 'none',
-                        cursor: saving ? 'not-allowed' : 'pointer',
-                        opacity: saving ? 0.5 : 1,
-                        fontSize: '14px',
-                        fontFamily: "'Inter', system-ui, sans-serif",
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      <span className="material-symbols-outlined">save</span>
-                      {saving ? 'Guardando Registro...' : 'Guardar Resultados Finales'}
-                    </button>
-                  )}
-                </div>
               </div>
             </motion.div>
           )}
@@ -626,5 +482,125 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
         onCancel={() => { setConfirmResumen(null); setConfirmAction(null) }}
       />
     </>
+  )
+}
+
+// ---- Subcomponentes ----
+
+function SectionTitle({ color, title, guardado }: { color: string; title: string; guardado?: boolean }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: '8px',
+      marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #E5E7EB',
+    }}>
+      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }} />
+      <h5 style={{ fontWeight: 700, color: '#111827', textTransform: 'uppercase', fontSize: '12px', letterSpacing: '0.05em', margin: 0 }}>
+        {title}
+      </h5>
+      {guardado && (
+        <span style={{ fontSize: '10px', background: 'rgba(16,185,129,0.1)', color: '#10B981', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+          ✓ Guardado
+        </span>
+      )}
+    </div>
+  )
+}
+
+function VotoRow({ id, label, value, disabled, onChange, inputStyle, disabledInputStyle, guardado, highlight, highlightColor }: {
+  id: string; label: string; value: string; disabled: boolean
+  onChange: (v: string) => void
+  inputStyle: React.CSSProperties; disabledInputStyle: React.CSSProperties
+  guardado: boolean; highlight: boolean; highlightColor?: string
+}) {
+  const bg = guardado ? 'rgba(16,185,129,0.04)' : highlight ? '#FAFAFA' : '#F8F9FA'
+  const border = guardado ? '#10B981' : highlight && highlightColor ? highlightColor + '40' : '#E5E7EB'
+  const labelColor = highlight && highlightColor && !guardado ? highlightColor : '#374151'
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
+      background: bg, padding: highlight ? '12px' : '10px 12px',
+      borderRadius: '8px', border: `1px solid ${border}`,
+    }}>
+      <label style={{ fontSize: highlight ? '13px' : '12px', fontWeight: highlight ? 700 : 500, color: labelColor, flex: 1 }} htmlFor={id}>
+        {label}
+      </label>
+      <input
+        id={id} type="number" inputMode="numeric" min="0" placeholder="0"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        disabled={disabled}
+        style={disabled ? { ...disabledInputStyle, width: '80px', flexShrink: 0 } : { ...inputStyle, width: '80px', flexShrink: 0 }}
+      />
+    </div>
+  )
+}
+
+function FotoSection({ titulo, color, foto1Url, foto2Url, disabled, requerida, onCapture1, onCapture2 }: {
+  titulo: string; color: string
+  foto1Url: string | null; foto2Url: string | null
+  disabled: boolean; requerida: boolean
+  onCapture1: (b64: string) => void; onCapture2: (b64: string) => void
+}) {
+  return (
+    <div style={{ marginTop: '4px', padding: '12px', borderRadius: '10px', background: '#FAFBFC', border: '1px solid #E5E7EB' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
+        <span className="material-symbols-outlined" style={{ fontSize: '16px', color }}>photo_camera</span>
+        <span style={{ fontSize: '12px', fontWeight: 700, color: '#111827' }}>{titulo}</span>
+        <span style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500 }}>(hasta 2)</span>
+        {requerida && (
+          <span style={{ fontSize: '10px', color: '#EF4444', fontWeight: 700 }}>
+            Requerida para guardar
+          </span>
+        )}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+        <PhotoCapture label="Foto 1" existingUrl={foto1Url} onCapture={onCapture1} disabled={disabled} />
+        <PhotoCapture label="Foto 2" existingUrl={foto2Url} onCapture={onCapture2} disabled={disabled} />
+      </div>
+    </div>
+  )
+}
+
+function SavedBadge({ label }: { label: string }) {
+  return (
+    <div style={{
+      width: '100%', background: '#10B981', color: 'white',
+      fontWeight: 700, padding: '13px 16px', borderRadius: '10px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+      fontSize: '13px', fontFamily: "'Inter', system-ui, sans-serif",
+    }}>
+      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>check_circle</span>
+      {label}
+    </div>
+  )
+}
+
+function SaveButton({ label, color, disabled, missingPhoto, onClick, saving }: {
+  label: string; color: string; disabled: boolean
+  missingPhoto: boolean; onClick: () => void; saving: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={missingPhoto ? 'Suba la foto del acta primero' : ''}
+      style={{
+        width: '100%',
+        background: missingPhoto ? '#E5E7EB' : color,
+        color: missingPhoto ? '#9CA3AF' : 'white',
+        fontWeight: 700, padding: '13px 16px', borderRadius: '10px',
+        boxShadow: missingPhoto ? 'none' : `0 4px 14px ${color}40`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+        border: 'none', cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: saving ? 0.6 : 1, fontSize: '13px',
+        fontFamily: "'Inter', system-ui, sans-serif", transition: 'all 0.2s',
+      }}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+        {missingPhoto ? 'photo_camera' : 'how_to_vote'}
+      </span>
+      {saving ? 'Guardando...' : missingPhoto ? 'Suba la foto para habilitar' : label}
+    </button>
   )
 }

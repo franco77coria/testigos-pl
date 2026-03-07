@@ -41,6 +41,8 @@ export async function GET(request: NextRequest) {
         datos_8am_guardados: r.datos_8am_guardados || false,
         datos_11am_guardados: r.datos_11am_guardados || false,
         datos_1pm_guardados: r.datos_1pm_guardados || false,
+        datos_camara_guardados: r.datos_camara_guardados || false,
+        datos_senado_guardados: r.datos_senado_guardados || false,
         datos_finales_guardados: r.datos_finales_guardados || false,
         estado: r.estado || 'pendiente',
       }

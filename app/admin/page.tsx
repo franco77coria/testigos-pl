@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 
 interface Stats {
   testigos: number
-  municipios: number
+  mesas: number
 }
 
 export default function AdminPanel() {
@@ -22,7 +22,7 @@ export default function AdminPanel() {
   // Loading & messages
   const [loading, setLoading] = useState('')
   const [mensaje, setMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
-  const [stats, setStats] = useState<Stats>({ testigos: 0, municipios: 0 })
+  const [stats, setStats] = useState<Stats>({ testigos: 0, mesas: 0 })
 
   // Admin authorization
   const [newAdminCedula, setNewAdminCedula] = useState('')
@@ -33,7 +33,6 @@ export default function AdminPanel() {
   const [resetMensaje, setResetMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
 
   const testigosRef = useRef<HTMLInputElement>(null)
-  const semaforoRef = useRef<HTMLInputElement>(null)
 
   // ---- Auth Gate ----
   async function verifySuperAdmin() {
@@ -58,20 +57,20 @@ export default function AdminPanel() {
   }
 
   // ---- CSV Upload ----
-  async function uploadCSV(tipo: 'testigos' | 'semaforo', file: File) {
-    setLoading(tipo)
+  async function uploadCSV(file: File) {
+    setLoading('testigos')
     setMensaje(null)
     try {
       const text = await file.text()
       const res = await fetch('/api/admin/upload-csv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tipo, csv: text }),
+        body: JSON.stringify({ csv: text }),
       })
       const data = await res.json()
       if (data.exito) {
         setMensaje({ tipo: 'ok', texto: data.mensaje })
-        setStats(prev => ({ ...prev, [tipo === 'testigos' ? 'testigos' : 'municipios']: data.total }))
+        setStats({ testigos: data.total, mesas: data.mesas })
       } else {
         setMensaje({ tipo: 'err', texto: data.mensaje })
       }
@@ -235,10 +234,10 @@ export default function AdminPanel() {
               </div>
               <div>
                 <div style={styles.workflowTitle}>Censo de Testigos</div>
-                <div style={styles.workflowDesc}>Actualiza la base con el CSV de testigos.</div>
+                <div style={styles.workflowDesc}>CSV unificado CNE: testigos + mesas asignadas.</div>
                 {stats.testigos > 0 && (
                   <div style={styles.workflowBadge}>
-                    <CheckCircle2 size={11} /> {stats.testigos} cargados
+                    <CheckCircle2 size={11} /> {stats.testigos} testigos · {stats.mesas} mesas
                   </div>
                 )}
               </div>
@@ -259,46 +258,7 @@ export default function AdminPanel() {
               )}
             </button>
             <input ref={testigosRef} type="file" accept=".csv" style={{ display: 'none' }}
-              onChange={e => { const f = e.target.files?.[0]; if (f) uploadCSV('testigos', f); e.target.value = '' }} />
-          </div>
-
-          <div style={styles.workflowDivider} />
-
-          {/* Semáforo Municipal */}
-          <div style={styles.workflowRow}>
-            <div style={styles.workflowLeft}>
-              <div style={{ ...styles.workflowIconCircle, background: 'rgba(245,158,11,0.08)' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" /><path d="M12 8v4l3 3" />
-                </svg>
-              </div>
-              <div>
-                <div style={styles.workflowTitle}>Semáforo Municipal</div>
-                <div style={styles.workflowDesc}>Metas y mesas habilitadas por municipio.</div>
-                {stats.municipios > 0 && (
-                  <div style={styles.workflowBadge}>
-                    <CheckCircle2 size={11} /> {stats.municipios} registrados
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={() => !loading && semaforoRef.current?.click()}
-              style={styles.csvButton}
-            >
-              {loading === 'semaforo' ? (
-                <><Loader2 size={14} className="animate-spin" /> Subiendo...</>
-              ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                  Subir CSV
-                </>
-              )}
-            </button>
-            <input ref={semaforoRef} type="file" accept=".csv" style={{ display: 'none' }}
-              onChange={e => { const f = e.target.files?.[0]; if (f) uploadCSV('semaforo', f); e.target.value = '' }} />
+              onChange={e => { const f = e.target.files?.[0]; if (f) uploadCSV(f); e.target.value = '' }} />
           </div>
         </div>
 
