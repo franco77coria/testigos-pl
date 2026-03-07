@@ -14,15 +14,10 @@ export async function GET() {
             .single()
 
         if (error || !data) {
-            // Return default values
             return NextResponse.json({
                 exito: true,
                 candidatos: [
-                    { code: 'votos_senado_1', title: 'Senado Candidato 1' },
-                    { code: 'votos_senado_2', title: 'Senado Candidato 2' },
-                    { code: 'votos_senado_3', title: 'Senado Candidato 3' },
-                    { code: 'votos_senado_4', title: 'Senado Candidato 4' },
-                    { code: 'votos_senado_5', title: 'Senado Candidato 5' },
+                    { code: 'votos_senado_1', title: 'L10 OSCAR SÁNCHEZ' },
                 ],
             })
         }
