@@ -46,18 +46,8 @@ export async function POST(request: NextRequest) {
     SENADO_CANDIDATOS.forEach(c => { updateData[c.code] = typeof datos[c.code] === 'number' ? datos[c.code] : 0 })
     updateData.votos_senado_partido = typeof datos.votos_senado_partido === 'number' ? datos.votos_senado_partido : 0
 
-    // Calcular estado
-    const merged = { ...resultado, ...updateData }
-
-    // Verificamos si completó todo lo requerido
-    const tieneVotosCamara = merged.votos_camara_l101 != null && merged.votos_camara_partido != null
-    const tieneVotosSenado = merged.votos_senado_1 != null && merged.votos_senado_partido != null
-
-    if (tieneVotosCamara && tieneVotosSenado && merged.foto_camara && merged.foto_senado && merged.confirmacion_e14) {
-      updateData.estado = 'completada'
-    } else {
-      updateData.estado = 'pendiente' // Se vuelve pendiente si no tiene todo
-    }
+    // Datos finales guardados = siempre completada
+    updateData.estado = 'completada'
 
     const { error: updateError } = await supabase
       .from('resultados')

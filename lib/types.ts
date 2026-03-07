@@ -148,12 +148,16 @@ export const SENADO_CANDIDATOS = [
 export type FranjaHoraria = '8am' | '11am' | '1pm'
 
 export const FRANJAS_HORARIAS: { key: FranjaHoraria; label: string; hora: string }[] = [
-  { key: '8am', label: 'Conteo 8:00 AM', hora: '08:00' },
-  { key: '11am', label: 'Conteo 11:00 AM', hora: '11:00' },
-  { key: '1pm', label: 'Conteo 1:00 PM', hora: '13:00' },
+  { key: '8am', label: 'Cantidad de Votantes 8 AM', hora: '08:00' },
+  { key: '11am', label: 'Cantidad de Votantes 11 AM', hora: '11:00' },
+  { key: '1pm', label: 'Cantidad de Votantes 1 PM', hora: '13:00' },
 ]
 
 export function calcularEstado(mesa: MesaDashboard): 'pendiente' | 'completada' {
+  // Si ya se guardaron los resultados finales, siempre es completada
+  if (mesa.datos_finales_guardados) {
+    return 'completada'
+  }
   const tieneVotosCamara = mesa.votos_camara_l101 != null && mesa.votos_camara_partido != null;
   const tieneVotosSenado = mesa.votos_senado_1 != null && mesa.votos_senado_partido != null;
   if (tieneVotosCamara && tieneVotosSenado && mesa.foto_camara && mesa.foto_senado && mesa.confirmacion_e14) {
