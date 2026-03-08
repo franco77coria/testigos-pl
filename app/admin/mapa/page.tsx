@@ -423,13 +423,16 @@ export default function MapaInteractivo() {
                 const s = 'font-size:1.1rem'
                 const tr = document.createElement('tr')
                 tr.style.cursor = 'pointer'
-                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}"><span style="display:inline-flex;align-items:center;gap:6px;"><span class="cota-arrow" style="font-size:0.7rem;color:#94A3B8;transition:transform .2s;">&#9654;</span>${p.puesto}</span></td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="color:#d97706;${s}">${p.mesas_con_alex}/${p.total_mesas}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
+                // Pre-compute mesa list for this puesto
+                const pMesas = mesas.filter(m => m.puesto === p.puesto).sort((a, b) => a.mesa - b.mesa)
+                const alexMesas = pMesas.filter(m => m.votos_alex > 0).map(m => m.mesa).join(', ')
+                const alexLabel = alexMesas ? `<div style="font-size:0.6rem;color:#94A3B8;margin-top:2px;white-space:normal;">M: ${alexMesas}</div>` : ''
+                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}"><span style="display:inline-flex;align-items:center;gap:6px;"><span class="cota-arrow" style="font-size:0.7rem;color:#94A3B8;transition:transform .2s;">&#9654;</span>${p.puesto}</span></td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="color:#d97706;${s}">${p.mesas_con_alex}/${p.total_mesas}${alexLabel}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
                 tbody.appendChild(tr)
 
                 // Detail rows (hidden by default)
-                const puestoMesas = mesas.filter(m => m.puesto === p.puesto).sort((a, b) => a.mesa - b.mesa)
                 const detailRows: HTMLTableRowElement[] = []
-                puestoMesas.forEach(m => {
+                pMesas.forEach(m => {
                     const mtr = document.createElement('tr')
                     mtr.style.display = 'none'
                     mtr.className = 'cota-detail-' + idx
