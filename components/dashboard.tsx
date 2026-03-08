@@ -104,11 +104,11 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
     }
     window.addEventListener('online', handleOnline)
 
-    // Chequear pendientes periódicamente (cada 30s)
+    // Chequear pendientes periódicamente (cada 60s, reducido para escala)
     const interval = setInterval(() => {
       setPendingSaves(getPendingCount())
       if (getPendingCount() > 0) processQueue()
-    }, 30000)
+    }, 60000)
 
     return () => {
       window.removeEventListener('online', handleOnline)

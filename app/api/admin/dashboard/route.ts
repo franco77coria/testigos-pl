@@ -1,7 +1,10 @@
-export const dynamic = 'force-dynamic'
-
 import { NextResponse } from 'next/server'
 import { getServiceClient, fetchAllRows } from '@/lib/supabase'
+
+// Cache: 5s fresh, 30s stale-while-revalidate
+const CACHE_HEADERS = {
+    'Cache-Control': 's-maxage=5, stale-while-revalidate=30',
+}
 
 export async function GET() {
     try {
@@ -90,10 +93,10 @@ export async function GET() {
                 },
                 municipios: municipiosData
             }
-        })
+        }, { headers: CACHE_HEADERS })
 
     } catch (error: any) {
         console.error('Error fetching admin dashboard stats:', error)
-        return NextResponse.json({ exito: false, mensaje: 'Error al recuperar estadísticas.' }, { status: 500 })
+        return NextResponse.json({ exito: false, mensaje: 'Error al recuperar estadísticas.' }, { status: 500, headers: CACHE_HEADERS })
     }
 }

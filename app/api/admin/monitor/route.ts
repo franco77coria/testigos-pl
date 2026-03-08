@@ -1,7 +1,10 @@
-export const dynamic = 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { getServiceClient, fetchAllRows } from '@/lib/supabase'
+
+// Cache: 5s fresh, 30s stale-while-revalidate (evita thundering herd en admins)
+const CACHE_HEADERS = {
+    'Cache-Control': 's-maxage=5, stale-while-revalidate=30',
+}
 
 export async function GET(request: NextRequest) {
     try {
@@ -174,10 +177,10 @@ export async function GET(request: NextRequest) {
                 completadas: puestos.reduce((s, p) => s + p.completadas, 0),
                 puestos: puestos.length,
             }
-        })
+        }, { headers: CACHE_HEADERS })
 
     } catch (error: any) {
         console.error('Error en monitor:', error)
-        return NextResponse.json({ exito: false, mensaje: 'Error al cargar monitor.' }, { status: 500 })
+        return NextResponse.json({ exito: false, mensaje: 'Error al cargar monitor.' }, { status: 500, headers: CACHE_HEADERS })
     }
 }

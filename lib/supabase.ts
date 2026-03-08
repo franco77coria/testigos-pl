@@ -5,9 +5,23 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export function getServiceClient() {
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient(supabaseUrl, serviceKey)
+/**
+ * Singleton service client — reutiliza la misma instancia en todas las requests.
+ * Evita crear miles de conexiones bajo carga (5K+ usuarios).
+ */
+let _serviceClient: SupabaseClient | null = null
+
+export function getServiceClient(): SupabaseClient {
+  if (!_serviceClient) {
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    _serviceClient = createClient(supabaseUrl, serviceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  }
+  return _serviceClient
 }
 
 /**
