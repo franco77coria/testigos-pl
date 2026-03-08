@@ -214,8 +214,13 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos, fra
     ...inputStyle, background: '#F3F4F6', color: '#9CA3AF', cursor: 'not-allowed',
   }
 
+  // Cuando senado+camara están activos, las franjas horarias se bloquean
+  const votacionActiva = franjasHabilitadas?.senado === true && franjasHabilitadas?.camara === true
+
   function isFranjaHabilitada(franja: FranjaHoraria): boolean {
     if (mesa[`datos_${franja}_guardados` as keyof MesaDashboard]) return false
+    // Si votación (senado+camara) está activa, bloquear todas las franjas horarias
+    if (votacionActiva) return false
     // Verificar si el admin habilitó esta franja
     if (franjasHabilitadas && franjasHabilitadas[franja] === false) return false
     if (franja === '8am') return true

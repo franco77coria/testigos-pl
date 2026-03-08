@@ -105,7 +105,12 @@ export default function AdminPanel() {
 
   async function toggleFranja(key: string) {
     setFranjasLoading(true)
-    const updated = { ...franjas, [key]: !franjas[key] }
+    const newVal = !franjas[key]
+    let updated = { ...franjas, [key]: newVal }
+    // Senado y Cámara siempre se activan/desactivan juntos
+    if (key === 'senado' || key === 'camara') {
+      updated = { ...updated, senado: newVal, camara: newVal }
+    }
     try {
       const res = await fetch('/api/admin/config/franjas', {
         method: 'POST',

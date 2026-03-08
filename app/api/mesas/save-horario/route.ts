@@ -18,18 +18,23 @@ export async function POST(request: NextRequest) {
 
         const supabase = getServiceClient()
 
-        // Verificar si la franja está habilitada por el admin
-        if (franja === '11am' || franja === '1pm') {
-            const { data: configData } = await supabase
-                .from('configuracion')
-                .select('valor')
-                .eq('clave', 'franjas_habilitadas')
-                .single()
+        // Verificar configuración de franjas
+        const { data: configData } = await supabase
+            .from('configuracion')
+            .select('valor')
+            .eq('clave', 'franjas_habilitadas')
+            .single()
 
-            const franjasConfig = configData ? JSON.parse(configData.valor) : { '8am': true, '11am': false, '1pm': false }
-            if (!franjasConfig[franja]) {
-                return NextResponse.json({ exito: false, mensaje: `El registro de las ${franja} no está habilitado en este momento.` })
-            }
+        const franjasConfig = configData ? JSON.parse(configData.valor) : { '8am': true, '11am': false, '1pm': false, senado: false, camara: false }
+
+        // Si votación (senado+camara) está activa, bloquear todas las franjas horarias
+        if (franjasConfig.senado === true && franjasConfig.camara === true) {
+            return NextResponse.json({ exito: false, mensaje: 'El registro de votación está activo. Las franjas horarias están bloqueadas.' })
+        }
+
+        // Verificar si la franja específica está habilitada
+        if (!franjasConfig[franja]) {
+            return NextResponse.json({ exito: false, mensaje: `El registro de las ${franja} no está habilitado en este momento.` })
         }
 
         // Verificar que la mesa existe
