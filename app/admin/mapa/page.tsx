@@ -99,7 +99,8 @@ export default function MapaInteractivo() {
     const [mapLoading, setMapLoading] = useState(true)
     const [legendOpen, setLegendOpen] = useState(true)
     const [tablesOpen, setTablesOpen] = useState(true)
-    const [countdown, setCountdown] = useState(30)
+    const [countdown, setCountdown] = useState(20)
+    const [refreshing, setRefreshing] = useState(false)
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
     const cotaData = useRef<CotaPuesto[]>([])
@@ -131,18 +132,20 @@ export default function MapaInteractivo() {
         })
     }, [auth.authorized, scriptsReady, fetchKPI])
 
-    // Auto-refresh every 30 seconds with countdown
+    // Auto-refresh every 20 seconds with countdown
     useEffect(() => {
         if (!mapInitialized.current) return
         const tick = setInterval(() => {
             setCountdown(prev => {
                 if (prev <= 1) {
+                    setRefreshing(true)
                     fetchKPI().then(() => {
                         if (onKPIsRef.current && kpiData.current.length > 0) {
                             onKPIsRef.current(kpiData.current)
                         }
+                        setRefreshing(false)
                     })
-                    return 30
+                    return 20
                 }
                 return prev - 1
             })
@@ -927,9 +930,20 @@ export default function MapaInteractivo() {
                             {tablesOpen ? 'Ocultar tablas' : 'Mostrar tablas'}
                         </button>
                         <span className="header-date" id="dateLabel"></span>
-                        <span style={{ fontSize: '.6rem', color: '#94A3B8', fontVariantNumeric: 'tabular-nums', minWidth: '24px', textAlign: 'center' }}>
-                            {countdown}s
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ width: '60px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{
+                                    width: `${((20 - countdown) / 20) * 100}%`,
+                                    height: '100%',
+                                    background: refreshing ? '#10B981' : '#e32117',
+                                    borderRadius: '2px',
+                                    transition: 'width 1s linear',
+                                }} />
+                            </div>
+                            <span style={{ fontSize: '.55rem', color: '#94A3B8', fontVariantNumeric: 'tabular-nums', minWidth: '20px' }}>
+                                {refreshing ? 'act...' : `${countdown}s`}
+                            </span>
+                        </div>
                     </div>
                 </header>
 
