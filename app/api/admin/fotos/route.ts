@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
         .from('testigos')
         .select('cedula, nombre_completo')
         .in('cedula', batch)
+        .limit(10000)
       if (data) testigosData.push(...data)
     }
 

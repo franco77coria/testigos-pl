@@ -60,8 +60,8 @@ export async function GET(request: NextRequest) {
     for (let i = 0; i < cedulasTestigos.length; i += 500) {
       const batch = cedulasTestigos.slice(i, i + 500)
       const [asigRes, resRes] = await Promise.all([
-        supabase.from('mesa_asignaciones').select('testigo_cedula, mesa_numero, municipio, puesto').in('testigo_cedula', batch),
-        supabase.from('resultados').select('testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados').in('testigo_cedula', batch),
+        supabase.from('mesa_asignaciones').select('testigo_cedula, mesa_numero, municipio, puesto').in('testigo_cedula', batch).limit(10000),
+        supabase.from('resultados').select('testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados').in('testigo_cedula', batch).limit(10000),
       ])
       if (asigRes.data) asignaciones.push(...asigRes.data)
       if (resRes.data) resultados.push(...resRes.data)

@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
             for (let i = 0; i < cedulaArr.length; i += 500) {
                 const batch = cedulaArr.slice(i, i + 500)
                 promises.push(
-                    supabase.from('testigos').select('cedula, nombre_completo, celular, correo').in('cedula', batch)
+                    supabase.from('testigos').select('cedula, nombre_completo, celular, correo').in('cedula', batch).limit(10000)
                 )
             }
 
