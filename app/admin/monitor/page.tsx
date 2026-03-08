@@ -292,20 +292,36 @@ export default function MonitorPage() {
                             </p>
                         </div>
                     </div>
-                    <button
-                        onClick={() => { setLoading(true); fetchData(filtro || undefined) }}
-                        disabled={refreshing}
-                        style={{
-                            background: 'rgba(206,17,38,0.1)', border: 'none', color: '#CE1126',
-                            padding: '8px', borderRadius: '50%', cursor: 'pointer',
-                            display: 'flex', alignItems: 'center',
-                            opacity: refreshing ? 0.5 : 1,
-                        }}
-                    >
-                        <span className="material-symbols-outlined" style={{
-                            fontSize: '18px', animation: refreshing ? 'spin 1s linear infinite' : 'none'
-                        }}>sync</span>
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                            onClick={() => { setLoading(true); fetchData(filtro || undefined) }}
+                            disabled={refreshing}
+                            style={{
+                                background: 'rgba(206,17,38,0.1)', border: 'none', color: '#CE1126',
+                                padding: '8px', borderRadius: '50%', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center',
+                                opacity: refreshing ? 0.5 : 1,
+                            }}
+                        >
+                            <span className="material-symbols-outlined" style={{
+                                fontSize: '18px', animation: refreshing ? 'spin 1s linear infinite' : 'none'
+                            }}>sync</span>
+                        </button>
+                        <button
+                            onClick={() => { window.location.href = '/' }}
+                            style={{
+                                background: '#FEE2E2', border: 'none', color: '#DC2626',
+                                padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', gap: '4px',
+                                fontSize: '11px', fontWeight: 700,
+                                fontFamily: "'Inter', system-ui, sans-serif",
+                            }}
+                            title="Cerrar sesión"
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span>
+                            Salir
+                        </button>
+                    </div>
                 </div>
             </header>
 

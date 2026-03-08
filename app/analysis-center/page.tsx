@@ -322,7 +322,27 @@ export default function AnalysisCenterPage() {
                 </p>
               </div>
             </div>
-            <span style={{ fontSize: '10px', fontWeight: 600, color: '#94A3B8' }}>{countdown}s</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '10px', fontWeight: 600, color: '#94A3B8' }}>{countdown}s</span>
+              <button
+                onClick={() => {
+                  sessionStorage.removeItem('analista_cedula')
+                  sessionStorage.removeItem('analista_nombre')
+                  window.location.href = '/'
+                }}
+                style={{
+                  background: '#FEE2E2', border: 'none', color: '#DC2626',
+                  padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                  fontSize: '11px', fontWeight: 700,
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                }}
+                title="Cerrar sesión"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span>
+                Salir
+              </button>
+            </div>
           </div>
         </header>
 
@@ -513,6 +533,24 @@ export default function AnalysisCenterPage() {
               <span className="material-symbols-outlined" style={{
                 fontSize: '18px', animation: refreshing ? 'spin 1s linear infinite' : 'none',
               }}>sync</span>
+            </button>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem('analista_cedula')
+                sessionStorage.removeItem('analista_nombre')
+                window.location.href = '/'
+              }}
+              style={{
+                background: '#FEE2E2', border: 'none', color: '#DC2626',
+                padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '4px',
+                fontSize: '11px', fontWeight: 700,
+                fontFamily: "'Inter', system-ui, sans-serif",
+              }}
+              title="Cerrar sesión"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span>
+              Salir
             </button>
           </div>
         </div>

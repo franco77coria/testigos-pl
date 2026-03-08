@@ -131,13 +131,16 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
           <button
             onClick={onLogout}
             style={{
-              background: 'none', border: 'none', color: '#94A3B8',
-              cursor: 'pointer', padding: '4px', borderRadius: '6px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#FEE2E2', border: 'none', color: '#DC2626',
+              cursor: 'pointer', padding: '6px 12px', borderRadius: '8px',
+              display: 'flex', alignItems: 'center', gap: '4px',
+              fontSize: '11px', fontWeight: 700,
+              fontFamily: "'Inter', system-ui, sans-serif",
             }}
             title="Cerrar sesión"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
+            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span>
+            Salir
           </button>
         </header>
 
