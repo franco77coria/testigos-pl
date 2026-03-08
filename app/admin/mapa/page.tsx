@@ -75,10 +75,12 @@ interface KPIRow {
 
 interface CotaPuesto {
     puesto: string
-    votantes_8am: number
     votantes_4pm: number
     total_mesas: number
     mesas_completadas: number
+    votos_alex: number
+    votos_partido: number
+    votos_senado: number
 }
 
 const CPriority: Record<string, string> = {
@@ -308,11 +310,13 @@ export default function MapaInteractivo() {
                 ['ALTA', 'MEDIA', 'BAJA', 'TOTAL'].forEach(p => {
                     const s = prioStats[p]
                     const pctC = s.metaC > 0 ? ((s.votA / s.metaC) * 100).toFixed(1) : '0'
+                    const pctPartido = s.metaC > 0 ? ((s.votC / s.metaC) * 100).toFixed(1) : '0'
                     const colorC = Number(pctC) >= 100 ? '#10b981' : (Number(pctC) > 70 ? '#f59e0b' : '#e32117')
+                    const colorPartido = Number(pctPartido) >= 100 ? '#10b981' : (Number(pctPartido) > 70 ? '#f59e0b' : '#e32117')
                     const badge = p === 'TOTAL' ? '<span style="font-weight:900;color:#1E293B">TOTAL</span>' : `<span class="prio-badge" style="background:${s.color}">${p}</span>`
                     const tr = document.createElement('tr')
                     if (p === 'TOTAL') tr.style.background = '#F8FAFC'
-                    tr.innerHTML = `<td>${badge}</td><td class="val" style="text-align:center">${s.muns}</td><td class="val">${fmt(s.metaC)}</td><td class="val" style="color:#d97706;font-weight:700;">${fmt(s.votA)}</td><td class="val">${fmt(s.votC)}</td><td class="pct" style="color:${colorC}">${pctC}%</td>`
+                    tr.innerHTML = `<td>${badge}</td><td class="val" style="text-align:center">${s.muns}</td><td class="val">${fmt(s.metaC)}</td><td class="val" style="color:#d97706;font-weight:700;">${fmt(s.votA)}</td><td class="val">${fmt(s.votC)}</td><td class="pct" style="color:${colorC}">${pctC}%</td><td class="pct" style="color:${colorPartido}">${pctPartido}%</td>`
                     tbodyC.appendChild(tr)
                 })
             }
@@ -352,21 +356,24 @@ export default function MapaInteractivo() {
             if (!tbody) return
             const cota = cotaData.current
             if (!cota || cota.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;font-size:1.1rem">Sin datos de Cota</td></tr>'
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;font-size:1.1rem">Sin datos de Cota</td></tr>'
                 return
             }
             tbody.innerHTML = ''
-            let totV8 = 0, totV4 = 0, totMesas = 0, totComp = 0
+            let totV4 = 0, totMesas = 0, totComp = 0, totAlex = 0, totPartido = 0, totSenado = 0
 
             cota.forEach(p => {
-                totV8 += p.votantes_8am
                 totV4 += p.votantes_4pm
                 totMesas += p.total_mesas
                 totComp += p.mesas_completadas
+                totAlex += p.votos_alex
+                totPartido += p.votos_partido
+                totSenado += p.votos_senado
                 const pct = p.total_mesas > 0 ? ((p.mesas_completadas / p.total_mesas) * 100).toFixed(1) : '0'
                 const color = Number(pct) >= 100 ? '#10b981' : (Number(pct) > 70 ? '#f59e0b' : '#e32117')
+                const s = 'font-size:1.1rem'
                 const tr = document.createElement('tr')
-                tr.innerHTML = `<td style="text-align:left;font-weight:600;font-size:1.1rem">${p.puesto}</td><td class="val" style="font-size:1.1rem">${fmt(p.votantes_8am)}</td><td class="val" style="font-size:1.1rem">${fmt(p.votantes_4pm)}</td><td class="val" style="font-size:1.1rem">${p.total_mesas}</td><td class="val" style="font-size:1.1rem">${p.mesas_completadas}</td><td class="pct" style="color:${color};font-size:1.1rem">${pct}%</td>`
+                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}">${p.puesto}</td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
                 tbody.appendChild(tr)
             })
 
@@ -375,7 +382,8 @@ export default function MapaInteractivo() {
             const totalTr = document.createElement('tr')
             totalTr.style.background = '#F8FAFC'
             totalTr.style.borderTop = '2px solid #228B22'
-            totalTr.innerHTML = `<td style="text-align:left;font-size:1.1rem"><span style="font-weight:900;color:#1E293B">TOTAL</span></td><td class="val" style="font-weight:900;font-size:1.1rem">${fmt(totV8)}</td><td class="val" style="font-weight:900;font-size:1.1rem">${fmt(totV4)}</td><td class="val" style="font-weight:900;font-size:1.1rem">${totMesas}</td><td class="val" style="font-weight:900;font-size:1.1rem">${totComp}</td><td class="pct" style="color:${totalColor};font-weight:900;font-size:1.1rem">${totalPct}%</td>`
+            const sb = 'font-weight:900;font-size:1.1rem'
+            totalTr.innerHTML = `<td style="text-align:left;${sb}"><span style="color:#1E293B">TOTAL</span></td><td class="val" style="${sb}">${fmt(totV4)}</td><td class="val" style="${sb}">${totMesas}</td><td class="val" style="${sb}">${totComp}</td><td class="pct" style="color:${totalColor};${sb}">${totalPct}%</td><td class="val" style="color:#d97706;${sb}">${fmt(totAlex)}</td><td class="val" style="${sb}">${fmt(totPartido)}</td><td class="val" style="${sb}">${fmt(totSenado)}</td>`
             tbody.appendChild(totalTr)
         }
 
@@ -855,10 +863,10 @@ export default function MapaInteractivo() {
                 {tablesOpen && <>
                 {/* ROW 1: CAMARA + SENADO side by side (original layout) */}
                 <div className="table-summary-container">
-                    <table className="summary-table" style={{ flex: 1, maxWidth: 750 }}>
+                    <table className="summary-table" style={{ flex: 1, maxWidth: 850 }}>
                         <thead>
                             <tr>
-                                <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
+                                <th colSpan={7} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
                                     RESULTADOS CAMARA DE REPRESENTANTES
                                 </th>
                             </tr>
@@ -869,10 +877,11 @@ export default function MapaInteractivo() {
                                 <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
                                 <th>Votos Partido Liberal</th>
                                 <th>% Cump.</th>
+                                <th>% Partido</th>
                             </tr>
                         </thead>
                         <tbody id="summaryTableBodyCamara">
-                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
+                            <tr><td colSpan={7} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
                         </tbody>
                     </table>
                     <table className="summary-table" style={{ maxWidth: 350 }}>
@@ -902,21 +911,23 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
-                                <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(34,139,34,0.1)', color: '#228B22', borderBottom: '2px solid #228B22' }}>
+                                <th colSpan={8} style={{ textAlign: 'center', background: 'rgba(34,139,34,0.1)', color: '#228B22', borderBottom: '2px solid #228B22' }}>
                                     RESULTADOS DE COTA
                                 </th>
                             </tr>
                             <tr>
                                 <th>Puesto</th>
-                                <th>Dato 8am</th>
                                 <th>Total Votos</th>
                                 <th>Mesas</th>
                                 <th>Completadas</th>
                                 <th>% Comp.</th>
+                                <th style={{ color: '#d97706' }}>Votos Alex</th>
+                                <th>Votos Partido</th>
+                                <th>Votos Senado</th>
                             </tr>
                         </thead>
                         <tbody id="cotaTableBody">
-                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Cota...</td></tr>
+                            <tr><td colSpan={8} style={{ textAlign: 'center' }}>Cargando datos Cota...</td></tr>
                         </tbody>
                     </table>
                 </div>
