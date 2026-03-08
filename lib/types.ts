@@ -94,10 +94,12 @@ export interface Resultado {
   votantes_8am: number | null
   votantes_11am: number | null
   votantes_1pm: number | null
+  votantes_4pm: number | null
   // Flags de bloqueo
   datos_8am_guardados: boolean
   datos_11am_guardados: boolean
   datos_1pm_guardados: boolean
+  datos_4pm_guardados: boolean
   datos_camara_guardados: boolean
   datos_senado_guardados: boolean
   datos_finales_guardados: boolean
@@ -143,10 +145,12 @@ export interface MesaDashboard {
   votantes_8am: number | null
   votantes_11am: number | null
   votantes_1pm: number | null
+  votantes_4pm: number | null
   // Flags de bloqueo
   datos_8am_guardados: boolean
   datos_11am_guardados: boolean
   datos_1pm_guardados: boolean
+  datos_4pm_guardados: boolean
   datos_camara_guardados: boolean
   datos_senado_guardados: boolean
   datos_finales_guardados: boolean
@@ -175,12 +179,13 @@ export const SENADO_CANDIDATOS = [
   { code: 'votos_senado_1', title: 'L10 OSCAR SÁNCHEZ' }
 ]
 
-export type FranjaHoraria = '8am' | '11am' | '1pm'
+export type FranjaHoraria = '8am' | '11am' | '1pm' | '4pm'
 
 export const FRANJAS_HORARIAS: { key: FranjaHoraria; label: string; hora: string }[] = [
   { key: '8am', label: 'ELECTORES HABILITADOS', hora: '08:00' },
   { key: '11am', label: 'CANTIDAD VOTANTES', hora: '11:00' },
   { key: '1pm', label: 'CANTIDAD VOTANTES', hora: '13:00' },
+  { key: '4pm', label: 'TOTAL DE VOTOS EN LA MESA', hora: '16:00' },
 ]
 
 export function calcularEstado(mesa: MesaDashboard): 'pendiente' | 'completada' {

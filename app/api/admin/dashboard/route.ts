@@ -51,10 +51,12 @@ export async function GET(request: NextRequest) {
         let sumHabilitados8am = 0
         let sumVotantes11am = 0
         let sumVotantes1pm = 0
+        let sumVotantes4pm = 0
 
         let reporte8amCount = 0
         let reporte11amCount = 0
         let reporte1pmCount = 0
+        let reporte4pmCount = 0
 
         // Votos (Dinámico)
         const votosCamara: Record<string, number> = { votos_camara_partido: 0 }
@@ -102,6 +104,10 @@ export async function GET(request: NextRequest) {
                     reporte1pmCount++
                     sumVotantes1pm += Number(res.votantes_1pm) || 0
                 }
+                if (res.datos_4pm_guardados) {
+                    reporte4pmCount++
+                    sumVotantes4pm += Number(res.votantes_4pm) || 0
+                }
 
                 // Votos Camara
                 if (res.datos_camara_guardados) {
@@ -144,9 +150,11 @@ export async function GET(request: NextRequest) {
                     habilitados8am: sumHabilitados8am,
                     conteo11am: sumVotantes11am,
                     conteo1pm: sumVotantes1pm,
+                    conteo4pm: sumVotantes4pm,
                     reportes8am: reporte8amCount,
                     reportes11am: reporte11amCount,
-                    reportes1pm: reporte1pmCount
+                    reportes1pm: reporte1pmCount,
+                    reportes4pm: reporte4pmCount
                 },
                 votos: {
                     camara: votosCamara,
@@ -165,7 +173,7 @@ export async function GET(request: NextRequest) {
 function getEmptyDashboardData() {
     return {
         progreso: { asignadas: 0, pendientes: 0, enProgreso: 0, completadas: 0, porcentajeTotal: 0, conFotoTotal: 0 },
-        horarios: { habilitados8am: 0, conteo11am: 0, conteo1pm: 0, reportes8am: 0, reportes11am: 0, reportes1pm: 0 },
+        horarios: { habilitados8am: 0, conteo11am: 0, conteo1pm: 0, conteo4pm: 0, reportes8am: 0, reportes11am: 0, reportes1pm: 0, reportes4pm: 0 },
         votos: { camara: {}, senado: {} },
         municipios: []
     }

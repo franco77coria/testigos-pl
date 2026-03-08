@@ -38,6 +38,7 @@ interface MesaResult {
     conteo_8am: boolean
     conteo_11am: boolean
     conteo_1pm: boolean
+    conteo_4pm: boolean
     foto_camara: boolean
     foto_senado: boolean
     foto_camara_url: string | null
@@ -82,7 +83,7 @@ interface DashboardData {
 
 interface ConteoDash {
     progreso: { asignadas: number; pendientes: number; enProgreso: number; completadas: number; porcentajeTotal: number; conFotoTotal: number }
-    horarios: { habilitados8am: number; conteo11am: number; conteo1pm: number; reportes8am: number; reportes11am: number; reportes1pm: number }
+    horarios: { habilitados8am: number; conteo11am: number; conteo1pm: number; conteo4pm: number; reportes8am: number; reportes11am: number; reportes1pm: number; reportes4pm: number }
     votos: { camara: Record<string, number>; senado: Record<string, number> }
 }
 
@@ -469,7 +470,7 @@ export default function AdminStats() {
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#10B981' }}>schedule</span>
                                 Votantes por Franja
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', textAlign: 'center' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', textAlign: 'center' }}>
                                 <div style={{ background: '#FAFBFC', padding: '12px', borderRadius: '10px', border: '1px solid #F1F5F9' }}>
                                     <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}><AnimatedNumber value={conteo.horarios.habilitados8am} /></div>
                                     <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Habilitados (8am)</div>
@@ -484,6 +485,11 @@ export default function AdminStats() {
                                     <div style={{ fontSize: '24px', fontWeight: 800, color: '#CE1126' }}><AnimatedNumber value={conteo.horarios.conteo1pm} /></div>
                                     <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Conteo (1pm)</div>
                                     <div style={{ fontSize: '9px', color: '#94A3B8', marginTop: '4px' }}>{conteo.horarios.reportes1pm} reportes</div>
+                                </div>
+                                <div style={{ background: '#FAFBFC', padding: '12px', borderRadius: '10px', border: '1px solid #F1F5F9' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#8B5CF6' }}><AnimatedNumber value={conteo.horarios.conteo4pm} /></div>
+                                    <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Total Votos (4pm)</div>
+                                    <div style={{ fontSize: '9px', color: '#94A3B8', marginTop: '4px' }}>{conteo.horarios.reportes4pm} reportes</div>
                                 </div>
                             </div>
                         </div>

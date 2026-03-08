@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServiceClient } from '@/lib/supabase'
 
 const CLAVE = 'franjas_habilitadas'
-const DEFAULT_FRANJAS = { '8am': true, '11am': false, '1pm': false, camara: false, senado: false }
+const DEFAULT_FRANJAS = { '8am': true, '11am': false, '1pm': false, '4pm': false, camara: false, senado: false }
 
 // GET: Obtener estado de franjas habilitadas
 export async function GET() {
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
             '8am': franjas['8am'] === true,
             '11am': franjas['11am'] === true,
             '1pm': franjas['1pm'] === true,
+            '4pm': franjas['4pm'] === true,
             camara: franjas['camara'] === true,
             senado: franjas['senado'] === true,
         }

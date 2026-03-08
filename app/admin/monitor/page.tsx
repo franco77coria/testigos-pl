@@ -14,6 +14,7 @@ interface MesaStatus {
     conteo_8am: boolean
     conteo_11am: boolean
     conteo_1pm: boolean
+    conteo_4pm: boolean
     foto_camara: boolean
     foto_senado: boolean
     estado: string
@@ -37,6 +38,7 @@ const INDICADORES = [
     { key: 'conteo_8am', label: '8H' },
     { key: 'conteo_11am', label: '11H' },
     { key: 'conteo_1pm', label: '1P' },
+    { key: 'conteo_4pm', label: '4P' },
     { key: 'foto_senado', label: 'F.S' },
     { key: 'senado_guardado', label: 'SEN' },
     { key: 'foto_camara', label: 'F.C' },
@@ -505,7 +507,7 @@ export default function MonitorPage() {
 
                                                         {/* 7 indicators */}
                                                         <div style={{
-                                                            display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px',
+                                                            display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '2px',
                                                         }}>
                                                             {INDICADORES.map(ind => {
                                                                 const val = mesa[ind.key as keyof MesaStatus] as boolean

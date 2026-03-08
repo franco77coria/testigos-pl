@@ -8,6 +8,7 @@ interface MesaCumplimiento {
   conteo_8am: boolean
   conteo_11am: boolean
   conteo_1pm: boolean
+  conteo_4pm: boolean
   foto_camara: boolean
   datos_camara: boolean
   foto_senado: boolean
@@ -50,6 +51,7 @@ const TAREAS = [
   { key: 'conteo_8am', label: '8H', title: 'Conteo 8 AM' },
   { key: 'conteo_11am', label: '11H', title: 'Conteo 11 AM' },
   { key: 'conteo_1pm', label: '1P', title: 'Conteo 1 PM' },
+  { key: 'conteo_4pm', label: '4P', title: 'Total Votos Mesa' },
   { key: 'foto_senado', label: 'F.S', title: 'Foto Senado' },
   { key: 'datos_senado', label: 'SEN', title: 'Datos Senado' },
   { key: 'foto_camara', label: 'F.C', title: 'Foto Cámara' },

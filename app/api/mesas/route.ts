@@ -37,10 +37,12 @@ export async function GET(request: NextRequest) {
         votantes_8am: r.votantes_8am,
         votantes_11am: r.votantes_11am,
         votantes_1pm: r.votantes_1pm,
+        votantes_4pm: r.votantes_4pm,
         // Flags de bloqueo
         datos_8am_guardados: r.datos_8am_guardados || false,
         datos_11am_guardados: r.datos_11am_guardados || false,
         datos_1pm_guardados: r.datos_1pm_guardados || false,
+        datos_4pm_guardados: r.datos_4pm_guardados || false,
         datos_camara_guardados: r.datos_camara_guardados || false,
         datos_senado_guardados: r.datos_senado_guardados || false,
         datos_finales_guardados: r.datos_finales_guardados || false,

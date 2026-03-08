@@ -98,6 +98,7 @@ export async function GET(request: NextRequest) {
             conteo_8am: boolean
             conteo_11am: boolean
             conteo_1pm: boolean
+            conteo_4pm: boolean
             foto_camara: boolean
             foto_senado: boolean
             foto_camara_url: string | null
@@ -141,6 +142,7 @@ export async function GET(request: NextRequest) {
                     conteo_8am: r.datos_8am_guardados === true,
                     conteo_11am: r.datos_11am_guardados === true,
                     conteo_1pm: r.datos_1pm_guardados === true,
+                    conteo_4pm: r.datos_4pm_guardados === true,
                     foto_camara: !!r.foto_camara,
                     foto_senado: !!r.foto_senado,
                     foto_camara_url: r.foto_camara || null,

@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ exito: false, mensaje: 'Datos incompletos.' })
         }
 
-        const franjasValidas = ['8am', '11am', '1pm']
+        const franjasValidas = ['8am', '11am', '1pm', '4pm']
         if (!franjasValidas.includes(franja)) {
             return NextResponse.json({ exito: false, mensaje: 'Franja horaria inválida.' })
         }
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
             .eq('clave', 'franjas_habilitadas')
             .single()
 
-        const franjasConfig = configData ? JSON.parse(configData.valor) : { '8am': true, '11am': false, '1pm': false, senado: false, camara: false }
+        const franjasConfig = configData ? JSON.parse(configData.valor) : { '8am': true, '11am': false, '1pm': false, '4pm': false, senado: false, camara: false }
 
         // Si votación (senado+camara) está activa, bloquear todas las franjas horarias
         if (franjasConfig.senado === true && franjasConfig.camara === true) {
@@ -61,6 +61,9 @@ export async function POST(request: NextRequest) {
         }
         if (franja === '1pm' && !resultado.datos_11am_guardados) {
             return NextResponse.json({ exito: false, mensaje: 'Primero debe registrar el conteo de las 11:00 AM.' })
+        }
+        if (franja === '4pm' && !resultado.datos_1pm_guardados) {
+            return NextResponse.json({ exito: false, mensaje: 'Primero debe registrar el conteo de la 1:00 PM.' })
         }
 
         // Validar que 11am y 1pm no superen los electores habilitados (8am)

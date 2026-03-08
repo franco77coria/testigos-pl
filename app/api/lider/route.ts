@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
       const batch = cedulasTestigos.slice(i, i + 500)
       const [asigRes, resRes] = await Promise.all([
         supabase.from('mesa_asignaciones').select('testigo_cedula, mesa_numero, municipio, puesto').in('testigo_cedula', batch).limit(10000),
-        supabase.from('resultados').select('testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados').in('testigo_cedula', batch).limit(10000),
+        supabase.from('resultados').select('testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, datos_4pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados').in('testigo_cedula', batch).limit(10000),
       ])
       if (asigRes.data) asignaciones.push(...asigRes.data)
       if (resRes.data) resultados.push(...resRes.data)
@@ -86,6 +86,7 @@ export async function GET(request: NextRequest) {
         conteo_8am: boolean
         conteo_11am: boolean
         conteo_1pm: boolean
+        conteo_4pm: boolean
         foto_camara: boolean
         datos_camara: boolean
         foto_senado: boolean
@@ -119,6 +120,7 @@ export async function GET(request: NextRequest) {
         conteo_8am: r?.datos_8am_guardados === true,
         conteo_11am: r?.datos_11am_guardados === true,
         conteo_1pm: r?.datos_1pm_guardados === true,
+        conteo_4pm: r?.datos_4pm_guardados === true,
         foto_camara: !!r?.foto_camara,
         datos_camara: r?.datos_camara_guardados === true,
         foto_senado: !!r?.foto_senado,
@@ -130,9 +132,9 @@ export async function GET(request: NextRequest) {
 
     // 6. Calcular totales
     const testigos = Object.values(testigosMap).map(t => {
-      const totalTareas = t.mesas.length * 7
+      const totalTareas = t.mesas.length * 8
       const tareasDone = t.mesas.reduce((sum, m) => sum + [
-        m.conteo_8am, m.conteo_11am, m.conteo_1pm,
+        m.conteo_8am, m.conteo_11am, m.conteo_1pm, m.conteo_4pm,
         m.foto_camara, m.datos_camara,
         m.foto_senado, m.datos_senado,
       ].filter(Boolean).length, 0)

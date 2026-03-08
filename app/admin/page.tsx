@@ -44,7 +44,7 @@ export default function AdminPanel() {
   const [accesoLoading, setAccesoLoading] = useState(false)
 
   // Franjas horarias
-  const [franjas, setFranjas] = useState<Record<string, boolean>>({ '8am': true, '11am': false, '1pm': false, camara: false, senado: false })
+  const [franjas, setFranjas] = useState<Record<string, boolean>>({ '8am': true, '11am': false, '1pm': false, '4pm': false, camara: false, senado: false })
   const [franjasLoading, setFranjasLoading] = useState(false)
 
   // Reset
@@ -431,6 +431,7 @@ export default function AdminPanel() {
             { key: '8am', label: 'Electores Habilitados', hora: '8:00 AM', icon: 'groups' },
             { key: '11am', label: 'Cantidad Votantes', hora: '11:00 AM', icon: 'schedule' },
             { key: '1pm', label: 'Cantidad Votantes', hora: '1:00 PM', icon: 'schedule' },
+            { key: '4pm', label: 'Total de Votos en la Mesa', hora: '4:00 PM', icon: 'how_to_reg' },
             { key: 'senado', label: 'Senado de la República', hora: 'Votos + Fotos E-14', icon: 'how_to_vote' },
             { key: 'camara', label: 'Cámara de Representantes', hora: 'Votos + Fotos E-14', icon: 'how_to_vote' },
           ].map(f => (
