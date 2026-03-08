@@ -81,6 +81,7 @@ interface CotaPuesto {
     votos_alex: number
     votos_partido: number
     votos_senado: number
+    mesas_con_alex: number
 }
 
 interface CotaMesa {
@@ -403,17 +404,18 @@ export default function MapaInteractivo() {
             const cota = cotaData.current
             const mesas = cotaMesas.current
             if (!cota || cota.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;font-size:1.1rem">Sin datos de Cota</td></tr>'
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;font-size:1.1rem">Sin datos de Cota</td></tr>'
                 return
             }
             tbody.innerHTML = ''
-            let totV4 = 0, totMesas = 0, totComp = 0, totAlex = 0, totPartido = 0, totSenado = 0
+            let totV4 = 0, totMesas = 0, totComp = 0, totAlex = 0, totPartido = 0, totSenado = 0, totMesasAlex = 0
 
             cota.forEach((p, idx) => {
                 totV4 += p.votantes_4pm
                 totMesas += p.total_mesas
                 totComp += p.mesas_completadas
                 totAlex += p.votos_alex
+                totMesasAlex += p.mesas_con_alex
                 totPartido += p.votos_partido
                 totSenado += p.votos_senado
                 const pct = p.total_mesas > 0 ? ((p.mesas_completadas / p.total_mesas) * 100).toFixed(1) : '0'
@@ -421,7 +423,7 @@ export default function MapaInteractivo() {
                 const s = 'font-size:1.1rem'
                 const tr = document.createElement('tr')
                 tr.style.cursor = 'pointer'
-                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}"><span style="display:inline-flex;align-items:center;gap:6px;"><span class="cota-arrow" style="font-size:0.7rem;color:#94A3B8;transition:transform .2s;">&#9654;</span>${p.puesto}</span></td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
+                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}"><span style="display:inline-flex;align-items:center;gap:6px;"><span class="cota-arrow" style="font-size:0.7rem;color:#94A3B8;transition:transform .2s;">&#9654;</span>${p.puesto}</span></td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="color:#d97706;${s}">${p.mesas_con_alex}/${p.total_mesas}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
                 tbody.appendChild(tr)
 
                 // Detail rows (hidden by default)
@@ -434,7 +436,8 @@ export default function MapaInteractivo() {
                     mtr.style.background = '#F8FAFC'
                     const ms = 'font-size:0.85rem;color:#64748B'
                     const check = m.completada ? '<span style="color:#10b981;">&#10003;</span>' : '<span style="color:#CBD5E1;">&#8212;</span>'
-                    mtr.innerHTML = `<td style="text-align:left;padding-left:2.5rem;${ms}">Mesa ${m.mesa}</td><td class="val" style="${ms}">${fmt(m.votantes_4pm)}</td><td colspan="2"></td><td style="text-align:center;">${check}</td><td class="val" style="${ms};color:#d97706;font-weight:600;">${fmt(m.votos_alex)}</td><td class="val" style="${ms}">${fmt(m.votos_partido)}</td><td class="val" style="${ms}">${fmt(m.votos_senado)}</td>`
+                    const hasAlex = m.votos_alex > 0 ? '<span style="color:#d97706;">&#10003;</span>' : '<span style="color:#CBD5E1;">&#8212;</span>'
+                    mtr.innerHTML = `<td style="text-align:left;padding-left:2.5rem;${ms}">Mesa ${m.mesa}</td><td class="val" style="${ms}">${fmt(m.votantes_4pm)}</td><td colspan="2"></td><td style="text-align:center;">${check}</td><td class="val" style="${ms};color:#d97706;font-weight:600;">${fmt(m.votos_alex)}</td><td style="text-align:center;">${hasAlex}</td><td class="val" style="${ms}">${fmt(m.votos_partido)}</td><td class="val" style="${ms}">${fmt(m.votos_senado)}</td>`
                     tbody.appendChild(mtr)
                     detailRows.push(mtr)
                 })
@@ -454,7 +457,7 @@ export default function MapaInteractivo() {
             totalTr.style.background = '#F8FAFC'
             totalTr.style.borderTop = '2px solid #228B22'
             const sb = 'font-weight:900;font-size:1.1rem'
-            totalTr.innerHTML = `<td style="text-align:left;${sb}"><span style="color:#1E293B">TOTAL</span></td><td class="val" style="${sb}">${fmt(totV4)}</td><td class="val" style="${sb}">${totMesas}</td><td class="val" style="${sb}">${totComp}</td><td class="pct" style="color:${totalColor};${sb}">${totalPct}%</td><td class="val" style="color:#d97706;${sb}">${fmt(totAlex)}</td><td class="val" style="${sb}">${fmt(totPartido)}</td><td class="val" style="${sb}">${fmt(totSenado)}</td>`
+            totalTr.innerHTML = `<td style="text-align:left;${sb}"><span style="color:#1E293B">TOTAL</span></td><td class="val" style="${sb}">${fmt(totV4)}</td><td class="val" style="${sb}">${totMesas}</td><td class="val" style="${sb}">${totComp}</td><td class="pct" style="color:${totalColor};${sb}">${totalPct}%</td><td class="val" style="color:#d97706;${sb}">${fmt(totAlex)}</td><td class="val" style="color:#d97706;${sb}">${totMesasAlex}/${totMesas}</td><td class="val" style="${sb}">${fmt(totPartido)}</td><td class="val" style="${sb}">${fmt(totSenado)}</td>`
             tbody.appendChild(totalTr)
         }
 
@@ -1038,7 +1041,7 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
-                                <th colSpan={8} style={{ textAlign: 'center', color: '#228B22', borderBottom: '2px solid #228B22', fontWeight: 800, fontSize: '.7rem', background: 'rgba(34,139,34,0.03)', padding: '0.5rem' }}>
+                                <th colSpan={9} style={{ textAlign: 'center', color: '#228B22', borderBottom: '2px solid #228B22', fontWeight: 800, fontSize: '.7rem', background: 'rgba(34,139,34,0.03)', padding: '0.5rem' }}>
                                     Resultados de Cota
                                 </th>
                             </tr>
@@ -1049,12 +1052,13 @@ export default function MapaInteractivo() {
                                 <th>Completadas</th>
                                 <th>% Comp.</th>
                                 <th style={{ color: '#d97706' }}>Votos Alex</th>
+                                <th style={{ color: '#d97706' }}>Mesas c/Alex</th>
                                 <th>Votos Partido</th>
                                 <th>Votos Senado</th>
                             </tr>
                         </thead>
                         <tbody id="cotaTableBody">
-                            <tr><td colSpan={8} style={{ textAlign: 'center' }}>Cargando datos Cota...</td></tr>
+                            <tr><td colSpan={9} style={{ textAlign: 'center' }}>Cargando datos Cota...</td></tr>
                         </tbody>
                     </table>
                 </div>

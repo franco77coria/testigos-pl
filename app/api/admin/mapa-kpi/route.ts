@@ -33,15 +33,16 @@ export async function GET() {
         ])
 
         // Aggregate COTA by puesto
-        const cotaByPuesto: Record<string, { puesto: string; votantes_4pm: number; total_mesas: number; mesas_completadas: number; votos_alex: number; votos_partido: number; votos_senado: number }> = {}
+        const cotaByPuesto: Record<string, { puesto: string; votantes_4pm: number; total_mesas: number; mesas_completadas: number; votos_alex: number; votos_partido: number; votos_senado: number; mesas_con_alex: number }> = {}
         for (const r of (cotaResult.data || [])) {
             const p = String(r.puesto || '').trim()
             if (!p) continue
             if (!cotaByPuesto[p]) {
-                cotaByPuesto[p] = { puesto: p, votantes_4pm: 0, total_mesas: 0, mesas_completadas: 0, votos_alex: 0, votos_partido: 0, votos_senado: 0 }
+                cotaByPuesto[p] = { puesto: p, votantes_4pm: 0, total_mesas: 0, mesas_completadas: 0, votos_alex: 0, votos_partido: 0, votos_senado: 0, mesas_con_alex: 0 }
             }
             cotaByPuesto[p].total_mesas++
             cotaByPuesto[p].votantes_4pm += Number(r.votantes_4pm) || 0
+            if ((Number(r.votos_camara_l101) || 0) > 0) cotaByPuesto[p].mesas_con_alex++
             cotaByPuesto[p].votos_alex += Number(r.votos_camara_l101) || 0
             cotaByPuesto[p].votos_partido += (Number(r.votos_camara_l101) || 0)
                 + (Number(r.votos_camara_l102) || 0) + (Number(r.votos_camara_l103) || 0)
