@@ -99,6 +99,7 @@ export default function MapaInteractivo() {
     const [mapLoading, setMapLoading] = useState(true)
     const [legendOpen, setLegendOpen] = useState(true)
     const [tablesOpen, setTablesOpen] = useState(true)
+    const [countdown, setCountdown] = useState(30)
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
     const cotaData = useRef<CotaPuesto[]>([])
@@ -130,16 +131,23 @@ export default function MapaInteractivo() {
         })
     }, [auth.authorized, scriptsReady, fetchKPI])
 
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds with countdown
     useEffect(() => {
         if (!mapInitialized.current) return
-        const interval = setInterval(async () => {
-            await fetchKPI()
-            if (onKPIsRef.current && kpiData.current.length > 0) {
-                onKPIsRef.current(kpiData.current)
-            }
-        }, 30000)
-        return () => clearInterval(interval)
+        const tick = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) {
+                    fetchKPI().then(() => {
+                        if (onKPIsRef.current && kpiData.current.length > 0) {
+                            onKPIsRef.current(kpiData.current)
+                        }
+                    })
+                    return 30
+                }
+                return prev - 1
+            })
+        }, 1000)
+        return () => clearInterval(tick)
     }, [fetchKPI])
 
     function initMap() {
@@ -919,6 +927,9 @@ export default function MapaInteractivo() {
                             {tablesOpen ? 'Ocultar tablas' : 'Mostrar tablas'}
                         </button>
                         <span className="header-date" id="dateLabel"></span>
+                        <span style={{ fontSize: '.6rem', color: '#94A3B8', fontVariantNumeric: 'tabular-nums', minWidth: '24px', textAlign: 'center' }}>
+                            {countdown}s
+                        </span>
                     </div>
                 </header>
 
