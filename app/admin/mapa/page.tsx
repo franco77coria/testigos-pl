@@ -759,11 +759,11 @@ export default function MapaInteractivo() {
                 .hc-lbl { font-size: 0.55rem; font-weight: 700; color: var(--s500); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1px; }
                 .header-date { color: var(--s500); font-size: .65rem; font-weight: 600; text-transform: uppercase; }
 
-                .table-summary-container { background: var(--s50); border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.4rem 0.8rem; display: flex; align-items: flex-start; justify-content: center; overflow-x: auto; gap: 0.8rem; }
-                .summary-table { width: 100%; max-width: 1200px; border-collapse: collapse; font-size: .7rem; text-align: center; }
-                .summary-table th, .summary-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
+                .table-summary-container { background: #fff; z-index: 400; padding: 0.6rem 1rem; display: flex; align-items: flex-start; justify-content: center; overflow-x: auto; gap: 1.2rem; }
+                .summary-table { width: 100%; max-width: 1200px; border-collapse: collapse; font-size: .7rem; text-align: center; border: 1px solid var(--s200); border-radius: 8px; overflow: hidden; }
+                .summary-table th, .summary-table td { padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
                 .summary-table th { min-width: 0; }
-                .summary-table th { font-weight: 700; color: var(--s500); font-size: .6rem; letter-spacing: 0.03em; background: transparent; }
+                .summary-table th { font-weight: 700; color: var(--s500); font-size: .6rem; letter-spacing: 0.03em; background: var(--s50); }
                 .summary-table th:first-child, .summary-table td:first-child { text-align: left; }
                 .summary-table .prio-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; color: #fff; font-weight: 800; font-size: 0.65rem; }
                 .summary-table .val { font-weight: 700; color: var(--s800); font-variant-numeric: tabular-nums; }
@@ -915,7 +915,7 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
-                                <th colSpan={7} style={{ textAlign: 'center', color: '#e32117', borderBottom: '2px solid #e32117', fontWeight: 800, fontSize: '.65rem', background: 'transparent' }}>
+                                <th colSpan={7} style={{ textAlign: 'center', color: '#e32117', borderBottom: '2px solid #e32117', fontWeight: 800, fontSize: '.7rem', background: 'rgba(227,33,23,0.03)', padding: '0.5rem' }}>
                                     Camara de Representantes
                                 </th>
                             </tr>
@@ -936,7 +936,7 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ maxWidth: 300 }}>
                         <thead>
                             <tr>
-                                <th colSpan={3} style={{ textAlign: 'center', color: '#1E293B', borderBottom: '2px solid #1E293B', fontWeight: 800, fontSize: '.65rem' }}>
+                                <th colSpan={3} style={{ textAlign: 'center', color: '#1E293B', borderBottom: '2px solid #1E293B', fontWeight: 800, fontSize: '.7rem', background: 'rgba(0,0,0,0.02)', padding: '0.5rem' }}>
                                     Senado
                                 </th>
                             </tr>
@@ -956,11 +956,11 @@ export default function MapaInteractivo() {
                     </table>
                 </div>
                 {/* ROW 2: COTA full width */}
-                <div className="table-summary-container">
+                <div className="table-summary-container" style={{ borderTop: '1px solid #E2E8F0' }}>
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
-                                <th colSpan={8} style={{ textAlign: 'center', color: '#228B22', borderBottom: '2px solid #228B22', fontWeight: 800, fontSize: '.65rem' }}>
+                                <th colSpan={8} style={{ textAlign: 'center', color: '#228B22', borderBottom: '2px solid #228B22', fontWeight: 800, fontSize: '.7rem', background: 'rgba(34,139,34,0.03)', padding: '0.5rem' }}>
                                     Resultados de Cota
                                 </th>
                             </tr>
