@@ -11,6 +11,11 @@ import { getServiceClient, fetchAllRows } from '@/lib/supabase'
  * Returns: { municipio, prioridad, camara_meta, camara_votos_partido,
  *            camara_votos_alex, camara_pct_votantes, senado_meta, senado_votos_oscar }[]
  */
+/** Normalize: strip accents + uppercase + trim (same as frontend norm()) */
+function norm(s: string): string {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim()
+}
+
 export async function GET() {
     try {
         const supabase = getServiceClient()
@@ -23,17 +28,18 @@ export async function GET() {
         ) as Record<string, unknown>[]
 
         // 2. Try to fetch municipio_kpi for priorities/metas (optional table)
-        let kpiMap: Record<string, { prioridad: string; camara_meta: number; senado_meta: number }> = {}
+        const kpiMap: Record<string, { prioridad: string; camara_meta: number; senado_meta: number; originalName: string }> = {}
         try {
             const { data: kpiRows } = await supabase
                 .from('municipio_kpi')
                 .select('municipio, prioridad, camara_meta, senado_meta')
             if (kpiRows && kpiRows.length > 0) {
                 for (const row of kpiRows) {
-                    kpiMap[String(row.municipio).toUpperCase().trim()] = {
+                    kpiMap[norm(String(row.municipio))] = {
                         prioridad: row.prioridad || 'BAJA',
                         camara_meta: row.camara_meta || 0,
                         senado_meta: row.senado_meta || 0,
+                        originalName: String(row.municipio).trim(),
                     }
                 }
             }
@@ -41,7 +47,7 @@ export async function GET() {
             // Table doesn't exist yet — that's fine, we'll use defaults
         }
 
-        // 3. Aggregate by municipality
+        // 3. Aggregate by municipality (using norm() to match regardless of accents)
         const agg: Record<string, {
             municipio: string
             camara_votos_partido: number
@@ -54,7 +60,7 @@ export async function GET() {
         for (const r of resultados) {
             const muni = String(r.municipio || '').trim()
             if (!muni) continue
-            const key = muni.toUpperCase()
+            const key = norm(muni)
 
             if (!agg[key]) {
                 agg[key] = {
@@ -82,7 +88,7 @@ export async function GET() {
 
         // 4a. Municipalities that have resultados
         for (const m of Object.values(agg)) {
-            const key = m.municipio.toUpperCase()
+            const key = norm(m.municipio)
             seen.add(key)
             const kpi = kpiMap[key] || null
             data.push({
@@ -104,7 +110,7 @@ export async function GET() {
         for (const [key, kpi] of Object.entries(kpiMap)) {
             if (seen.has(key)) continue
             data.push({
-                municipio: key,
+                municipio: kpi.originalName,
                 prioridad: kpi.prioridad,
                 camara_meta: kpi.camara_meta,
                 camara_votos_partido: 0,

@@ -554,32 +554,63 @@ export default function MapaInteractivo() {
         }
     }
 
-    // ── Auth Gate UI ──
+    // ── Auth Gate UI (same style as dashboard) ──
     if (!auth.authorized) {
         return (
-            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#EEF1F5', fontFamily: 'Inter, system-ui, sans-serif' }}>
-                <div style={{ background: '#fff', padding: '2rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', maxWidth: 400, width: '100%' }}>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem', color: '#e32117' }}>Mapa Interactivo</h2>
-                    <p style={{ fontSize: '0.8rem', color: '#64748B', marginBottom: '1.5rem' }}>Ingrese su cedula de super admin para acceder.</p>
-                    <input
-                        type="text"
-                        placeholder="Cedula"
-                        value={auth.cedula}
-                        onChange={e => auth.setCedula(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && auth.verify()}
-                        style={{ width: '100%', padding: '0.7rem 1rem', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '1rem', outline: 'none' }}
-                    />
-                    {auth.error && <p style={{ color: '#e32117', fontSize: '0.75rem', marginBottom: '0.5rem' }}>{auth.error}</p>}
-                    <button
-                        onClick={auth.verify}
-                        disabled={auth.loading}
-                        style={{ width: '100%', padding: '0.7rem', background: '#e32117', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}
-                    >
-                        {auth.loading ? 'Verificando...' : 'Acceder'}
-                    </button>
-                    <Link href="/admin" style={{ display: 'block', textAlign: 'center', marginTop: '1rem', fontSize: '0.75rem', color: '#64748B' }}>
-                        Volver al panel
-                    </Link>
+            <div style={{
+                minHeight: '100vh', background: '#F0F2F5',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px',
+                fontFamily: "'Inter', system-ui, sans-serif",
+            }}>
+                <div style={{
+                    background: '#FFFFFF', borderRadius: '16px', padding: '32px',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #E5E7EB',
+                    width: '100%', maxWidth: '380px',
+                }}>
+                    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                        <div style={{
+                            width: '48px', height: '48px', borderRadius: '12px',
+                            background: 'rgba(206,17,38,0.1)', display: 'flex',
+                            alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px',
+                            fontSize: '24px', color: '#CE1126', fontWeight: 900, fontStyle: 'italic',
+                        }}>L</div>
+                        <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>
+                            Mapa Interactivo
+                        </h1>
+                        <p style={{ fontSize: '12px', color: '#94A3B8' }}>
+                            Ingrese su cedula de super admin para acceder.
+                        </p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <input type="text" inputMode="numeric" placeholder="Ingrese su cedula"
+                            value={auth.cedula} onChange={e => auth.setCedula(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && auth.verify()}
+                            style={{
+                                width: '100%', padding: '12px 14px', border: '1px solid #E5E7EB',
+                                borderRadius: '10px', fontSize: '14px', fontWeight: 500, outline: 'none',
+                                fontFamily: "'Inter', system-ui, sans-serif", textAlign: 'center', boxSizing: 'border-box',
+                            }}
+                        />
+                        <button onClick={auth.verify} disabled={auth.loading || !auth.cedula.trim()}
+                            style={{
+                                width: '100%', padding: '12px', borderRadius: '10px', border: 'none',
+                                background: (!auth.cedula.trim() || auth.loading) ? 'rgba(206,17,38,0.4)' : '#CE1126',
+                                color: 'white', fontWeight: 700, fontSize: '14px',
+                                cursor: (!auth.cedula.trim() || auth.loading) ? 'not-allowed' : 'pointer',
+                                fontFamily: "'Inter', system-ui, sans-serif",
+                            }}>{auth.loading ? 'Verificando...' : 'Acceder'}</button>
+                    </div>
+                    {auth.error && (
+                        <div style={{
+                            marginTop: '12px', padding: '10px', borderRadius: '8px',
+                            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+                            color: '#EF4444', fontSize: '12px', fontWeight: 600, textAlign: 'center',
+                        }}>{auth.error}</div>
+                    )}
+                    <Link href="/admin" style={{
+                        display: 'block', textAlign: 'center', marginTop: '16px',
+                        fontSize: '12px', color: '#94A3B8', textDecoration: 'none', fontWeight: 500,
+                    }}>Volver al panel</Link>
                 </div>
             </div>
         )
@@ -600,7 +631,7 @@ export default function MapaInteractivo() {
                     --s500: #64748B; --s600: #475569; --s700: #334155; --s800: #1E293B; --s900: #0F172A;
                 }
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); height: 100vh; overflow: hidden; }
+                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); height: 100vh; overflow: auto; }
                 ::-webkit-scrollbar { width: 6px; }
                 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
                 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
