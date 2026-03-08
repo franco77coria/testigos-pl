@@ -633,7 +633,7 @@ export default function MapaInteractivo() {
                     --s500: #64748B; --s600: #475569; --s700: #334155; --s800: #1E293B; --s900: #0F172A;
                 }
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); height: 100vh; overflow: hidden; }
+                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); min-height: 100vh; }
                 ::-webkit-scrollbar { width: 6px; }
                 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
                 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
@@ -646,7 +646,7 @@ export default function MapaInteractivo() {
                 .load-text { color: #fff; margin-top: 1.5rem; font-weight: 600; font-size: 1rem; }
                 .load-note { color: rgba(255,255,255,.6); margin-top: .5rem; font-size: .75rem; }
 
-                .map-wrap { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+                .map-wrap { display: flex; flex-direction: column; min-height: 100vh; }
                 .header { background: linear-gradient(135deg, var(--pl-red) 0%, #b51a12 100%); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; color: #fff; position: relative; z-index: 500; box-shadow: 0 4px 15px rgba(227,33,23,0.2); overflow: hidden; }
                 .header::after { content: ''; position: absolute; top: 0; right: 0; width: 400px; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08)); pointer-events: none; }
                 .hdr-left { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 1; }
@@ -669,8 +669,8 @@ export default function MapaInteractivo() {
                 .summary-table .val { font-weight: 700; color: var(--s800); font-variant-numeric: tabular-nums; }
                 .summary-table .pct { font-weight: 800; }
 
-                .main-body { display: flex; flex: 1; position: relative; overflow: hidden; background: #e8e4da; }
-                #map { flex: 1; position: relative; height: 100%; }
+                .main-body { display: flex; flex: 1; position: relative; background: #e8e4da; min-height: 70vh; }
+                #map { flex: 1; position: relative; min-height: 70vh; }
                 #mapSvg { width: 100%; height: 100%; display: block; }
                 .muni { cursor: pointer; transition: opacity .12s; }
                 .muni:hover { opacity: .75; }
