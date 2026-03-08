@@ -13,23 +13,34 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ exito: false, mensaje: 'Cédula requerida.' })
     }
 
-    // 1. Verificar que es lider
-    const { data: lider } = await supabase
-      .from('lideres')
-      .select('cedula, nombre, telefono')
-      .eq('cedula', cedula)
-      .single()
+    const isAll = cedula === '__all__'
 
-    if (!lider) {
-      return NextResponse.json({ exito: false, mensaje: 'Líder no encontrado.' })
+    // 1. Verificar que es lider (o modo admin)
+    let lider: { cedula: string; nombre: string; telefono: string | null } | null = null
+
+    if (!isAll) {
+      const { data } = await supabase
+        .from('lideres')
+        .select('cedula, nombre, telefono')
+        .eq('cedula', cedula)
+        .single()
+
+      if (!data) {
+        return NextResponse.json({ exito: false, mensaje: 'Líder no encontrado.' })
+      }
+      lider = data
+    } else {
+      lider = { cedula: '__all__', nombre: 'Todos', telefono: null }
     }
 
-    // 2. Obtener testigos de este lider
-    const { data: testigosData } = await supabase
+    // 2. Obtener testigos
+    let testigosQuery = supabase
       .from('testigos')
       .select('cedula, nombre_completo, celular, correo, municipio, puesto')
-      .eq('cedula_lider', cedula)
-      .limit(1000)
+    if (!isAll) {
+      testigosQuery = testigosQuery.eq('cedula_lider', cedula)
+    }
+    const { data: testigosData } = await testigosQuery.limit(10000)
 
     if (!testigosData || testigosData.length === 0) {
       return NextResponse.json({

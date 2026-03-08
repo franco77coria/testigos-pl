@@ -120,6 +120,13 @@ export default function LiderPage() {
         sessionStorage.setItem('lider_nombre', json.sesion.nombre)
         setAuthorized(true)
         setLoading(true)
+      } else if (json.exito && (json.esCoordinador || json.esAnalista)) {
+        setLiderCedula('__all__')
+        setLiderNombre(json.esCoordinador ? 'Super Admin' : json.sesion.nombre)
+        sessionStorage.setItem('lider_cedula', '__all__')
+        sessionStorage.setItem('lider_nombre', json.esCoordinador ? 'Super Admin' : json.sesion.nombre)
+        setAuthorized(true)
+        setLoading(true)
       } else {
         setGateError('Acceso restringido. Solo líderes autorizados.')
       }
