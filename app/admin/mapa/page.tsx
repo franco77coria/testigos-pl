@@ -753,9 +753,10 @@ export default function MapaInteractivo() {
                 .hc-lbl { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
                 .header-date { color: rgba(255,255,255,.7); font-size: .7rem; font-weight: 600; position: relative; z-index: 1; text-transform: uppercase; background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px; }
 
-                .table-summary-container { background: #fff; border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.5rem 1.5rem; display: flex; align-items: flex-start; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow-x: auto; gap: 2rem; }
+                .table-summary-container { background: #fff; border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.5rem 0.8rem; display: flex; align-items: flex-start; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow-x: auto; gap: 1rem; }
                 .summary-table { width: 100%; max-width: 1200px; border-collapse: collapse; font-size: .75rem; text-align: center; }
-                .summary-table th, .summary-table td { padding: 0.4rem 0.8rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
+                .summary-table th, .summary-table td { padding: 0.3rem 0.4rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
+                .summary-table th { min-width: 0; }
                 .summary-table th { font-weight: 800; color: var(--s500); text-transform: uppercase; letter-spacing: 0.05em; background: var(--s50); }
                 .summary-table th:first-child, .summary-table td:first-child { text-align: left; }
                 .summary-table .prio-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; color: #fff; font-weight: 800; font-size: 0.65rem; }
@@ -905,7 +906,7 @@ export default function MapaInteractivo() {
                 {tablesOpen && <>
                 {/* ROW 1: CAMARA + SENADO side by side (original layout) */}
                 <div className="table-summary-container">
-                    <table className="summary-table" style={{ flex: 1, maxWidth: 850 }}>
+                    <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
                                 <th colSpan={7} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
@@ -913,12 +914,12 @@ export default function MapaInteractivo() {
                                 </th>
                             </tr>
                             <tr>
-                                <th>Prioridad</th>
-                                <th style={{ textAlign: 'center' }}>Municipios</th>
-                                <th>Total Votos Mesa</th>
-                                <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
-                                <th>Votos Partido Liberal</th>
-                                <th>% Cump.</th>
+                                <th>Prio.</th>
+                                <th style={{ textAlign: 'center' }}>Mun.</th>
+                                <th>Tot. Votos</th>
+                                <th style={{ color: '#d97706' }}>V. Alex</th>
+                                <th>V. Partido</th>
+                                <th>% Alex</th>
                                 <th>% Partido</th>
                             </tr>
                         </thead>
@@ -926,7 +927,7 @@ export default function MapaInteractivo() {
                             <tr><td colSpan={7} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
                         </tbody>
                     </table>
-                    <table className="summary-table" style={{ maxWidth: 350 }}>
+                    <table className="summary-table" style={{ maxWidth: 300 }}>
                         <thead>
                             <tr>
                                 <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
@@ -934,9 +935,9 @@ export default function MapaInteractivo() {
                                 </th>
                             </tr>
                             <tr>
-                                <th>Meta Senado</th>
-                                <th>Voto Senado - L10 Oscar Sánchez</th>
-                                <th>% Cump.</th>
+                                <th>Meta</th>
+                                <th>L10 Oscar S.</th>
+                                <th>%</th>
                             </tr>
                         </thead>
                         <tbody id="summaryTableBodySenado">
