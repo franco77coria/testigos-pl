@@ -62,9 +62,7 @@ export async function POST(request: NextRequest) {
         if (franja === '1pm' && !resultado.datos_11am_guardados) {
             return NextResponse.json({ exito: false, mensaje: 'Primero debe registrar el conteo de las 11:00 AM.' })
         }
-        if (franja === '4pm' && !resultado.datos_1pm_guardados) {
-            return NextResponse.json({ exito: false, mensaje: 'Primero debe registrar el conteo de la 1:00 PM.' })
-        }
+        // 4pm no requiere dependencia secuencial - se habilita directamente desde el admin
 
         // Validar que 11am y 1pm no superen los electores habilitados (8am)
         const votantesNum = typeof votantes === 'number' ? votantes : parseInt(votantes) || 0

@@ -226,7 +226,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos, fra
     if (franja === '8am') return true
     if (franja === '11am') return mesa.datos_8am_guardados === true
     if (franja === '1pm') return mesa.datos_11am_guardados === true
-    if (franja === '4pm') return mesa.datos_1pm_guardados === true
+    if (franja === '4pm') return true
     return false
   }
 
