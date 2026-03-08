@@ -14,6 +14,18 @@ export async function POST(request: NextRequest) {
 
     const supabase = getServiceClient()
 
+    // Verificar si Cámara está habilitada por el admin
+    const { data: configData } = await supabase
+      .from('configuracion')
+      .select('valor')
+      .eq('clave', 'franjas_habilitadas')
+      .single()
+
+    const config = configData ? JSON.parse(configData.valor) : { camara: false }
+    if (config.camara === false) {
+      return NextResponse.json({ exito: false, mensaje: 'El registro de Cámara no está habilitado en este momento.' })
+    }
+
     const { data: resultado, error } = await supabase
       .from('resultados')
       .select('*')

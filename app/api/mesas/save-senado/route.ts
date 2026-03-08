@@ -14,6 +14,18 @@ export async function POST(request: NextRequest) {
 
     const supabase = getServiceClient()
 
+    // Verificar si Senado está habilitado por el admin
+    const { data: configData } = await supabase
+      .from('configuracion')
+      .select('valor')
+      .eq('clave', 'franjas_habilitadas')
+      .single()
+
+    const config = configData ? JSON.parse(configData.valor) : { senado: false }
+    if (config.senado === false) {
+      return NextResponse.json({ exito: false, mensaje: 'El registro de Senado no está habilitado en este momento.' })
+    }
+
     const { data: resultado, error } = await supabase
       .from('resultados')
       .select('*')

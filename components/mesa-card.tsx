@@ -14,9 +14,10 @@ interface Props {
   cedula: string
   onUpdate: (mesa: MesaDashboard) => void
   senadoCandidatos?: { code: string; title: string }[]
+  franjasHabilitadas?: Record<string, boolean>
 }
 
-export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: Props) {
+export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos, franjasHabilitadas }: Props) {
   const activeSenado = senadoCandidatos?.length ? senadoCandidatos : SENADO_CANDIDATOS
   const [expanded, setExpanded] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -29,6 +30,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
   const isCompletada = estado === 'completada'
   const camaraGuardada = mesa.datos_camara_guardados === true
   const senadoGuardado = mesa.datos_senado_guardados === true
+  const camaraBloqueadaAdmin = franjasHabilitadas?.camara === false
+  const senadoBloqueadoAdmin = franjasHabilitadas?.senado === false
   const datosFinalesBloqueados = isCompletada
 
   function handleToggle() {
@@ -94,6 +97,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
 
   // ---- GUARDAR SENADO ----
   function handlePreSaveSenado() {
+    if (senadoBloqueadoAdmin) { toast('err', 'El registro de Senado no está habilitado por el administrador.'); return }
     if (senadoGuardado) { toast('err', 'Los registros de Senado ya fueron guardados.'); return }
     if (!mesa.foto_senado) { toast('err', 'Suba la foto del acta de Senado antes de guardar.'); return }
     const resumen: { label: string; valor: string }[] = []
@@ -132,6 +136,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
 
   // ---- GUARDAR CÁMARA ----
   function handlePreSaveCamara() {
+    if (camaraBloqueadaAdmin) { toast('err', 'El registro de Cámara no está habilitado por el administrador.'); return }
     if (camaraGuardada) { toast('err', 'Los registros de Cámara ya fueron guardados.'); return }
     if (!mesa.foto_camara) { toast('err', 'Suba la foto del acta de Cámara antes de guardar.'); return }
     const resumen: { label: string; valor: string }[] = []
@@ -211,6 +216,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
 
   function isFranjaHabilitada(franja: FranjaHoraria): boolean {
     if (mesa[`datos_${franja}_guardados` as keyof MesaDashboard]) return false
+    // Verificar si el admin habilitó esta franja
+    if (franjasHabilitadas && franjasHabilitadas[franja] === false) return false
     if (franja === '8am') return true
     if (franja === '11am') return mesa.datos_8am_guardados === true
     if (franja === '1pm') return mesa.datos_11am_guardados === true
@@ -327,7 +334,9 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                               )}
                               {!guardada && !habilitada && (
                                 <span style={{ fontSize: '11px', color: '#94A3B8' }}>
-                                  Complete la franja anterior primero
+                                  {franjasHabilitadas && franjasHabilitadas[f.key] === false
+                                    ? 'No habilitado por el administrador'
+                                    : 'Complete la franja anterior primero'}
                                 </span>
                               )}
                             </div>
@@ -379,8 +388,14 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                 </div>
 
                 {/* ===== SECCIÓN 2: SENADO (primero) ===== */}
-                <div style={{ marginBottom: '24px' }}>
+                <div style={{ marginBottom: '24px', opacity: senadoBloqueadoAdmin && !senadoGuardado ? 0.5 : 1 }}>
                   <SectionTitle color="#3B82F6" title="Senado de la República" guardado={senadoGuardado} />
+                  {senadoBloqueadoAdmin && !senadoGuardado && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px', padding: '10px 14px', borderRadius: '10px', background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#EF4444' }}>lock</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#B91C1C' }}>No habilitado por el administrador</span>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
                     {activeSenado.map(c => (
@@ -389,7 +404,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                         id={c.code}
                         label={c.title}
                         value={valores[c.code] || '0'}
-                        disabled={senadoGuardado}
+                        disabled={senadoGuardado || senadoBloqueadoAdmin}
                         onChange={v => setValores(prev => ({ ...prev, [c.code]: v }))}
                         inputStyle={inputStyle}
                         disabledInputStyle={disabledInputStyle}
@@ -402,7 +417,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                       id="votos_senado_partido"
                       label="VOTOS POR EL PARTIDO LIBERAL"
                       value={valores.votos_senado_partido || '0'}
-                      disabled={senadoGuardado}
+                      disabled={senadoGuardado || senadoBloqueadoAdmin}
                       onChange={v => setValores(prev => ({ ...prev, votos_senado_partido: v }))}
                       inputStyle={inputStyle}
                       disabledInputStyle={disabledInputStyle}
@@ -416,8 +431,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                       color="#3B82F6"
                       foto1Url={mesa.foto_senado}
                       foto2Url={mesa.foto_senado_2}
-                      disabled={senadoGuardado}
-                      requerida={!mesa.foto_senado && !senadoGuardado}
+                      disabled={senadoGuardado || senadoBloqueadoAdmin}
+                      requerida={!mesa.foto_senado && !senadoGuardado && !senadoBloqueadoAdmin}
                       onCapture1={b64 => handleUploadPhoto(b64, 'senado')}
                       onCapture2={b64 => handleUploadPhoto(b64, 'senado_2')}
                     />
@@ -426,10 +441,10 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                       <SavedBadge label="Registros de Senado Guardados" />
                     ) : (
                       <SaveButton
-                        label="GUARDAR REGISTROS DE SENADO"
+                        label={senadoBloqueadoAdmin ? 'NO HABILITADO' : 'GUARDAR REGISTROS DE SENADO'}
                         color="#3B82F6"
-                        disabled={saving || !mesa.foto_senado}
-                        missingPhoto={!mesa.foto_senado}
+                        disabled={saving || !mesa.foto_senado || senadoBloqueadoAdmin}
+                        missingPhoto={!mesa.foto_senado && !senadoBloqueadoAdmin}
                         onClick={handlePreSaveSenado}
                         saving={saving}
                       />
@@ -438,8 +453,14 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                 </div>
 
                 {/* ===== SECCIÓN 3: CÁMARA (después) ===== */}
-                <div style={{ marginBottom: '8px' }}>
+                <div style={{ marginBottom: '8px', opacity: camaraBloqueadaAdmin && !camaraGuardada ? 0.5 : 1 }}>
                   <SectionTitle color="#CE1126" title="Cámara de Representantes" guardado={camaraGuardada} />
+                  {camaraBloqueadaAdmin && !camaraGuardada && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px', padding: '10px 14px', borderRadius: '10px', background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#EF4444' }}>lock</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#B91C1C' }}>No habilitado por el administrador</span>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
                     {CAMARA_CANDIDATOS.map(c => (
@@ -448,7 +469,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                         id={c.code}
                         label={c.title}
                         value={valores[c.code] || '0'}
-                        disabled={camaraGuardada}
+                        disabled={camaraGuardada || camaraBloqueadaAdmin}
                         onChange={v => setValores(prev => ({ ...prev, [c.code]: v }))}
                         inputStyle={inputStyle}
                         disabledInputStyle={disabledInputStyle}
@@ -461,7 +482,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                       id="votos_camara_partido"
                       label="Votos por la LISTA DEL PARTIDO LIBERAL"
                       value={valores.votos_camara_partido || '0'}
-                      disabled={camaraGuardada}
+                      disabled={camaraGuardada || camaraBloqueadaAdmin}
                       onChange={v => setValores(prev => ({ ...prev, votos_camara_partido: v }))}
                       inputStyle={inputStyle}
                       disabledInputStyle={disabledInputStyle}
@@ -475,8 +496,8 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                       color="#CE1126"
                       foto1Url={mesa.foto_camara}
                       foto2Url={mesa.foto_camara_2}
-                      disabled={camaraGuardada}
-                      requerida={!mesa.foto_camara && !camaraGuardada}
+                      disabled={camaraGuardada || camaraBloqueadaAdmin}
+                      requerida={!mesa.foto_camara && !camaraGuardada && !camaraBloqueadaAdmin}
                       onCapture1={b64 => handleUploadPhoto(b64, 'camara')}
                       onCapture2={b64 => handleUploadPhoto(b64, 'camara_2')}
                     />
@@ -485,10 +506,10 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
                       <SavedBadge label="Registros de Cámara Guardados" />
                     ) : (
                       <SaveButton
-                        label="GUARDAR REGISTROS DE CÁMARA"
+                        label={camaraBloqueadaAdmin ? 'NO HABILITADO' : 'GUARDAR REGISTROS DE CÁMARA'}
                         color="#CE1126"
-                        disabled={saving || !mesa.foto_camara}
-                        missingPhoto={!mesa.foto_camara}
+                        disabled={saving || !mesa.foto_camara || camaraBloqueadaAdmin}
+                        missingPhoto={!mesa.foto_camara && !camaraBloqueadaAdmin}
                         onClick={handlePreSaveCamara}
                         saving={saving}
                       />

@@ -40,6 +40,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
   const [refreshing, setRefreshing] = useState(false)
   const [ultimaAct, setUltimaAct] = useState(horaActual())
   const [senadoCandidatos, setSenadoCandidatos] = useState(SENADO_CANDIDATOS)
+  const [franjasHabilitadas, setFranjasHabilitadas] = useState<Record<string, boolean>>({ '8am': true, '11am': true, '1pm': true })
   const [pendingSaves, setPendingSaves] = useState(0)
   const [processingQueue, setProcessingQueue] = useState(false)
 
@@ -90,6 +91,15 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
       .then(data => {
         if (data.exito && data.candidatos) {
           setSenadoCandidatos(data.candidatos)
+        }
+      })
+      .catch(() => { })
+
+    fetch('/api/admin/config/franjas')
+      .then(r => r.json())
+      .then(data => {
+        if (data.exito && data.franjas) {
+          setFranjasHabilitadas(data.franjas)
         }
       })
       .catch(() => { })
@@ -375,6 +385,7 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
                     cedula={sesion.cedula}
                     onUpdate={handleMesaUpdate}
                     senadoCandidatos={senadoCandidatos}
+                    franjasHabilitadas={franjasHabilitadas}
                   />
                 ))}
               </div>

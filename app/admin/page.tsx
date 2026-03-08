@@ -43,6 +43,10 @@ export default function AdminPanel() {
   const [accesoMensaje, setAccesoMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
   const [accesoLoading, setAccesoLoading] = useState(false)
 
+  // Franjas horarias
+  const [franjas, setFranjas] = useState<Record<string, boolean>>({ '8am': true, '11am': false, '1pm': false, camara: false, senado: false })
+  const [franjasLoading, setFranjasLoading] = useState(false)
+
   // Reset
   const [resetConfirm, setResetConfirm] = useState('')
   const [resetMensaje, setResetMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
@@ -71,10 +75,11 @@ export default function AdminPanel() {
     setGateLoading(false)
   }
 
-  // ---- Load accesos ----
+  // ---- Load accesos + franjas ----
   useEffect(() => {
     if (!authorized) return
     loadAccesos()
+    loadFranjas()
   }, [authorized])
 
   async function loadAccesos() {
@@ -88,6 +93,31 @@ export default function AdminPanel() {
       if (rA.exito) setAccesoAnalysis(rA.accesos)
       if (rS.exito) setAccesoSuper(rS.accesos)
     } catch { /* silent */ }
+  }
+
+  async function loadFranjas() {
+    try {
+      const res = await fetch('/api/admin/config/franjas')
+      const data = await res.json()
+      if (data.exito && data.franjas) setFranjas(data.franjas)
+    } catch { /* silent */ }
+  }
+
+  async function toggleFranja(key: string) {
+    setFranjasLoading(true)
+    const updated = { ...franjas, [key]: !franjas[key] }
+    try {
+      const res = await fetch('/api/admin/config/franjas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ franjas: updated, cedula: gateCedula }),
+      })
+      const data = await res.json()
+      if (data.exito) {
+        setFranjas(data.franjas)
+      }
+    } catch { /* silent */ }
+    setFranjasLoading(false)
   }
 
   function endpointForTab(tab: AccesoTab) {
@@ -370,6 +400,62 @@ export default function AdminPanel() {
             <input ref={testigosRef} type="file" accept=".csv" style={{ display: 'none' }}
               onChange={e => { const f = e.target.files?.[0]; if (f) uploadCSV(f); e.target.value = '' }} />
           </div>
+        </div>
+
+        {/* =================== CONTROL DE FRANJAS HORARIAS =================== */}
+        <div style={styles.sectionHeader}>CONTROL DE FORMULARIOS</div>
+        <div style={{
+          background: '#FFFFFF', borderRadius: '20px', border: '1px solid #E2E8F0',
+          overflow: 'hidden', marginBottom: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+          padding: '20px',
+        }}>
+          <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, marginBottom: '16px', margin: '0 0 16px' }}>
+            Habilite o deshabilite las secciones que los testigos pueden llenar.
+          </p>
+          {[
+            { key: '8am', label: 'Electores Habilitados', hora: '8:00 AM', icon: 'groups' },
+            { key: '11am', label: 'Cantidad Votantes', hora: '11:00 AM', icon: 'schedule' },
+            { key: '1pm', label: 'Cantidad Votantes', hora: '1:00 PM', icon: 'schedule' },
+            { key: 'senado', label: 'Senado de la República', hora: 'Votos + Fotos E-14', icon: 'how_to_vote' },
+            { key: 'camara', label: 'Cámara de Representantes', hora: 'Votos + Fotos E-14', icon: 'how_to_vote' },
+          ].map(f => (
+            <div key={f.key} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 16px', borderRadius: '12px', marginBottom: '8px',
+              background: franjas[f.key] ? 'rgba(16,185,129,0.04)' : '#F8FAFC',
+              border: `1px solid ${franjas[f.key] ? '#A7F3D0' : '#E2E8F0'}`,
+              transition: 'all 0.2s',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span className="material-symbols-outlined" style={{
+                  fontSize: '20px', color: franjas[f.key] ? '#10B981' : '#94A3B8',
+                }}>{f.icon}</span>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{f.label}</div>
+                  <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 500 }}>{f.hora}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => toggleFranja(f.key)}
+                disabled={franjasLoading}
+                style={{
+                  width: '48px', height: '28px', borderRadius: '14px', border: 'none',
+                  background: franjas[f.key] ? '#10B981' : '#D1D5DB',
+                  position: 'relative', cursor: franjasLoading ? 'not-allowed' : 'pointer',
+                  transition: 'background 0.2s', opacity: franjasLoading ? 0.5 : 1,
+                  flexShrink: 0,
+                }}
+              >
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '50%', background: '#FFFFFF',
+                  position: 'absolute', top: '3px',
+                  left: franjas[f.key] ? '23px' : '3px',
+                  transition: 'left 0.2s',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+                }} />
+              </button>
+            </div>
+          ))}
         </div>
 
         {/* =================== GESTIÓN DE ACCESOS =================== */}

@@ -18,6 +18,20 @@ export async function POST(request: NextRequest) {
 
         const supabase = getServiceClient()
 
+        // Verificar si la franja está habilitada por el admin
+        if (franja === '11am' || franja === '1pm') {
+            const { data: configData } = await supabase
+                .from('configuracion')
+                .select('valor')
+                .eq('clave', 'franjas_habilitadas')
+                .single()
+
+            const franjasConfig = configData ? JSON.parse(configData.valor) : { '8am': true, '11am': false, '1pm': false }
+            if (!franjasConfig[franja]) {
+                return NextResponse.json({ exito: false, mensaje: `El registro de las ${franja} no está habilitado en este momento.` })
+            }
+        }
+
         // Verificar que la mesa existe
         const { data: resultado, error } = await supabase
             .from('resultados')
