@@ -419,6 +419,9 @@ export default function AnalysisCenterPage() {
                       <div style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500, marginTop: '2px' }}>
                         {t.municipio} — {t.puesto}
                       </div>
+                      <div style={{ fontSize: '10px', color: '#6366F1', fontWeight: 600, marginTop: '2px' }}>
+                        Mesas: {t.mesas.map((m: any) => m.mesa_numero).sort((a: number, b: number) => a - b).join(', ')}
+                      </div>
                       <div style={{ height: '4px', background: '#E5E7EB', borderRadius: '2px', marginTop: '6px', overflow: 'hidden' }}>
                         <div style={{ height: '100%', borderRadius: '2px', background: barColor, width: `${pct}%` }} />
                       </div>
