@@ -853,9 +853,9 @@ export default function MapaInteractivo() {
 
                 {/* SUMMARY TABLES + FILTERS (collapsible) */}
                 {tablesOpen && <>
-                {/* ROW 1: CAMARA full width */}
+                {/* ROW 1: CAMARA + SENADO side by side (original layout) */}
                 <div className="table-summary-container">
-                    <table className="summary-table" style={{ flex: 1 }}>
+                    <table className="summary-table" style={{ flex: 1, maxWidth: 750 }}>
                         <thead>
                             <tr>
                                 <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
@@ -875,10 +875,7 @@ export default function MapaInteractivo() {
                             <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
                         </tbody>
                     </table>
-                </div>
-                {/* ROW 2: SENADO (compact) + COTA side by side */}
-                <div className="table-summary-container" style={{ gap: '1.5rem' }}>
-                    <table className="summary-table" style={{ maxWidth: 300, flexShrink: 0 }}>
+                    <table className="summary-table" style={{ maxWidth: 350 }}>
                         <thead>
                             <tr>
                                 <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
@@ -899,6 +896,9 @@ export default function MapaInteractivo() {
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                {/* ROW 2: COTA full width */}
+                <div className="table-summary-container">
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
