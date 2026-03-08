@@ -120,8 +120,14 @@ export default function AdminPanel() {
       const data = await res.json()
       if (data.exito) {
         setFranjas(data.franjas)
+      } else {
+        console.error('Error toggling franja:', data.mensaje)
+        alert(data.mensaje || 'Error al cambiar la configuración')
       }
-    } catch { /* silent */ }
+    } catch (err) {
+      console.error('Error toggling franja:', err)
+      alert('Error de conexión al cambiar la configuración')
+    }
     setFranjasLoading(false)
   }
 
