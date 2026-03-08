@@ -853,53 +853,53 @@ export default function MapaInteractivo() {
 
                 {/* SUMMARY TABLES + FILTERS (collapsible) */}
                 {tablesOpen && <>
+                {/* ROW 1: CAMARA full width */}
                 <div className="table-summary-container">
-                    {/* LEFT: CAMARA + SENADO stacked */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, maxWidth: 750 }}>
-                        <table className="summary-table">
-                            <thead>
-                                <tr>
-                                    <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
-                                        RESULTADOS CAMARA DE REPRESENTANTES
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Prioridad</th>
-                                    <th style={{ textAlign: 'center' }}>Municipios</th>
-                                    <th>Meta Alex Prieto</th>
-                                    <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
-                                    <th>Votos Partido Liberal</th>
-                                    <th>% Cump.</th>
-                                </tr>
-                            </thead>
-                            <tbody id="summaryTableBodyCamara">
-                                <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
-                            </tbody>
-                        </table>
-                        <table className="summary-table">
-                            <thead>
-                                <tr>
-                                    <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
-                                        RESULTADOS SENADO
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Meta Senado</th>
-                                    <th>Votos Senado</th>
-                                    <th>% Cump.</th>
-                                </tr>
-                            </thead>
-                            <tbody id="summaryTableBodySenado">
-                                <tr>
-                                    <td className="val" style={{ fontSize: '1.1rem' }}>100,000</td>
-                                    <td className="val" id="stSenVotos" style={{ fontSize: '1.1rem', color: '#e32117' }}>—</td>
-                                    <td className="pct" id="stSenPct" style={{ fontSize: '1.1rem' }}>—</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    {/* RIGHT: RESULTADOS DE COTA */}
-                    <table className="summary-table" style={{ flex: 1, alignSelf: 'flex-start' }}>
+                    <table className="summary-table" style={{ flex: 1 }}>
+                        <thead>
+                            <tr>
+                                <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
+                                    RESULTADOS CAMARA DE REPRESENTANTES
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Prioridad</th>
+                                <th style={{ textAlign: 'center' }}>Municipios</th>
+                                <th>Meta Alex Prieto</th>
+                                <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
+                                <th>Votos Partido Liberal</th>
+                                <th>% Cump.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBodyCamara">
+                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                {/* ROW 2: SENADO (compact) + COTA side by side */}
+                <div className="table-summary-container" style={{ gap: '1.5rem' }}>
+                    <table className="summary-table" style={{ maxWidth: 300, flexShrink: 0 }}>
+                        <thead>
+                            <tr>
+                                <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
+                                    RESULTADOS SENADO
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Meta Senado</th>
+                                <th>Votos Senado</th>
+                                <th>% Cump.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBodySenado">
+                            <tr>
+                                <td className="val" style={{ fontSize: '1.1rem' }}>100,000</td>
+                                <td className="val" id="stSenVotos" style={{ fontSize: '1.1rem', color: '#e32117' }}>—</td>
+                                <td className="pct" id="stSenPct" style={{ fontSize: '1.1rem' }}>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
                                 <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(34,139,34,0.1)', color: '#228B22', borderBottom: '2px solid #228B22' }}>

@@ -159,7 +159,7 @@ export default function AdminStats() {
                         r8am: mesas.filter((m: MesaResult) => m.conteo_8am).length,
                         r11am: mesas.filter((m: MesaResult) => m.conteo_11am).length,
                         r1pm: mesas.filter((m: MesaResult) => m.conteo_1pm).length,
-                        r4pm: mesas.filter((m: MesaResult) => m.camara_guardado && m.senado_guardado).length,
+                        r4pm: mesas.filter((m: MesaResult) => m.conteo_4pm).length,
                         mesas,
                     })
                 }
