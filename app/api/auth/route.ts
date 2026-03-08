@@ -3,6 +3,10 @@ import { getServiceClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
+function cleanCedula(value: string): string {
+  return value.replace(/\./g, '').replace(/\s/g, '').trim()
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { cedula } = await request.json()
@@ -12,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getServiceClient()
-    const cedulaClean = String(cedula).trim()
+    const cedulaClean = cleanCedula(String(cedula))
 
     // 1. Verificar si es admin
     const { data: admin } = await supabase
@@ -29,7 +33,37 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 2. Buscar testigo — solo retorna ubicacion, sin mesas
+    // 2. Verificar si es analista
+    const { data: analista } = await supabase
+      .from('analistas')
+      .select('cedula, nombre, telefono')
+      .eq('cedula', cedulaClean)
+      .single()
+
+    if (analista) {
+      return NextResponse.json({
+        exito: true,
+        esAnalista: true,
+        sesion: { cedula: analista.cedula, nombre: analista.nombre },
+      })
+    }
+
+    // 3. Verificar si es lider
+    const { data: lider } = await supabase
+      .from('lideres')
+      .select('cedula, nombre, telefono')
+      .eq('cedula', cedulaClean)
+      .single()
+
+    if (lider) {
+      return NextResponse.json({
+        exito: true,
+        esLider: true,
+        sesion: { cedula: lider.cedula, nombre: lider.nombre },
+      })
+    }
+
+    // 4. Buscar testigo
     const { data: testigo, error: testigoError } = await supabase
       .from('testigos')
       .select('*')
@@ -42,7 +76,8 @@ export async function POST(request: NextRequest) {
         mensaje: 'Cedula no encontrada. Verifique su numero o contacte al coordinador.',
       })
     }
-    // 3. Check if testigo already has mesa assignments
+
+    // 5. Cargar mesas asignadas del testigo
     const { data: asignaciones } = await supabase
       .from('mesa_asignaciones')
       .select('mesa_numero, municipio, puesto')
@@ -51,7 +86,6 @@ export async function POST(request: NextRequest) {
     let mesas: any[] = []
 
     if (asignaciones && asignaciones.length > 0) {
-      // Load resultados for assigned mesas
       const mesaNums = asignaciones.map(a => a.mesa_numero)
       const { data: resultados } = await supabase
         .from('resultados')

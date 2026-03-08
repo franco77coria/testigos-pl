@@ -35,6 +35,10 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
   return classes.filter(Boolean).join(' ')
 }
 
+export function cleanCedula(value: string): string {
+  return value.replace(/\./g, '').replace(/\s/g, '').trim()
+}
+
 export function horaActual(): string {
   return new Date().toLocaleTimeString('es-CO', {
     hour: '2-digit',

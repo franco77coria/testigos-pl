@@ -51,7 +51,14 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
   // ---- CONTEO HORARIO ----
   function handlePreSaveHorario(franja: FranjaHoraria) {
     const franjaInfo = FRANJAS_HORARIAS.find(f => f.key === franja)!
-    const valor = valHorario[franja] || '0'
+    const valor = parseInt(valHorario[franja]) || 0
+    // Validar que 11am y 1pm no superen los electores habilitados (8am)
+    if ((franja === '11am' || franja === '1pm') && mesa.votantes_8am != null) {
+      if (valor > mesa.votantes_8am) {
+        toast('err', `No puede superar los electores habilitados (${mesa.votantes_8am}).`)
+        return
+      }
+    }
     setConfirmResumen([{ label: franjaInfo.label, valor: `${valor} personas` }])
     setConfirmAction(() => () => doSaveHorario(franja))
   }
@@ -167,7 +174,10 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
     const data = await res.json()
     if (data.exito) {
       const updated = data.mesas.find((m: MesaDashboard) => m.mesa_numero === mesa.mesa_numero)
-      if (updated) onUpdate(updated)
+      if (updated) {
+        onUpdate(updated)
+        if (calcularEstado(updated) === 'completada') setExpanded(false)
+      }
     }
   }
 

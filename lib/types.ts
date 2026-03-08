@@ -15,7 +15,36 @@ export interface Testigo {
   mm: string | null
   zz: string | null
   pp: string | null
+  cedula_lider: string | null
+  cedula_analista: string | null
   created_at: string
+}
+
+export interface Lider {
+  id: string
+  cedula: string
+  nombre: string
+  telefono: string | null
+  cedula_analista: string | null
+  created_at: string
+}
+
+export interface Analista {
+  id: string
+  cedula: string
+  nombre: string
+  telefono: string | null
+  created_at: string
+}
+
+export interface LiderResumen {
+  cedula: string
+  nombre: string
+  telefono: string | null
+  total_testigos: number
+  total_mesas: number
+  mesas_completadas: number
+  porcentaje: number
 }
 
 export interface Municipio {

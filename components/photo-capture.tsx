@@ -15,6 +15,7 @@ interface Props {
 
 export default function PhotoCapture({ label, existingUrl, onCapture, uploading, uploaded, disabled }: Props) {
   const [preview, setPreview] = useState<string | null>(null)
+  const [cleared, setCleared] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -26,13 +27,14 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
     reader.onload = async (ev) => {
       const b64 = ev.target?.result as string
       setPreview(b64)
+      setCleared(false)
       const compressed = await comprimirImagen(b64)
       onCapture(compressed)
     }
     reader.readAsDataURL(file)
   }
 
-  const hasImage = preview || existingUrl
+  const hasImage = !cleared && (!!preview || !!existingUrl)
 
   return (
     <div className="p-3.5 rounded-xl" style={{
@@ -97,9 +99,12 @@ export default function PhotoCapture({ label, existingUrl, onCapture, uploading,
                 onClick={(e) => {
                   e.stopPropagation()
                   setPreview(null)
+                  setCleared(true)
                   if (inputRef.current) inputRef.current.value = ''
+                  setTimeout(() => inputRef.current?.click(), 0)
                 }}
                 className="absolute top-2 right-2 p-1.5 rounded-lg flex items-center justify-center text-white bg-black/60 backdrop-blur hover:bg-black/80 transition-colors"
+                title="Reemplazar foto"
               >
                 <X size={16} />
               </button>

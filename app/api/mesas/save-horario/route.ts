@@ -44,10 +44,18 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ exito: false, mensaje: 'Primero debe registrar el conteo de las 11:00 AM.' })
         }
 
+        // Validar que 11am y 1pm no superen los electores habilitados (8am)
+        const votantesNum = typeof votantes === 'number' ? votantes : parseInt(votantes) || 0
+        if ((franja === '11am' || franja === '1pm') && resultado.votantes_8am != null) {
+            if (votantesNum > resultado.votantes_8am) {
+                return NextResponse.json({ exito: false, mensaje: `El valor no puede superar los electores habilitados (${resultado.votantes_8am}).` })
+            }
+        }
+
         // Guardar el dato y marcar como guardado
         const votantesField = `votantes_${franja}`
         const updateData: Record<string, unknown> = {
-            [votantesField]: typeof votantes === 'number' ? votantes : parseInt(votantes) || 0,
+            [votantesField]: votantesNum,
             [flagField]: true,
             updated_at: new Date().toISOString(),
         }

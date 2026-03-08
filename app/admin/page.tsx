@@ -8,6 +8,8 @@ import { useRouter } from 'next/navigation'
 interface Stats {
   testigos: number
   mesas: number
+  lideres: number
+  analistas: number
 }
 
 type AccesoTab = 'lideres' | 'analysis' | 'super'
@@ -29,7 +31,7 @@ export default function AdminPanel() {
   // Loading & messages
   const [loading, setLoading] = useState('')
   const [mensaje, setMensaje] = useState<{ tipo: 'ok' | 'err'; texto: string } | null>(null)
-  const [stats, setStats] = useState<Stats>({ testigos: 0, mesas: 0 })
+  const [stats, setStats] = useState<Stats>({ testigos: 0, mesas: 0, lideres: 0, analistas: 0 })
 
   // Accesos
   const [accesoTab, setAccesoTab] = useState<AccesoTab>('lideres')
@@ -170,7 +172,7 @@ export default function AdminPanel() {
       const data = await res.json()
       if (data.exito) {
         setMensaje({ tipo: 'ok', texto: data.mensaje })
-        setStats({ testigos: data.total, mesas: data.mesas })
+        setStats({ testigos: data.total, mesas: data.mesas, lideres: data.lideres || 0, analistas: data.analistas || 0 })
       } else {
         setMensaje({ tipo: 'err', texto: data.mensaje })
       }
@@ -300,6 +302,36 @@ export default function AdminPanel() {
           </div>
         </div>
 
+        {/* =================== ACCESOS DIRECTOS =================== */}
+        <div style={styles.sectionHeader}>ACCESOS DIRECTOS</div>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+          gap: '10px', marginBottom: '20px',
+        }}>
+          {[
+            { href: '/admin/dashboard', label: 'Dashboard', icon: 'monitoring', desc: 'KPIs en vivo' },
+            { href: '/admin/monitor', label: 'Monitor', icon: 'grid_view', desc: 'Estado mesas' },
+            { href: '/admin/fotos', label: 'Fotos E-14', icon: 'photo_library', desc: 'Galería fotos' },
+            { href: '/analysis-center', label: 'Analysis Center', icon: 'analytics', desc: 'Seguimiento líderes' },
+            { href: '/lider', label: 'Panel Líder', icon: 'supervisor_account', desc: 'Vista de líder' },
+            { href: '/', label: 'Portal Testigo', icon: 'person', desc: 'Vista de testigo' },
+          ].map(link => (
+            <Link key={link.href} href={link.href} style={{
+              background: '#FFFFFF', borderRadius: '12px', padding: '16px 14px',
+              border: '1px solid #E5E7EB', textDecoration: 'none',
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              gap: '8px', textAlign: 'center',
+              transition: 'box-shadow 0.2s',
+            }}>
+              <span className="material-symbols-outlined" style={{
+                fontSize: '24px', color: '#CE1126',
+              }}>{link.icon}</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#111827' }}>{link.label}</span>
+              <span style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500 }}>{link.desc}</span>
+            </Link>
+          ))}
+        </div>
+
         {/* =================== FLUJO DE TRABAJO =================== */}
         <div style={styles.sectionHeader}>FLUJO DE TRABAJO</div>
         <div style={styles.workflowCard}>
@@ -315,7 +347,7 @@ export default function AdminPanel() {
                 <div style={styles.workflowDesc}>CSV unificado CNE: testigos + mesas asignadas.</div>
                 {stats.testigos > 0 && (
                   <div style={styles.workflowBadge}>
-                    <CheckCircle2 size={11} /> {stats.testigos} testigos · {stats.mesas} mesas
+                    <CheckCircle2 size={11} /> {stats.testigos} testigos · {stats.mesas} mesas · {stats.lideres} líderes · {stats.analistas} analistas
                   </div>
                 )}
               </div>

@@ -26,6 +26,16 @@ export default function Home() {
       if (data.esCoordinador) {
         router.push('/admin')
         return { exito: true, esCoordinador: true }
+      } else if (data.esAnalista) {
+        sessionStorage.setItem('analista_cedula', data.sesion.cedula)
+        sessionStorage.setItem('analista_nombre', data.sesion.nombre)
+        router.push('/analysis-center')
+        return { exito: true, esCoordinador: true }
+      } else if (data.esLider) {
+        sessionStorage.setItem('lider_cedula', data.sesion.cedula)
+        sessionStorage.setItem('lider_nombre', data.sesion.nombre)
+        router.push('/lider')
+        return { exito: true, esCoordinador: true }
       } else {
         setSesion(data.sesion)
         setPantalla('dashboard')

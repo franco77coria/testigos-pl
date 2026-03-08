@@ -52,6 +52,11 @@ export async function GET(request: NextRequest) {
             testigo_cedula: string
             votos_camara: boolean
             votos_senado: boolean
+            camara_guardado: boolean
+            senado_guardado: boolean
+            conteo_8am: boolean
+            conteo_11am: boolean
+            conteo_1pm: boolean
             foto_camara: boolean
             foto_senado: boolean
             foto_camara_url: string | null
@@ -88,6 +93,11 @@ export async function GET(request: NextRequest) {
                     testigo_cedula: r.testigo_cedula,
                     votos_camara: hasCamaraVotes,
                     votos_senado: hasSenadoVotes,
+                    camara_guardado: r.datos_camara_guardados === true,
+                    senado_guardado: r.datos_senado_guardados === true,
+                    conteo_8am: r.datos_8am_guardados === true,
+                    conteo_11am: r.datos_11am_guardados === true,
+                    conteo_1pm: r.datos_1pm_guardados === true,
                     foto_camara: !!r.foto_camara,
                     foto_senado: !!r.foto_senado,
                     foto_camara_url: r.foto_camara || null,
