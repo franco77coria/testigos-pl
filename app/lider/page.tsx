@@ -434,8 +434,26 @@ export default function LiderPage() {
                     <div style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500, marginTop: '2px' }}>
                       {t.municipio} — {t.puesto}
                     </div>
-                    <div style={{ fontSize: '10px', color: '#6366F1', fontWeight: 600, marginTop: '2px' }}>
-                      Mesas: {t.mesas.map((m: any) => m.mesa_numero).sort((a: number, b: number) => a - b).join(', ')}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '10px', color: '#6366F1', fontWeight: 600 }}>
+                        Mesas: {t.mesas.map((m: any) => m.mesa_numero).sort((a: number, b: number) => a - b).join(', ')}
+                      </span>
+                      {t.celular && (
+                        <a
+                          href={`https://wa.me/57${t.celular.replace(/\D/g, '')}`}
+                          target="_blank" rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '3px',
+                            background: '#25D366', color: 'white', borderRadius: '4px',
+                            padding: '1px 6px', fontSize: '9px', fontWeight: 700,
+                            textDecoration: 'none', flexShrink: 0,
+                          }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: '11px' }}>chat</span>
+                          WA
+                        </a>
+                      )}
                     </div>
                     <div style={{ height: '4px', background: '#E5E7EB', borderRadius: '2px', marginTop: '6px', overflow: 'hidden' }}>
                       <div style={{
