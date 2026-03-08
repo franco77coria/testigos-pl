@@ -754,9 +754,10 @@ export default function MapaInteractivo() {
                 .hdr-center { display: flex; gap: 1.5rem; background: rgba(0,0,0,0.15); padding: 0.4rem 1.2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); z-index: 1; }
                 .hc-stat { display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 1.5rem; }
                 .hc-stat:last-child { border-right: none; padding-right: 0; }
+                .hc-row { display: flex; align-items: baseline; gap: 6px; justify-content: center; }
                 .hc-val { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
-                .hc-pct { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.55); margin-top: 1px; }
-                .hc-lbl { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
+                .hc-pct { font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.55); }
+                .hc-lbl { font-size: 0.6rem; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
                 .header-date { color: rgba(255,255,255,.7); font-size: .7rem; font-weight: 600; position: relative; z-index: 1; text-transform: uppercase; background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px; }
 
                 .table-summary-container { background: #fff; border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.5rem 0.8rem; display: flex; align-items: flex-start; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow-x: auto; gap: 1rem; }
@@ -882,19 +883,16 @@ export default function MapaInteractivo() {
                     </div>
                     <div className="hdr-center">
                         <div className="hc-stat">
-                            <div className="hc-val" id="hCamPL">—</div>
-                            <div className="hc-pct" id="hCamPLpct">—</div>
                             <div className="hc-lbl">Partido Liberal (Cam)</div>
+                            <div className="hc-row"><span className="hc-val" id="hCamPL">—</span><span className="hc-pct" id="hCamPLpct">—</span></div>
                         </div>
                         <div className="hc-stat" style={{ color: '#ffd700' }}>
-                            <div className="hc-val" id="hAlex">—</div>
-                            <div className="hc-pct" id="hAlexPct" style={{ color: 'rgba(255,215,0,0.6)' }}>—</div>
                             <div className="hc-lbl" style={{ color: 'rgba(255,215,0,0.7)' }}>Alex Prieto</div>
+                            <div className="hc-row"><span className="hc-val" id="hAlex">—</span><span className="hc-pct" id="hAlexPct" style={{ color: 'rgba(255,215,0,0.6)' }}>—</span></div>
                         </div>
                         <div className="hc-stat">
-                            <div className="hc-val" id="hOscar">—</div>
-                            <div className="hc-pct" id="hOscarPct">—</div>
                             <div className="hc-lbl">Oscar Sanchez (Sen)</div>
+                            <div className="hc-row"><span className="hc-val" id="hOscar">—</span><span className="hc-pct" id="hOscarPct">—</span></div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', zIndex: 1 }}>
