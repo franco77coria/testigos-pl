@@ -893,7 +893,7 @@ export default function MapaInteractivo() {
                             </tr>
                             <tr>
                                 <th>Meta Senado</th>
-                                <th>Votos Senado</th>
+                                <th>Voto Senado - L10 Oscar Sánchez</th>
                                 <th>% Cump.</th>
                             </tr>
                         </thead>
