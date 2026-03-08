@@ -52,7 +52,7 @@ export default function MonitorPage() {
     const [refreshing, setRefreshing] = useState(false)
     const [expandedPuesto, setExpandedPuesto] = useState<string | null>(null)
     const [countdown, setCountdown] = useState(30)
-    const [contactoMesa, setContactoMesa] = useState<string | null>(null)
+
 
     // Auth gate
     const [authorized, setAuthorized] = useState(false)
@@ -447,8 +447,7 @@ export default function MonitorPage() {
                                         }}>
                                             {p.mesas.map((mesa) => {
                                                 const allDone = mesa.camara_guardado && mesa.senado_guardado
-                                                const mesaKey = `${p.municipio}__${p.puesto}__${mesa.mesa_numero}`
-                                                const showContacto = contactoMesa === mesaKey
+
 
                                                 return (
                                                     <div key={mesa.mesa_numero} style={{
@@ -458,69 +457,34 @@ export default function MonitorPage() {
                                                         border: `1px solid ${allDone ? 'rgba(16,185,129,0.2)' : '#E5E7EB'}`,
                                                         position: 'relative',
                                                     }}>
-                                                        {/* Mesa number + contact button */}
-                                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', marginBottom: '4px' }}>
-                                                            <div style={{
-                                                                fontSize: 'clamp(14px, 1.5vw, 24px)', fontWeight: 700,
-                                                                color: allDone ? '#10B981' : '#111827',
-                                                            }}>{mesa.mesa_numero}</div>
-                                                            {(mesa.testigo_celular || mesa.testigo_correo) && (
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); setContactoMesa(showContacto ? null : mesaKey) }}
-                                                                    style={{
-                                                                        background: 'none', border: 'none', cursor: 'pointer', padding: '2px',
-                                                                        color: showContacto ? '#CE1126' : '#94A3B8',
-                                                                        display: 'flex', alignItems: 'center',
-                                                                    }}
-                                                                    title="Ver contacto"
-                                                                >
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: 'clamp(14px, 1.2vw, 18px)' }}>
-                                                                        {showContacto ? 'close' : 'call'}
-                                                                    </span>
-                                                                </button>
-                                                            )}
+                                                        {/* Mesa number */}
+                                                        <div style={{
+                                                            fontSize: 'clamp(14px, 1.5vw, 24px)', fontWeight: 700,
+                                                            color: allDone ? '#10B981' : '#111827', marginBottom: '2px',
+                                                        }}>{mesa.mesa_numero}</div>
+
+                                                        {/* Testigo name — siempre visible */}
+                                                        <div style={{
+                                                            fontSize: 'clamp(9px, 0.8vw, 11px)', color: '#374151',
+                                                            fontWeight: 600, marginBottom: '6px',
+                                                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                        }}>
+                                                            {mesa.testigo_nombre || mesa.testigo_cedula}
                                                         </div>
 
-                                                        {/* Testigo name */}
-                                                        {mesa.testigo_nombre && (
-                                                            <div style={{
-                                                                fontSize: 'clamp(8px, 0.7vw, 10px)', color: '#94A3B8',
-                                                                fontWeight: 500, marginBottom: '6px',
-                                                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                                            }}>
-                                                                {mesa.testigo_nombre}
-                                                            </div>
-                                                        )}
-
-                                                        {/* Contacto popup */}
-                                                        {showContacto && (
-                                                            <div style={{
-                                                                background: '#FFFFFF', borderRadius: '8px', padding: '8px',
-                                                                border: '1px solid #E5E7EB', marginBottom: '6px',
-                                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                                                            }}>
-                                                                {mesa.testigo_celular && (
-                                                                    <a href={`tel:${mesa.testigo_celular}`} style={{
-                                                                        display: 'flex', alignItems: 'center', gap: '4px',
-                                                                        fontSize: '11px', fontWeight: 600, color: '#3B82F6',
-                                                                        textDecoration: 'none', marginBottom: mesa.testigo_correo ? '4px' : 0,
-                                                                    }}>
-                                                                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>call</span>
-                                                                        {mesa.testigo_celular}
-                                                                    </a>
-                                                                )}
-                                                                {mesa.testigo_correo && (
-                                                                    <a href={`mailto:${mesa.testigo_correo}`} style={{
-                                                                        display: 'flex', alignItems: 'center', gap: '4px',
-                                                                        fontSize: '10px', fontWeight: 600, color: '#3B82F6',
-                                                                        textDecoration: 'none',
-                                                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                                                    }}>
-                                                                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>mail</span>
-                                                                        {mesa.testigo_correo}
-                                                                    </a>
-                                                                )}
-                                                            </div>
+                                                        {/* Boton contacto — solo telefono */}
+                                                        {mesa.testigo_celular && (
+                                                            <a href={`tel:${mesa.testigo_celular}`}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                style={{
+                                                                    display: 'inline-flex', alignItems: 'center', gap: '3px',
+                                                                    fontSize: 'clamp(8px, 0.7vw, 10px)', fontWeight: 600, color: '#3B82F6',
+                                                                    textDecoration: 'none', marginBottom: '6px',
+                                                                }}
+                                                            >
+                                                                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>call</span>
+                                                                {mesa.testigo_celular}
+                                                            </a>
                                                         )}
 
                                                         {/* 7 indicators */}
