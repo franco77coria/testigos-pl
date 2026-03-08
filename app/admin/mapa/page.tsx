@@ -633,7 +633,7 @@ export default function MapaInteractivo() {
                     --s500: #64748B; --s600: #475569; --s700: #334155; --s800: #1E293B; --s900: #0F172A;
                 }
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); min-height: 100vh; }
+                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); }
                 ::-webkit-scrollbar { width: 6px; }
                 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
                 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
@@ -646,7 +646,7 @@ export default function MapaInteractivo() {
                 .load-text { color: #fff; margin-top: 1.5rem; font-weight: 600; font-size: 1rem; }
                 .load-note { color: rgba(255,255,255,.6); margin-top: .5rem; font-size: .75rem; }
 
-                .map-wrap { display: flex; flex-direction: column; min-height: 100vh; }
+                .map-wrap { display: flex; flex-direction: column; }
                 .header { background: linear-gradient(135deg, var(--pl-red) 0%, #b51a12 100%); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; color: #fff; position: relative; z-index: 500; box-shadow: 0 4px 15px rgba(227,33,23,0.2); overflow: hidden; }
                 .header::after { content: ''; position: absolute; top: 0; right: 0; width: 400px; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08)); pointer-events: none; }
                 .hdr-left { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 1; }
@@ -669,8 +669,8 @@ export default function MapaInteractivo() {
                 .summary-table .val { font-weight: 700; color: var(--s800); font-variant-numeric: tabular-nums; }
                 .summary-table .pct { font-weight: 800; }
 
-                .main-body { display: flex; flex: 1; position: relative; background: #e8e4da; min-height: 70vh; }
-                #map { flex: 1; position: relative; min-height: 70vh; }
+                .main-body { position: relative; background: #e8e4da; height: calc(100vh - 80px); }
+                #map { width: 100%; height: 100%; position: relative; }
                 #mapSvg { width: 100%; height: 100%; display: block; }
                 .muni { cursor: pointer; transition: opacity .12s; }
                 .muni:hover { opacity: .75; }
@@ -680,12 +680,12 @@ export default function MapaInteractivo() {
                 .prov-label { font-family: 'Inter', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; pointer-events: none; paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 3.5px; fill: #1a2540; }
                 .prov-label.dimmed { opacity: 0.15; }
 
-                #sidebar { width: 320px; background: var(--card); border-right: 1px solid var(--s200); box-shadow: 2px 0 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; z-index: 100; position: relative; }
-                .sb-header { padding: 1.2rem; border-bottom: 1px solid var(--s200); background: #fff; }
+                #sidebar { background: var(--card); z-index: 100; padding: 1.5rem; }
+                .sb-header { padding-bottom: 1rem; border-bottom: 1px solid var(--s200); background: #fff; margin-bottom: 1rem; }
                 .sb-title { font-size: .85rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--pl-red); display: flex; align-items: center; gap: 8px; }
                 .sb-title::before { content: ''; display: block; width: 4px; height: 14px; background: var(--pl-red); border-radius: 2px; }
-                .sb-content { flex: 1; overflow-y: auto; padding: 1rem; }
-                .prov-card { background: var(--s50); border: 1px solid var(--s200); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; transition: border-color 0.2s; }
+                .sb-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+                .prov-card { background: var(--s50); border: 1px solid var(--s200); border-radius: 12px; padding: 1rem; transition: border-color 0.2s; }
                 .prov-card:hover { border-color: var(--s300); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
                 .pc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .8rem; }
                 .pc-name { font-weight: 800; font-size: .95rem; color: var(--s800); }
@@ -754,12 +754,12 @@ export default function MapaInteractivo() {
                 .toggle-tables-btn svg { flex-shrink: 0; }
 
                 @media(max-width:800px) {
-                    .main-body { flex-direction: column; }
-                    #sidebar { width: 100%; height: 35vh; border-right: none; border-bottom: 1px solid var(--s200); }
+                    .main-body { height: calc(100vh - 70px); }
                     #panel { width: 100%; }
                     .header h1 { font-size: 1.1rem; }
                     .table-summary-container { justify-content: flex-start; padding: .5rem 1rem; }
                     .hdr-center { display: none; }
+                    .sb-content { grid-template-columns: 1fr; }
                 }
             `}</style>
 
@@ -887,16 +887,18 @@ export default function MapaInteractivo() {
                 </div>
                 </>}
 
-                {/* MAIN BODY */}
+                {/* MAIN BODY — map takes full width */}
                 <div className="main-body">
-                    <div id="sidebar">
-                        <div className="sb-header">
-                            <div className="sb-title">Resumen por Provincia</div>
-                        </div>
-                        <div className="sb-content" id="sbContent"></div>
-                    </div>
                     <div id="map"><svg id="mapSvg"></svg></div>
                 </div>
+            </div>
+
+            {/* PROVINCE SUMMARY — grid below the map */}
+            <div id="sidebar">
+                <div className="sb-header">
+                    <div className="sb-title">Resumen por Provincia</div>
+                </div>
+                <div className="sb-content" id="sbContent"></div>
             </div>
 
             {/* TOOLTIP */}
