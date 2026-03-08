@@ -219,14 +219,15 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos, fra
 
   function isFranjaHabilitada(franja: FranjaHoraria): boolean {
     if (mesa[`datos_${franja}_guardados` as keyof MesaDashboard]) return false
-    // Si votación (senado+camara) está activa, bloquear todas las franjas horarias
-    if (votacionActiva) return false
     // Verificar si el admin habilitó esta franja
     if (franjasHabilitadas && franjasHabilitadas[franja] === false) return false
+    // 4pm no tiene dependencias - solo requiere que el admin lo habilite
+    if (franja === '4pm') return true
+    // Si votación (senado+camara) está activa, bloquear las demás franjas horarias
+    if (votacionActiva) return false
     if (franja === '8am') return true
     if (franja === '11am') return mesa.datos_8am_guardados === true
     if (franja === '1pm') return mesa.datos_11am_guardados === true
-    if (franja === '4pm') return true
     return false
   }
 
@@ -311,7 +312,7 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos, fra
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {FRANJAS_HORARIAS.map((f) => {
                       const guardada = isFranjaGuardada(f.key)
-                      const habilitada = datosFinalesBloqueados ? false : isFranjaHabilitada(f.key)
+                      const habilitada = (datosFinalesBloqueados && f.key !== '4pm') ? false : isFranjaHabilitada(f.key)
                       const valorGuardado = mesa[`votantes_${f.key}` as keyof MesaDashboard]
 
                       return (

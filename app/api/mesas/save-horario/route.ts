@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
 
         const franjasConfig = configData ? JSON.parse(configData.valor) : { '8am': true, '11am': false, '1pm': false, '4pm': false, senado: false, camara: false }
 
-        // Si votación (senado+camara) está activa, bloquear todas las franjas horarias
-        if (franjasConfig.senado === true && franjasConfig.camara === true) {
+        // Si votación (senado+camara) está activa, bloquear franjas horarias (excepto 4pm)
+        if (franjasConfig.senado === true && franjasConfig.camara === true && franja !== '4pm') {
             return NextResponse.json({ exito: false, mensaje: 'El registro de votación está activo. Las franjas horarias están bloqueadas.' })
         }
 
