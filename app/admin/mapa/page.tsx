@@ -137,7 +137,7 @@ export default function MapaInteractivo() {
         if (!d3 || !topojson) return
 
         const kpiIdx: Record<string, KPIRow> = {}
-        let provStats: Record<string, { muns: number; vC: number; vA: number; vS: number; al: number; md: number; bj: number }> = {}
+        let provStats: Record<string, { muns: number; vC: number; vA: number; vS: number; tvm: number; al: number; md: number; bj: number; muniList: { name: string; vA: number; vC: number; vS: number; tvm: number }[] }> = {}
         let filterPrio = 'ALL', filterProv = 'ALL', filterMuni = 'ALL'
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let allGeoFeatures: any[] = []
@@ -293,11 +293,13 @@ export default function MapaInteractivo() {
                 prioStats.TOTAL.votS += d.senado_votos_oscar || 0
 
                 const prov = getProv(d.municipio)
-                if (!provStats[prov]) provStats[prov] = { muns: 0, vC: 0, vA: 0, vS: 0, al: 0, md: 0, bj: 0 }
+                if (!provStats[prov]) provStats[prov] = { muns: 0, vC: 0, vA: 0, vS: 0, tvm: 0, al: 0, md: 0, bj: 0, muniList: [] }
                 provStats[prov].muns++
                 provStats[prov].vC += d.camara_votos_partido || 0
                 provStats[prov].vA += d.camara_votos_alex || 0
                 provStats[prov].vS += d.senado_votos_oscar || 0
+                provStats[prov].tvm += d.total_votos_mesa || 0
+                provStats[prov].muniList.push({ name: d.municipio, vA: d.camara_votos_alex || 0, vC: d.camara_votos_partido || 0, vS: d.senado_votos_oscar || 0, tvm: d.total_votos_mesa || 0 })
                 if (prio === 'ALTA') provStats[prov].al++
                 else if (prio === 'MEDIA') provStats[prov].md++
                 else provStats[prov].bj++
@@ -392,32 +394,72 @@ export default function MapaInteractivo() {
             if (!sb) return
             sb.innerHTML = ''
 
+            const pctStr = (v: number, t: number) => t > 0 ? ((v / t) * 100).toFixed(1) + '%' : '0%'
+
             const pNames = Object.keys(provStats).sort((a, b) => (provStats[b].vC || 0) - (provStats[a].vC || 0))
             pNames.forEach(p => {
                 const stat = provStats[p]
                 const div = document.createElement('div')
                 div.className = 'prov-card'
+                const muniId = 'muniList_' + p.replace(/\s/g, '_')
                 div.innerHTML = `
-                    <div class="pc-head">
-                        <div class="pc-name">${p}</div>
+                    <div class="pc-head" style="cursor:pointer" data-toggle="${muniId}">
+                        <div class="pc-name">${p} <span style="font-size:0.55rem;color:#94A3B8;">&#9660;</span></div>
                         <div class="pc-count">${stat.muns} Mun.</div>
                     </div>
                     <div style="font-size:0.65rem;color:#64748B;margin-bottom:8px;display:flex;flex-direction:column;gap:4px;">
                         <div style="display:flex;justify-content:space-between;">
-                            <span>Votos Camara (Partido):</span> <b>${fmt(stat.vC)}</b>
+                            <span>Votos Partido Liberal:</span> <b>${fmt(stat.vC)}</b> <span style="color:#94A3B8;font-size:0.6rem;">${pctStr(stat.vC, stat.tvm)}</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;padding:2px 4px;background:rgba(227,33,23,0.05);border-radius:4px;color:#e32117;">
-                            <span style="font-weight:700;">Alex Prieto:</span> <b style="font-size:0.75rem;">${fmt(stat.vA)}</b>
+                            <span style="font-weight:700;">Alex Prieto:</span> <b style="font-size:0.75rem;">${fmt(stat.vA)}</b> <span style="font-size:0.6rem;opacity:0.7;">${pctStr(stat.vA, stat.tvm)}</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span>Votos Senado (Oscar S.):</span> <b>${fmt(stat.vS)}</b>
+                            <span>L10 Oscar Sánchez:</span> <b>${fmt(stat.vS)}</b> <span style="color:#94A3B8;font-size:0.6rem;">${pctStr(stat.vS, stat.tvm)}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;color:#94A3B8;">
+                            <span>Total Votos Mesa:</span> <b>${fmt(stat.tvm)}</b>
                         </div>
                     </div>
                     <div class="pc-grid">
                         <div class="pc-stat" style="border-bottom: 2px solid #e32117"><div class="n" style="color:#e32117">${stat.al}</div><div class="l">Alta</div></div>
                         <div class="pc-stat" style="border-bottom: 2px solid #f0746e"><div class="n" style="color:#f0746e">${stat.md}</div><div class="l">Media</div></div>
                         <div class="pc-stat" style="border-bottom: 2px solid #f9c2c0"><div class="n" style="color:#f9c2c0">${stat.bj}</div><div class="l">Baja</div></div>
+                    </div>
+                    <div id="${muniId}" style="display:none;margin-top:6px;border-top:1px solid #E2E8F0;padding-top:6px;">
+                        ${stat.muniList.sort((a, b) => b.vA - a.vA).map(m => `
+                            <div style="font-size:0.6rem;padding:4px 0;border-bottom:1px solid #F1F5F9;display:flex;flex-direction:column;gap:2px;">
+                                <div style="font-weight:700;color:#1E293B;font-size:0.65rem;">${m.name}</div>
+                                <div style="display:flex;justify-content:space-between;color:#64748B;">
+                                    <span>Partido Liberal:</span> <span><b>${fmt(m.vC)}</b> <span style="color:#94A3B8;">${pctStr(m.vC, m.tvm)}</span></span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;color:#e32117;">
+                                    <span style="font-weight:600;">Alex Prieto:</span> <span><b>${fmt(m.vA)}</b> <span style="opacity:0.7;">${pctStr(m.vA, m.tvm)}</span></span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;color:#64748B;">
+                                    <span>L10 Oscar S.:</span> <span><b>${fmt(m.vS)}</b> <span style="color:#94A3B8;">${pctStr(m.vS, m.tvm)}</span></span>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;color:#94A3B8;">
+                                    <span>Total Votos Mesa:</span> <b>${fmt(m.tvm)}</b>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>`
+
+                // Toggle click on header
+                const head = div.querySelector('[data-toggle]') as HTMLElement
+                if (head) {
+                    head.addEventListener('click', () => {
+                        const list = document.getElementById(muniId)
+                        if (list) {
+                            const open = list.style.display !== 'none'
+                            list.style.display = open ? 'none' : 'block'
+                            const arrow = head.querySelector('.pc-name span')
+                            if (arrow) arrow.innerHTML = open ? '&#9660;' : '&#9650;'
+                        }
+                    })
+                }
+
                 sb.appendChild(div)
             })
         }
