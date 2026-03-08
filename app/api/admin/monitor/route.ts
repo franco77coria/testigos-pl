@@ -56,12 +56,17 @@ export async function GET(request: NextRequest) {
             const cedulaArr = Array.from(allCedulas)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const testigosData: any[] = []
+
+            const promises = []
             for (let i = 0; i < cedulaArr.length; i += 500) {
                 const batch = cedulaArr.slice(i, i + 500)
-                const { data } = await supabase
-                    .from('testigos')
-                    .select('cedula, nombre_completo, celular, correo')
-                    .in('cedula', batch)
+                promises.push(
+                    supabase.from('testigos').select('cedula, nombre_completo, celular, correo').in('cedula', batch)
+                )
+            }
+
+            const results = await Promise.all(promises)
+            for (const { data } of results) {
                 if (data) testigosData.push(...data)
             }
 

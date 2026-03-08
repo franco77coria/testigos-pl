@@ -133,10 +133,12 @@ export default function AdminStats() {
             if (filtroLider) params.append('cedula_lider', filtroLider)
 
             const q = params.toString() ? `?${params.toString()}` : ''
+            const pMonitor = fetch(`/api/admin/monitor${q}`).then(r => r.json())
+            const pDash = rol === 'super' ? fetch(`/api/admin/dashboard${q}`).then(r => r.json()) : Promise.resolve(null)
 
-            const res = await fetch(`/api/admin/monitor${q}`)
-            const json = await res.json()
-            if (json.exito) {
+            const [json, jsonDash] = await Promise.all([pMonitor, pDash])
+
+            if (json?.exito) {
                 const muniMap = new Map<string, PuestoResult[]>()
                 for (const p of json.puestos) {
                     if (!muniMap.has(p.municipio)) muniMap.set(p.municipio, [])
@@ -175,13 +177,9 @@ export default function AdminStats() {
                 }
             }
 
-            // Fetch conteo data for super admin
-            if (rol === 'super') {
-                const resDash = await fetch(`/api/admin/dashboard${q}`)
-                const jsonDash = await resDash.json()
-                if (jsonDash.exito && jsonDash.data) {
-                    setConteo(jsonDash.data)
-                }
+            // Process conteo data for super admin
+            if (jsonDash?.exito && jsonDash.data) {
+                setConteo(jsonDash.data)
             }
         } catch { /* silent */ }
         setLoading(false)
