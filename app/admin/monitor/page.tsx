@@ -7,6 +7,8 @@ interface MesaStatus {
     mesa_numero: number
     testigo_nombre: string
     testigo_cedula: string
+    testigo_celular: string | null
+    testigo_correo: string | null
     camara_guardado: boolean
     senado_guardado: boolean
     conteo_8am: boolean
@@ -50,39 +52,80 @@ export default function MonitorPage() {
     const [refreshing, setRefreshing] = useState(false)
     const [expandedPuesto, setExpandedPuesto] = useState<string | null>(null)
     const [countdown, setCountdown] = useState(30)
+    const [contactoMesa, setContactoMesa] = useState<string | null>(null)
 
     // Auth gate
     const [authorized, setAuthorized] = useState(false)
     const [gateCedula, setGateCedula] = useState('')
     const [gateLoading, setGateLoading] = useState(false)
     const [gateError, setGateError] = useState('')
+    const [userRole, setUserRole] = useState<'admin' | 'lider'>('admin')
+    const [liderCedula, setLiderCedula] = useState('')
+    const [userName, setUserName] = useState('')
 
     async function verifyAccess() {
         setGateLoading(true)
         setGateError('')
         try {
-            const res = await fetch('/api/admin/verify-super', {
+            // Primero intenta como admin
+            const resAdmin = await fetch('/api/admin/verify-super', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cedula: gateCedula }),
             })
-            const json = await res.json()
-            if (json.exito) {
+            const jsonAdmin = await resAdmin.json()
+            if (jsonAdmin.exito) {
+                setUserRole('admin')
+                setUserName('Admin')
                 setAuthorized(true)
                 fetchData()
-            } else {
-                setGateError('No tiene acceso al monitor. Contacte al Super Admin.')
+                setGateLoading(false)
+                return
             }
+
+            // Luego intenta como lider
+            const resAuth = await fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cedula: gateCedula }),
+            })
+            const jsonAuth = await resAuth.json()
+            if (jsonAuth.exito && jsonAuth.esLider) {
+                setUserRole('lider')
+                setLiderCedula(jsonAuth.sesion.cedula)
+                setUserName(jsonAuth.sesion.nombre || 'Líder')
+                setAuthorized(true)
+                fetchData(undefined, jsonAuth.sesion.cedula)
+                setGateLoading(false)
+                return
+            }
+
+            // Tambien analista puede entrar
+            if (jsonAuth.exito && jsonAuth.esAnalista) {
+                setUserRole('admin')
+                setUserName(jsonAuth.sesion.nombre || 'Analista')
+                setAuthorized(true)
+                fetchData()
+                setGateLoading(false)
+                return
+            }
+
+            setGateError('No tiene acceso al monitor.')
         } catch {
             setGateError('Error de conexión.')
         }
         setGateLoading(false)
     }
 
-    const fetchData = useCallback(async (muni?: string) => {
+    const fetchData = useCallback(async (muni?: string, cedulaLider?: string) => {
         setRefreshing(true)
         try {
-            const url = muni ? `/api/admin/monitor?municipio=${encodeURIComponent(muni)}` : '/api/admin/monitor'
+            const params = new URLSearchParams()
+            if (muni) params.set('municipio', muni)
+            const cedLider = cedulaLider || liderCedula
+            if (cedLider) params.set('cedula_lider', cedLider)
+            const qs = params.toString()
+            const url = `/api/admin/monitor${qs ? `?${qs}` : ''}`
             const res = await fetch(url)
             const data = await res.json()
             if (data.exito) {
@@ -94,7 +137,7 @@ export default function MonitorPage() {
         setLoading(false)
         setRefreshing(false)
         setCountdown(30)
-    }, [])
+    }, [liderCedula])
 
     useEffect(() => {
         if (authorized) {
@@ -224,7 +267,7 @@ export default function MonitorPage() {
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Link href="/admin" style={{
+                        <Link href={userRole === 'lider' ? '/lider' : '/admin'} style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             width: '32px', height: '32px', borderRadius: '8px',
                             background: '#F8F9FA', border: '1px solid #E5E7EB', textDecoration: 'none',
@@ -245,7 +288,7 @@ export default function MonitorPage() {
                                 }} />
                             </h1>
                             <p style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 600, margin: 0 }}>
-                                Vista de mesas — {countdown}s
+                                {userRole === 'lider' ? `${userName} — Mis mesas` : 'Vista de mesas'} — {countdown}s
                             </p>
                         </div>
                     </div>
@@ -297,32 +340,35 @@ export default function MonitorPage() {
                 </div>
             </div>
 
-            {/* Filter */}
-            <div style={{ padding: 'clamp(12px, 2vw, 20px)' }}>
-                <div style={{ position: 'relative' }}>
-                    <select
-                        value={filtro}
-                        onChange={(e) => handleFiltro(e.target.value)}
-                        style={{
-                            width: '100%', padding: '12px 40px 12px 16px',
-                            background: '#FFFFFF', border: '1px solid #E5E7EB',
-                            borderRadius: '10px', fontSize: '13px', fontWeight: 500,
-                            color: '#111827', appearance: 'none', outline: 'none', cursor: 'pointer',
-                            fontFamily: "'Inter', system-ui, sans-serif",
-                        }}
-                    >
-                        <option value="">Todos los municipios</option>
-                        {municipios.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94A3B8' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>expand_more</span>
+            {/* Filter — solo para admin */}
+            {userRole === 'admin' && (
+                <div style={{ padding: 'clamp(12px, 2vw, 20px)' }}>
+                    <div style={{ position: 'relative' }}>
+                        <select
+                            value={filtro}
+                            onChange={(e) => handleFiltro(e.target.value)}
+                            style={{
+                                width: '100%', padding: '12px 40px 12px 16px',
+                                background: '#FFFFFF', border: '1px solid #E5E7EB',
+                                borderRadius: '10px', fontSize: '13px', fontWeight: 500,
+                                color: '#111827', appearance: 'none', outline: 'none', cursor: 'pointer',
+                                fontFamily: "'Inter', system-ui, sans-serif",
+                            }}
+                        >
+                            <option value="">Todos los municipios</option>
+                            {municipios.map(m => <option key={m} value={m}>{m}</option>)}
+                        </select>
+                        <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94A3B8' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>expand_more</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Leyenda */}
             <div style={{
-                padding: '0 clamp(12px, 2vw, 20px) 12px', display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center',
+                padding: userRole === 'lider' ? 'clamp(12px, 2vw, 20px) clamp(12px, 2vw, 20px) 12px' : '0 clamp(12px, 2vw, 20px) 12px',
+                display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center',
             }}>
                 {INDICADORES.map(ind => (
                     <span key={ind.key} style={{
@@ -391,7 +437,7 @@ export default function MonitorPage() {
                                     }}>expand_more</span>
                                 </div>
 
-                                {/* Mesa cards — grid TV-ready */}
+                                {/* Mesa cards */}
                                 {isExpanded && (
                                     <div style={{ padding: 'clamp(8px, 1vw, 16px)' }}>
                                         <div style={{
@@ -401,6 +447,8 @@ export default function MonitorPage() {
                                         }}>
                                             {p.mesas.map((mesa) => {
                                                 const allDone = mesa.camara_guardado && mesa.senado_guardado
+                                                const mesaKey = `${p.municipio}__${p.puesto}__${mesa.mesa_numero}`
+                                                const showContacto = contactoMesa === mesaKey
 
                                                 return (
                                                     <div key={mesa.mesa_numero} style={{
@@ -408,12 +456,30 @@ export default function MonitorPage() {
                                                         borderRadius: '10px', textAlign: 'center',
                                                         background: allDone ? 'rgba(16,185,129,0.04)' : '#FFFFFF',
                                                         border: `1px solid ${allDone ? 'rgba(16,185,129,0.2)' : '#E5E7EB'}`,
+                                                        position: 'relative',
                                                     }}>
-                                                        {/* Mesa number */}
-                                                        <div style={{
-                                                            fontSize: 'clamp(14px, 1.5vw, 24px)', fontWeight: 700,
-                                                            color: allDone ? '#10B981' : '#111827', marginBottom: '4px',
-                                                        }}>{mesa.mesa_numero}</div>
+                                                        {/* Mesa number + contact button */}
+                                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', marginBottom: '4px' }}>
+                                                            <div style={{
+                                                                fontSize: 'clamp(14px, 1.5vw, 24px)', fontWeight: 700,
+                                                                color: allDone ? '#10B981' : '#111827',
+                                                            }}>{mesa.mesa_numero}</div>
+                                                            {(mesa.testigo_celular || mesa.testigo_correo) && (
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); setContactoMesa(showContacto ? null : mesaKey) }}
+                                                                    style={{
+                                                                        background: 'none', border: 'none', cursor: 'pointer', padding: '2px',
+                                                                        color: showContacto ? '#CE1126' : '#94A3B8',
+                                                                        display: 'flex', alignItems: 'center',
+                                                                    }}
+                                                                    title="Ver contacto"
+                                                                >
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: 'clamp(14px, 1.2vw, 18px)' }}>
+                                                                        {showContacto ? 'close' : 'call'}
+                                                                    </span>
+                                                                </button>
+                                                            )}
+                                                        </div>
 
                                                         {/* Testigo name */}
                                                         {mesa.testigo_nombre && (
@@ -423,6 +489,37 @@ export default function MonitorPage() {
                                                                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                                             }}>
                                                                 {mesa.testigo_nombre}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Contacto popup */}
+                                                        {showContacto && (
+                                                            <div style={{
+                                                                background: '#FFFFFF', borderRadius: '8px', padding: '8px',
+                                                                border: '1px solid #E5E7EB', marginBottom: '6px',
+                                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                                            }}>
+                                                                {mesa.testigo_celular && (
+                                                                    <a href={`tel:${mesa.testigo_celular}`} style={{
+                                                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                                                        fontSize: '11px', fontWeight: 600, color: '#3B82F6',
+                                                                        textDecoration: 'none', marginBottom: mesa.testigo_correo ? '4px' : 0,
+                                                                    }}>
+                                                                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>call</span>
+                                                                        {mesa.testigo_celular}
+                                                                    </a>
+                                                                )}
+                                                                {mesa.testigo_correo && (
+                                                                    <a href={`mailto:${mesa.testigo_correo}`} style={{
+                                                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                                                        fontSize: '10px', fontWeight: 600, color: '#3B82F6',
+                                                                        textDecoration: 'none',
+                                                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                                    }}>
+                                                                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>mail</span>
+                                                                        {mesa.testigo_correo}
+                                                                    </a>
+                                                                )}
                                                             </div>
                                                         )}
 

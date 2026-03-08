@@ -152,7 +152,7 @@ async function getTestigosDelLider(supabase: any, cedulaLider: string) {
     .from('testigos')
     .select('cedula, nombre_completo, celular, correo, municipio, puesto')
     .eq('cedula_lider', cedulaLider)
-    .limit(1000)
+    .limit(10000)
 
   if (!testigosData || testigosData.length === 0) {
     return NextResponse.json({

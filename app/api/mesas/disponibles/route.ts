@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
             .select('mesa_numero, testigo_cedula')
             .eq('municipio', testigo.municipio)
             .eq('puesto', testigo.puesto)
+            .limit(10000)
 
         const claimedMap: Record<number, string> = {}
         if (claimed) {

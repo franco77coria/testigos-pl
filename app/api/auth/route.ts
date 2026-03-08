@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
       .from('mesa_asignaciones')
       .select('mesa_numero, municipio, puesto')
       .eq('testigo_cedula', cedulaClean)
+      .limit(10000)
 
     let mesas: any[] = []
 
@@ -92,6 +93,7 @@ export async function POST(request: NextRequest) {
         .select('*')
         .eq('testigo_cedula', cedulaClean)
         .in('mesa_numero', mesaNums)
+        .limit(10000)
 
       mesas = asignaciones.map(a => {
         const resultado = resultados?.find(r => r.mesa_numero === a.mesa_numero) || {}

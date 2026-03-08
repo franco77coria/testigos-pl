@@ -7,11 +7,31 @@ export async function GET(request: NextRequest) {
     try {
         const supabase = getServiceClient()
 
-        // Optional filter by municipio
         const { searchParams } = new URL(request.url)
         const filtroMunicipio = searchParams.get('municipio') || ''
+        const filtroLider = searchParams.get('cedula_lider') || ''
 
-        // 1. Get all resultados with testigo info
+        // Si filtramos por lider, primero obtener las cedulas de sus testigos
+        let cedulasTestigos: string[] | null = null
+        if (filtroLider) {
+            const { data: testigosLider } = await supabase
+                .from('testigos')
+                .select('cedula')
+                .eq('cedula_lider', filtroLider)
+                .limit(10000)
+            if (testigosLider && testigosLider.length > 0) {
+                cedulasTestigos = testigosLider.map(t => t.cedula)
+            } else {
+                return NextResponse.json({
+                    exito: true,
+                    puestos: [],
+                    municipios: [],
+                    resumen: { totalMesas: 0, completadas: 0, puestos: 0 },
+                })
+            }
+        }
+
+        // 1. Get resultados
         let query = supabase
             .from('resultados')
             .select('*')
@@ -20,23 +40,51 @@ export async function GET(request: NextRequest) {
         if (filtroMunicipio) {
             query = query.eq('municipio', filtroMunicipio)
         }
+        if (cedulasTestigos) {
+            query = query.in('testigo_cedula', cedulasTestigos)
+        }
 
         const { data: resultados, error } = await query
         if (error) throw error
 
-        // 2. Get all asignaciones to know which mesas exist
+        // 2. Get asignaciones
         let asigQuery = supabase
             .from('mesa_asignaciones')
-            .select('*, testigos!inner(nombre1, apellido1)')
+            .select('testigo_cedula, mesa_numero, municipio, puesto')
             .limit(10000)
 
         if (filtroMunicipio) {
             asigQuery = asigQuery.eq('municipio', filtroMunicipio)
         }
+        if (cedulasTestigos) {
+            asigQuery = asigQuery.in('testigo_cedula', cedulasTestigos)
+        }
 
         const { data: asignaciones } = await asigQuery
 
-        // 3. Get unique municipios from both sources
+        // 3. Get testigo info (nombre, celular, correo)
+        const allCedulas = new Set<string>()
+        resultados?.forEach(r => allCedulas.add(r.testigo_cedula))
+        asignaciones?.forEach(a => allCedulas.add(a.testigo_cedula))
+
+        const testigoInfoMap: Record<string, { nombre: string; celular: string | null; correo: string | null }> = {}
+        if (allCedulas.size > 0) {
+            const { data: testigosData } = await supabase
+                .from('testigos')
+                .select('cedula, nombre_completo, celular, correo')
+                .in('cedula', Array.from(allCedulas))
+                .limit(10000)
+
+            for (const t of (testigosData || [])) {
+                testigoInfoMap[t.cedula] = {
+                    nombre: t.nombre_completo || t.cedula,
+                    celular: t.celular || null,
+                    correo: t.correo || null,
+                }
+            }
+        }
+
+        // 4. Get unique municipios for filter dropdown
         const { data: allMunicipios } = await supabase
             .from('mesa_asignaciones')
             .select('municipio')
@@ -45,11 +93,13 @@ export async function GET(request: NextRequest) {
         const municipioSet = new Set<string>()
         allMunicipios?.forEach(m => municipioSet.add(m.municipio))
 
-        // 4. Group by municipio > puesto > mesa
+        // 5. Group by municipio > puesto > mesa
         const grouped: Record<string, Record<string, {
             mesa_numero: number
             testigo_nombre: string
             testigo_cedula: string
+            testigo_celular: string | null
+            testigo_correo: string | null
             votos_camara: boolean
             votos_senado: boolean
             camara_guardado: boolean
@@ -67,7 +117,6 @@ export async function GET(request: NextRequest) {
             updated_at: string | null
         }[]>> = {}
 
-        // Build from resultados
         if (resultados) {
             for (const r of resultados) {
                 const muni = r.municipio || 'SIN MUNICIPIO'
@@ -76,7 +125,6 @@ export async function GET(request: NextRequest) {
                 if (!grouped[muni]) grouped[muni] = {}
                 if (!grouped[muni][puesto]) grouped[muni][puesto] = []
 
-                // Check if votes have been filled (any non-zero value)
                 const hasCamaraVotes = !!(
                     r.votos_camara_l101 || r.votos_camara_l102 || r.votos_camara_l103 ||
                     r.votos_camara_l104 || r.votos_camara_l105 || r.votos_camara_l106 ||
@@ -87,10 +135,14 @@ export async function GET(request: NextRequest) {
                     r.votos_senado_4 || r.votos_senado_5 || r.votos_senado_partido
                 )
 
+                const info = testigoInfoMap[r.testigo_cedula]
+
                 grouped[muni][puesto].push({
                     mesa_numero: r.mesa_numero,
-                    testigo_nombre: '',  // will fill from asignaciones
+                    testigo_nombre: info?.nombre || '',
                     testigo_cedula: r.testigo_cedula,
+                    testigo_celular: info?.celular || null,
+                    testigo_correo: info?.correo || null,
                     votos_camara: hasCamaraVotes,
                     votos_senado: hasSenadoVotes,
                     camara_guardado: r.datos_camara_guardados === true,
@@ -110,28 +162,7 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // Fill testigo names from asignaciones
-        if (asignaciones) {
-            for (const a of asignaciones) {
-                const muni = a.municipio || 'SIN MUNICIPIO'
-                const puesto = a.puesto || 'SIN PUESTO'
-                const testigoData = (a as any).testigos
-                const nombre = testigoData
-                    ? `${testigoData.nombre1 || ''} ${testigoData.apellido1 || ''}`.trim()
-                    : ''
-
-                if (grouped[muni]?.[puesto]) {
-                    const mesa = grouped[muni][puesto].find(
-                        m => m.mesa_numero === a.mesa_numero && m.testigo_cedula === a.testigo_cedula
-                    )
-                    if (mesa) {
-                        mesa.testigo_nombre = nombre
-                    }
-                }
-            }
-        }
-
-        // 5. Build response with stats
+        // 6. Build response
         const puestos: {
             municipio: string
             puesto: string
@@ -142,7 +173,6 @@ export async function GET(request: NextRequest) {
 
         for (const [muni, puestosMap] of Object.entries(grouped)) {
             for (const [puesto, mesas] of Object.entries(puestosMap)) {
-                // Sort mesas by number
                 mesas.sort((a, b) => a.mesa_numero - b.mesa_numero)
                 puestos.push({
                     municipio: muni,
@@ -154,7 +184,6 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // Sort by municipio name
         puestos.sort((a, b) => a.municipio.localeCompare(b.municipio))
 
         return NextResponse.json({

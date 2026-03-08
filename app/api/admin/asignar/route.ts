@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
       .from('municipios')
       .select('*')
       .order('municipio, puesto')
+      .limit(10000)
 
     if (!puestos || puestos.length === 0) {
       return NextResponse.json({
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
       .from('testigos')
       .select('*')
       .order('municipio, puesto, cedula')
+      .limit(10000)
 
     if (!testigos || testigos.length === 0) {
       return NextResponse.json({

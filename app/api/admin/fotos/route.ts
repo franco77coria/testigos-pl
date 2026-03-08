@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
       .from('testigos')
       .select('cedula, nombre_completo')
       .in('cedula', cedulas)
+      .limit(10000)
 
     const nombresMap: Record<string, string> = {}
     for (const t of (testigosData || [])) {
