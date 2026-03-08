@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getServiceClient } from '@/lib/supabase'
+import { getServiceClient, fetchAllRows } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
     try {
@@ -14,13 +14,9 @@ export async function GET(request: NextRequest) {
         // Si filtramos por lider, primero obtener las cedulas de sus testigos
         let cedulasTestigos: string[] | null = null
         if (filtroLider) {
-            const { data: testigosLider } = await supabase
-                .from('testigos')
-                .select('cedula')
-                .eq('cedula_lider', filtroLider)
-                .limit(10000)
-            if (testigosLider && testigosLider.length > 0) {
-                cedulasTestigos = testigosLider.map(t => t.cedula)
+            const testigosLider = await fetchAllRows(supabase, 'testigos', 'cedula', { eq: { cedula_lider: filtroLider } })
+            if (testigosLider.length > 0) {
+                cedulasTestigos = testigosLider.map(t => t.cedula as string)
             } else {
                 return NextResponse.json({
                     exito: true,
@@ -31,51 +27,38 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // 1. Get resultados
-        let query = supabase
-            .from('resultados')
-            .select('*')
-            .limit(10000)
+        // 1. Get resultados (paginated)
+        const resFilters: { eq?: Record<string, string>; in?: { column: string; values: string[] } } = {}
+        if (filtroMunicipio) resFilters.eq = { municipio: filtroMunicipio }
+        if (cedulasTestigos) resFilters.in = { column: 'testigo_cedula', values: cedulasTestigos }
+        const resultados = await fetchAllRows(supabase, 'resultados', '*', Object.keys(resFilters).length > 0 ? resFilters : undefined)
 
-        if (filtroMunicipio) {
-            query = query.eq('municipio', filtroMunicipio)
-        }
-        if (cedulasTestigos) {
-            query = query.in('testigo_cedula', cedulasTestigos)
-        }
-
-        const { data: resultados, error } = await query
-        if (error) throw error
-
-        // 2. Get asignaciones
-        let asigQuery = supabase
-            .from('mesa_asignaciones')
-            .select('testigo_cedula, mesa_numero, municipio, puesto')
-            .limit(10000)
-
-        if (filtroMunicipio) {
-            asigQuery = asigQuery.eq('municipio', filtroMunicipio)
-        }
-        if (cedulasTestigos) {
-            asigQuery = asigQuery.in('testigo_cedula', cedulasTestigos)
-        }
-
-        const { data: asignaciones } = await asigQuery
+        // 2. Get asignaciones (paginated)
+        const asigFilters: { eq?: Record<string, string>; in?: { column: string; values: string[] } } = {}
+        if (filtroMunicipio) asigFilters.eq = { municipio: filtroMunicipio }
+        if (cedulasTestigos) asigFilters.in = { column: 'testigo_cedula', values: cedulasTestigos }
+        const asignaciones = await fetchAllRows(supabase, 'mesa_asignaciones', 'testigo_cedula, mesa_numero, municipio, puesto', Object.keys(asigFilters).length > 0 ? asigFilters : undefined)
 
         // 3. Get testigo info (nombre, celular, correo)
         const allCedulas = new Set<string>()
-        resultados?.forEach(r => allCedulas.add(r.testigo_cedula))
-        asignaciones?.forEach(a => allCedulas.add(a.testigo_cedula))
+        resultados.forEach(r => allCedulas.add(r.testigo_cedula as string))
+        asignaciones.forEach(a => allCedulas.add(a.testigo_cedula as string))
 
         const testigoInfoMap: Record<string, { nombre: string; celular: string | null; correo: string | null }> = {}
         if (allCedulas.size > 0) {
-            const { data: testigosData } = await supabase
-                .from('testigos')
-                .select('cedula, nombre_completo, celular, correo')
-                .in('cedula', Array.from(allCedulas))
-                .limit(10000)
+            const cedulaArr = Array.from(allCedulas)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const testigosData: any[] = []
+            for (let i = 0; i < cedulaArr.length; i += 500) {
+                const batch = cedulaArr.slice(i, i + 500)
+                const { data } = await supabase
+                    .from('testigos')
+                    .select('cedula, nombre_completo, celular, correo')
+                    .in('cedula', batch)
+                if (data) testigosData.push(...data)
+            }
 
-            for (const t of (testigosData || [])) {
+            for (const t of testigosData) {
                 testigoInfoMap[t.cedula] = {
                     nombre: t.nombre_completo || t.cedula,
                     celular: t.celular || null,
@@ -84,14 +67,10 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // 4. Get unique municipios for filter dropdown
-        const { data: allMunicipios } = await supabase
-            .from('mesa_asignaciones')
-            .select('municipio')
-            .limit(10000)
-
+        // 4. Get unique municipios for filter dropdown (paginated)
+        const allMunicipios = await fetchAllRows(supabase, 'mesa_asignaciones', 'municipio')
         const municipioSet = new Set<string>()
-        allMunicipios?.forEach(m => municipioSet.add(m.municipio))
+        allMunicipios.forEach(m => municipioSet.add(m.municipio as string))
 
         // 5. Group by municipio > puesto > mesa
         const grouped: Record<string, Record<string, {

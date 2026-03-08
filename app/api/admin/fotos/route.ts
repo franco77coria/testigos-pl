@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getServiceClient } from '@/lib/supabase'
+import { getServiceClient, fetchAllRows } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,39 +9,35 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const filtroMunicipio = searchParams.get('municipio') || ''
 
-    let query = supabase
-      .from('resultados')
-      .select('mesa_numero, municipio, puesto, testigo_cedula, foto_camara, foto_camara_2, foto_senado, foto_senado_2')
-      .limit(10000)
+    const filters = filtroMunicipio ? { eq: { municipio: filtroMunicipio } } : undefined
+    const resultados = await fetchAllRows(
+      supabase, 'resultados',
+      'mesa_numero, municipio, puesto, testigo_cedula, foto_camara, foto_camara_2, foto_senado, foto_senado_2',
+      filters
+    )
 
-    if (filtroMunicipio) {
-      query = query.eq('municipio', filtroMunicipio)
+    // Obtener nombres de testigos (paginated by batches of .in())
+    const cedulas = [...new Set(resultados.map(r => r.testigo_cedula as string))]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const testigosData: any[] = []
+    for (let i = 0; i < cedulas.length; i += 500) {
+      const batch = cedulas.slice(i, i + 500)
+      const { data } = await supabase
+        .from('testigos')
+        .select('cedula, nombre_completo')
+        .in('cedula', batch)
+      if (data) testigosData.push(...data)
     }
-
-    const { data: resultados, error } = await query
-    if (error) throw error
-
-    // Obtener nombres de testigos
-    const cedulas = [...new Set((resultados || []).map(r => r.testigo_cedula))]
-    const { data: testigosData } = await supabase
-      .from('testigos')
-      .select('cedula, nombre_completo')
-      .in('cedula', cedulas)
-      .limit(10000)
 
     const nombresMap: Record<string, string> = {}
     for (const t of (testigosData || [])) {
       nombresMap[t.cedula] = t.nombre_completo
     }
 
-    // Municipios para filtro
-    const { data: allMunicipios } = await supabase
-      .from('mesa_asignaciones')
-      .select('municipio')
-      .limit(10000)
-
+    // Municipios para filtro (paginated)
+    const allMunicipios = await fetchAllRows(supabase, 'mesa_asignaciones', 'municipio')
     const municipioSet = new Set<string>()
-    allMunicipios?.forEach(m => municipioSet.add(m.municipio))
+    allMunicipios.forEach(m => municipioSet.add(m.municipio as string))
 
     const mesas = (resultados || []).map(r => ({
       mesa_numero: r.mesa_numero,

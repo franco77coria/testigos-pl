@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
-import { getServiceClient } from '@/lib/supabase'
+import { getServiceClient, fetchAllRows } from '@/lib/supabase'
 
 export async function GET() {
     try {
@@ -12,9 +12,8 @@ export async function GET() {
         const { count: totalMesas } = await supabase.from('mesa_asignaciones').select('*', { count: 'exact', head: true })
         const { count: totalMunicipios } = await supabase.from('municipios').select('*', { count: 'exact', head: true })
 
-        // 2. Fetch Progress Metrics
-        const { data: resultados, error: resError } = await supabase.from('resultados').select('*').limit(10000)
-        if (resError) throw resError
+        // 2. Fetch Progress Metrics (paginated)
+        const resultados = await fetchAllRows(supabase, 'resultados', '*')
 
         let mesasPendientes = 0
         let mesasEnProgreso = 0
@@ -32,7 +31,7 @@ export async function GET() {
         const progressByMunicipio: Record<string, { total: number; completadas: number }> = {}
 
         // 3. Aggregate Results
-        if (resultados) {
+        if (resultados.length > 0) {
             for (const res of resultados) {
                 if (res.estado === 'completada') mesasCompletadas++
                 else if (res.estado === 'en_progreso') mesasEnProgreso++

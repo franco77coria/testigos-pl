@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getServiceClient } from '@/lib/supabase'
+import { getServiceClient, fetchAllRows } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,17 +17,13 @@ export async function GET(request: NextRequest) {
 
     // Vista principal: lista de lideres para este analista
     // Si no hay cedula_analista, devolver todos (para super admin)
-    let testigosQuery = supabase
-      .from('testigos')
-      .select('cedula, nombre_completo, celular, correo, municipio, puesto, cedula_lider')
-      .limit(10000)
-
-    if (cedulaAnalista) {
-      testigosQuery = testigosQuery.eq('cedula_analista', cedulaAnalista)
-    }
-
-    const { data: testigosData } = await testigosQuery
-    if (!testigosData || testigosData.length === 0) {
+    const testigosFilters = cedulaAnalista ? { eq: { cedula_analista: cedulaAnalista } } : undefined
+    const testigosData = await fetchAllRows(
+      supabase, 'testigos',
+      'cedula, nombre_completo, celular, correo, municipio, puesto, cedula_lider',
+      testigosFilters
+    )
+    if (testigosData.length === 0) {
       return NextResponse.json({
         exito: true,
         lideres: [],
@@ -47,31 +43,39 @@ export async function GET(request: NextRequest) {
       lideresInfo[l.cedula] = { nombre: l.nombre, telefono: l.telefono }
     }
 
-    // Obtener asignaciones para todos los testigos
-    const cedulasTestigos = testigosData.map(t => t.cedula)
-    const { data: asignaciones } = await supabase
-      .from('mesa_asignaciones')
-      .select('testigo_cedula, mesa_numero')
-      .in('testigo_cedula', cedulasTestigos)
-      .limit(10000)
+    // Obtener asignaciones para todos los testigos (batched)
+    const cedulasTestigos = testigosData.map(t => t.cedula as string)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const asignaciones: any[] = []
+    for (let i = 0; i < cedulasTestigos.length; i += 500) {
+      const batch = cedulasTestigos.slice(i, i + 500)
+      const { data } = await supabase
+        .from('mesa_asignaciones')
+        .select('testigo_cedula, mesa_numero')
+        .in('testigo_cedula', batch)
+      if (data) asignaciones.push(...data)
+    }
 
-    // Obtener resultados (solo flags)
-    const { data: resultados } = await supabase
-      .from('resultados')
-      .select(
-        'testigo_cedula, mesa_numero, datos_camara_guardados, datos_senado_guardados, datos_finales_guardados'
-      )
-      .in('testigo_cedula', cedulasTestigos)
-      .limit(10000)
+    // Obtener resultados (solo flags, batched)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const resultados: any[] = []
+    for (let i = 0; i < cedulasTestigos.length; i += 500) {
+      const batch = cedulasTestigos.slice(i, i + 500)
+      const { data } = await supabase
+        .from('resultados')
+        .select('testigo_cedula, mesa_numero, datos_camara_guardados, datos_senado_guardados, datos_finales_guardados')
+        .in('testigo_cedula', batch)
+      if (data) resultados.push(...data)
+    }
 
     const resMap: Record<string, any> = {}
-    for (const r of (resultados || [])) {
+    for (const r of resultados) {
       resMap[`${r.testigo_cedula}__${r.mesa_numero}`] = r
     }
 
     // Contar mesas por testigo
     const testigoMesas: Record<string, { total: number; completadas: number }> = {}
-    for (const a of (asignaciones || [])) {
+    for (const a of asignaciones) {
       if (!testigoMesas[a.testigo_cedula]) {
         testigoMesas[a.testigo_cedula] = { total: 0, completadas: 0 }
       }
@@ -147,14 +151,10 @@ async function getTestigosDelLider(supabase: any, cedulaLider: string) {
     .eq('cedula', cedulaLider)
     .single()
 
-  // Testigos de este lider
-  const { data: testigosData } = await supabase
-    .from('testigos')
-    .select('cedula, nombre_completo, celular, correo, municipio, puesto')
-    .eq('cedula_lider', cedulaLider)
-    .limit(10000)
+  // Testigos de este lider (paginated)
+  const testigosData = await fetchAllRows(supabase, 'testigos', 'cedula, nombre_completo, celular, correo, municipio, puesto', { eq: { cedula_lider: cedulaLider } })
 
-  if (!testigosData || testigosData.length === 0) {
+  if (testigosData.length === 0) {
     return NextResponse.json({
       exito: true,
       lider: lider || { cedula: cedulaLider, nombre: cedulaLider },
@@ -163,24 +163,23 @@ async function getTestigosDelLider(supabase: any, cedulaLider: string) {
     })
   }
 
-  const cedulasTestigos = testigosData.map((t: any) => t.cedula)
+  const cedulasTestigos = testigosData.map((t: any) => t.cedula as string)
 
-  const { data: asignaciones } = await supabase
-    .from('mesa_asignaciones')
-    .select('testigo_cedula, mesa_numero, municipio, puesto')
-    .in('testigo_cedula', cedulasTestigos)
-    .limit(10000)
-
-  const { data: resultados } = await supabase
-    .from('resultados')
-    .select(
-      'testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados'
-    )
-    .in('testigo_cedula', cedulasTestigos)
-    .limit(10000)
+  // Batched fetch for asignaciones and resultados
+  const asignaciones: any[] = []
+  const resultados: any[] = []
+  for (let i = 0; i < cedulasTestigos.length; i += 500) {
+    const batch = cedulasTestigos.slice(i, i + 500)
+    const [asigRes, resRes] = await Promise.all([
+      supabase.from('mesa_asignaciones').select('testigo_cedula, mesa_numero, municipio, puesto').in('testigo_cedula', batch),
+      supabase.from('resultados').select('testigo_cedula, mesa_numero, datos_8am_guardados, datos_11am_guardados, datos_1pm_guardados, foto_camara, datos_camara_guardados, foto_senado, datos_senado_guardados, datos_finales_guardados').in('testigo_cedula', batch),
+    ])
+    if (asigRes.data) asignaciones.push(...asigRes.data)
+    if (resRes.data) resultados.push(...resRes.data)
+  }
 
   const resMap: Record<string, any> = {}
-  for (const r of (resultados || [])) {
+  for (const r of resultados) {
     resMap[`${r.testigo_cedula}__${r.mesa_numero}`] = r
   }
 
@@ -197,7 +196,7 @@ async function getTestigosDelLider(supabase: any, cedulaLider: string) {
     }
   }
 
-  for (const a of (asignaciones || [])) {
+  for (const a of asignaciones) {
     const entry = testigosMap[a.testigo_cedula]
     if (!entry) continue
 
