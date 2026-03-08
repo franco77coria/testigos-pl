@@ -83,6 +83,16 @@ interface CotaPuesto {
     votos_senado: number
 }
 
+interface CotaMesa {
+    puesto: string
+    mesa: number
+    votantes_4pm: number
+    votos_alex: number
+    votos_partido: number
+    votos_senado: number
+    completada: boolean
+}
+
 const CPriority: Record<string, string> = {
     ALTA: '#e32117',
     MEDIA: '#f0746e',
@@ -105,6 +115,7 @@ export default function MapaInteractivo() {
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
     const cotaData = useRef<CotaPuesto[]>([])
+    const cotaMesas = useRef<CotaMesa[]>([])
     const onKPIsRef = useRef<((data: KPIRow[]) => void) | null>(null)
 
     const scriptsReady = d3Ready && topoReady
@@ -117,6 +128,7 @@ export default function MapaInteractivo() {
             if (json.exito && json.data) {
                 kpiData.current = json.data
                 if (json.cotaData) cotaData.current = json.cotaData
+                if (json.cotaMesas) cotaMesas.current = json.cotaMesas
             }
         } catch (e) {
             console.error('Error fetching KPI:', e)
@@ -389,6 +401,7 @@ export default function MapaInteractivo() {
             const tbody = document.getElementById('cotaTableBody')
             if (!tbody) return
             const cota = cotaData.current
+            const mesas = cotaMesas.current
             if (!cota || cota.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;font-size:1.1rem">Sin datos de Cota</td></tr>'
                 return
@@ -396,7 +409,7 @@ export default function MapaInteractivo() {
             tbody.innerHTML = ''
             let totV4 = 0, totMesas = 0, totComp = 0, totAlex = 0, totPartido = 0, totSenado = 0
 
-            cota.forEach(p => {
+            cota.forEach((p, idx) => {
                 totV4 += p.votantes_4pm
                 totMesas += p.total_mesas
                 totComp += p.mesas_completadas
@@ -407,8 +420,32 @@ export default function MapaInteractivo() {
                 const color = Number(pct) >= 100 ? '#10b981' : (Number(pct) > 70 ? '#f59e0b' : '#e32117')
                 const s = 'font-size:1.1rem'
                 const tr = document.createElement('tr')
-                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}">${p.puesto}</td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
+                tr.style.cursor = 'pointer'
+                tr.innerHTML = `<td style="text-align:left;font-weight:600;${s}"><span style="display:inline-flex;align-items:center;gap:6px;"><span class="cota-arrow" style="font-size:0.7rem;color:#94A3B8;transition:transform .2s;">&#9654;</span>${p.puesto}</span></td><td class="val" style="${s}">${fmt(p.votantes_4pm)}</td><td class="val" style="${s}">${p.total_mesas}</td><td class="val" style="${s}">${p.mesas_completadas}</td><td class="pct" style="color:${color};${s}">${pct}%</td><td class="val" style="color:#d97706;font-weight:700;${s}">${fmt(p.votos_alex)}</td><td class="val" style="${s}">${fmt(p.votos_partido)}</td><td class="val" style="${s}">${fmt(p.votos_senado)}</td>`
                 tbody.appendChild(tr)
+
+                // Detail rows (hidden by default)
+                const puestoMesas = mesas.filter(m => m.puesto === p.puesto).sort((a, b) => a.mesa - b.mesa)
+                const detailRows: HTMLTableRowElement[] = []
+                puestoMesas.forEach(m => {
+                    const mtr = document.createElement('tr')
+                    mtr.style.display = 'none'
+                    mtr.className = 'cota-detail-' + idx
+                    mtr.style.background = '#F8FAFC'
+                    const ms = 'font-size:0.85rem;color:#64748B'
+                    const check = m.completada ? '<span style="color:#10b981;">&#10003;</span>' : '<span style="color:#CBD5E1;">&#8212;</span>'
+                    mtr.innerHTML = `<td style="text-align:left;padding-left:2.5rem;${ms}">Mesa ${m.mesa}</td><td class="val" style="${ms}">${fmt(m.votantes_4pm)}</td><td colspan="2"></td><td style="text-align:center;">${check}</td><td class="val" style="${ms};color:#d97706;font-weight:600;">${fmt(m.votos_alex)}</td><td class="val" style="${ms}">${fmt(m.votos_partido)}</td><td class="val" style="${ms}">${fmt(m.votos_senado)}</td>`
+                    tbody.appendChild(mtr)
+                    detailRows.push(mtr)
+                })
+
+                // Toggle click
+                tr.addEventListener('click', () => {
+                    const open = detailRows[0]?.style.display !== 'none'
+                    detailRows.forEach(r => r.style.display = open ? 'none' : 'table-row')
+                    const arrow = tr.querySelector('.cota-arrow') as HTMLElement
+                    if (arrow) arrow.style.transform = open ? '' : 'rotate(90deg)'
+                })
             })
 
             const totalPct = totMesas > 0 ? ((totComp / totMesas) * 100).toFixed(1) : '0'

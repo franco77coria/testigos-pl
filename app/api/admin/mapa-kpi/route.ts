@@ -158,7 +158,18 @@ export async function GET() {
             })
         }
 
-        return NextResponse.json({ exito: true, data, cotaData })
+        // Raw COTA mesa data for detail expansion
+        const cotaMesas = (cotaResult.data || []).map(r => ({
+            puesto: String(r.puesto || '').trim(),
+            mesa: r.mesa_numero,
+            votantes_4pm: Number(r.votantes_4pm) || 0,
+            votos_alex: Number(r.votos_camara_l101) || 0,
+            votos_partido: (Number(r.votos_camara_l101) || 0) + (Number(r.votos_camara_l102) || 0) + (Number(r.votos_camara_l103) || 0) + (Number(r.votos_camara_l104) || 0) + (Number(r.votos_camara_l105) || 0) + (Number(r.votos_camara_l106) || 0) + (Number(r.votos_camara_l107) || 0) + (Number(r.votos_camara_partido) || 0),
+            votos_senado: Number(r.votos_senado_1) || 0,
+            completada: !!(r.datos_4pm_guardados && r.foto_camara && r.foto_senado),
+        }))
+
+        return NextResponse.json({ exito: true, data, cotaData, cotaMesas })
     } catch (error) {
         console.error('Error en mapa-kpi:', error)
         return NextResponse.json({ exito: false, mensaje: 'Error del sistema.' }, { status: 500 })
