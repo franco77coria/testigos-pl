@@ -43,11 +43,11 @@ export async function POST(request: NextRequest) {
         const supabase = getServiceClient()
         const { data: admin } = await supabase
             .from('admins')
-            .select('rol')
-            .eq('cedula', cedula)
+            .select('cedula, es_super')
+            .eq('cedula', String(cedula).trim())
             .single()
 
-        if (!admin || admin.rol !== 'super') {
+        if (!admin || !admin.es_super) {
             return NextResponse.json({ exito: false, mensaje: 'No autorizado.' })
         }
 

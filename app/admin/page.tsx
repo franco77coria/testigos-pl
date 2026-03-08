@@ -104,6 +104,10 @@ export default function AdminPanel() {
   }
 
   async function toggleFranja(key: string) {
+    if (!gateCedula.trim()) {
+      alert('Error: cédula no disponible. Recarga la página e ingresa de nuevo.')
+      return
+    }
     setFranjasLoading(true)
     const newVal = !franjas[key]
     let updated = { ...franjas, [key]: newVal }
@@ -115,7 +119,7 @@ export default function AdminPanel() {
       const res = await fetch('/api/admin/config/franjas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ franjas: updated, cedula: gateCedula }),
+        body: JSON.stringify({ franjas: updated, cedula: gateCedula.trim() }),
       })
       const data = await res.json()
       if (data.exito) {
