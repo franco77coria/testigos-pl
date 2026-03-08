@@ -73,6 +73,14 @@ interface KPIRow {
     senado_votos_oscar: number
 }
 
+interface CotaPuesto {
+    puesto: string
+    votantes_8am: number
+    votantes_4pm: number
+    total_mesas: number
+    mesas_completadas: number
+}
+
 const CPriority: Record<string, string> = {
     ALTA: '#e32117',
     MEDIA: '#f0746e',
@@ -91,6 +99,7 @@ export default function MapaInteractivo() {
     const [tablesOpen, setTablesOpen] = useState(true)
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
+    const cotaData = useRef<CotaPuesto[]>([])
 
     const scriptsReady = d3Ready && topoReady
 
@@ -101,6 +110,7 @@ export default function MapaInteractivo() {
             const json = await res.json()
             if (json.exito && json.data) {
                 kpiData.current = json.data
+                if (json.cotaData) cotaData.current = json.cotaData
             }
         } catch (e) {
             console.error('Error fetching KPI:', e)
@@ -246,6 +256,7 @@ export default function MapaInteractivo() {
 
             populateFilters()
             renderKPIStats(data)
+            renderCotaTable()
         }
 
         function renderKPIStats(dataset: KPIRow[]) {
@@ -334,6 +345,38 @@ export default function MapaInteractivo() {
             setT('hOscar', fmt(prioStats.TOTAL.votS))
 
             renderSidebar()
+        }
+
+        function renderCotaTable() {
+            const tbody = document.getElementById('cotaTableBody')
+            if (!tbody) return
+            const cota = cotaData.current
+            if (!cota || cota.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;font-size:1.1rem">Sin datos de Cota</td></tr>'
+                return
+            }
+            tbody.innerHTML = ''
+            let totV8 = 0, totV4 = 0, totMesas = 0, totComp = 0
+
+            cota.forEach(p => {
+                totV8 += p.votantes_8am
+                totV4 += p.votantes_4pm
+                totMesas += p.total_mesas
+                totComp += p.mesas_completadas
+                const pct = p.total_mesas > 0 ? ((p.mesas_completadas / p.total_mesas) * 100).toFixed(1) : '0'
+                const color = Number(pct) >= 100 ? '#10b981' : (Number(pct) > 70 ? '#f59e0b' : '#e32117')
+                const tr = document.createElement('tr')
+                tr.innerHTML = `<td style="text-align:left;font-weight:600;font-size:1.1rem">${p.puesto}</td><td class="val" style="font-size:1.1rem">${fmt(p.votantes_8am)}</td><td class="val" style="font-size:1.1rem">${fmt(p.votantes_4pm)}</td><td class="val" style="font-size:1.1rem">${p.total_mesas}</td><td class="val" style="font-size:1.1rem">${p.mesas_completadas}</td><td class="pct" style="color:${color};font-size:1.1rem">${pct}%</td>`
+                tbody.appendChild(tr)
+            })
+
+            const totalPct = totMesas > 0 ? ((totComp / totMesas) * 100).toFixed(1) : '0'
+            const totalColor = Number(totalPct) >= 100 ? '#10b981' : (Number(totalPct) > 70 ? '#f59e0b' : '#e32117')
+            const totalTr = document.createElement('tr')
+            totalTr.style.background = '#F8FAFC'
+            totalTr.style.borderTop = '2px solid #228B22'
+            totalTr.innerHTML = `<td style="text-align:left;font-size:1.1rem"><span style="font-weight:900;color:#1E293B">TOTAL</span></td><td class="val" style="font-weight:900;font-size:1.1rem">${fmt(totV8)}</td><td class="val" style="font-weight:900;font-size:1.1rem">${fmt(totV4)}</td><td class="val" style="font-weight:900;font-size:1.1rem">${totMesas}</td><td class="val" style="font-weight:900;font-size:1.1rem">${totComp}</td><td class="pct" style="color:${totalColor};font-weight:900;font-size:1.1rem">${totalPct}%</td>`
+            tbody.appendChild(totalTr)
         }
 
         function renderSidebar() {
@@ -660,7 +703,7 @@ export default function MapaInteractivo() {
                 .hc-lbl { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
                 .header-date { color: rgba(255,255,255,.7); font-size: .7rem; font-weight: 600; position: relative; z-index: 1; text-transform: uppercase; background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px; }
 
-                .table-summary-container { background: #fff; border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.5rem 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow-x: auto; gap: 2rem; }
+                .table-summary-container { background: #fff; border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.5rem 1.5rem; display: flex; align-items: flex-start; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow-x: auto; gap: 2rem; }
                 .summary-table { width: 100%; max-width: 1200px; border-collapse: collapse; font-size: .75rem; text-align: center; }
                 .summary-table th, .summary-table td { padding: 0.4rem 0.8rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
                 .summary-table th { font-weight: 800; color: var(--s500); text-transform: uppercase; letter-spacing: 0.05em; background: var(--s50); }
@@ -811,45 +854,69 @@ export default function MapaInteractivo() {
                 {/* SUMMARY TABLES + FILTERS (collapsible) */}
                 {tablesOpen && <>
                 <div className="table-summary-container">
-                    <table className="summary-table" style={{ flex: 1, maxWidth: 750 }}>
+                    {/* LEFT: CAMARA + SENADO stacked */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, maxWidth: 750 }}>
+                        <table className="summary-table">
+                            <thead>
+                                <tr>
+                                    <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
+                                        RESULTADOS CAMARA DE REPRESENTANTES
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Prioridad</th>
+                                    <th style={{ textAlign: 'center' }}>Municipios</th>
+                                    <th>Meta Alex Prieto</th>
+                                    <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
+                                    <th>Votos Partido Liberal</th>
+                                    <th>% Cump.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summaryTableBodyCamara">
+                                <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
+                            </tbody>
+                        </table>
+                        <table className="summary-table">
+                            <thead>
+                                <tr>
+                                    <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
+                                        RESULTADOS SENADO
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Meta Senado</th>
+                                    <th>Votos Senado</th>
+                                    <th>% Cump.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summaryTableBodySenado">
+                                <tr>
+                                    <td className="val" style={{ fontSize: '1.1rem' }}>100,000</td>
+                                    <td className="val" id="stSenVotos" style={{ fontSize: '1.1rem', color: '#e32117' }}>—</td>
+                                    <td className="pct" id="stSenPct" style={{ fontSize: '1.1rem' }}>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {/* RIGHT: RESULTADOS DE COTA */}
+                    <table className="summary-table" style={{ flex: 1, alignSelf: 'flex-start' }}>
                         <thead>
                             <tr>
-                                <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
-                                    RESULTADOS CAMARA DE REPRESENTANTES
+                                <th colSpan={6} style={{ textAlign: 'center', background: 'rgba(34,139,34,0.1)', color: '#228B22', borderBottom: '2px solid #228B22' }}>
+                                    RESULTADOS DE COTA
                                 </th>
                             </tr>
                             <tr>
-                                <th>Prioridad</th>
-                                <th style={{ textAlign: 'center' }}>Municipios</th>
-                                <th>Meta Alex Prieto</th>
-                                <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
-                                <th>Votos Partido Liberal</th>
-                                <th>% Cump.</th>
+                                <th>Puesto</th>
+                                <th>Dato 8am</th>
+                                <th>Total Votos</th>
+                                <th>Mesas</th>
+                                <th>Completadas</th>
+                                <th>% Comp.</th>
                             </tr>
                         </thead>
-                        <tbody id="summaryTableBodyCamara">
-                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Camara...</td></tr>
-                        </tbody>
-                    </table>
-                    <table className="summary-table" style={{ maxWidth: 350 }}>
-                        <thead>
-                            <tr>
-                                <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
-                                    RESULTADOS SENADO
-                                </th>
-                            </tr>
-                            <tr>
-                                <th>Meta Senado</th>
-                                <th>Votos Senado</th>
-                                <th>% Cump.</th>
-                            </tr>
-                        </thead>
-                        <tbody id="summaryTableBodySenado">
-                            <tr>
-                                <td className="val" style={{ fontSize: '1.1rem' }}>100,000</td>
-                                <td className="val" id="stSenVotos" style={{ fontSize: '1.1rem', color: '#e32117' }}>—</td>
-                                <td className="pct" id="stSenPct" style={{ fontSize: '1.1rem' }}>—</td>
-                            </tr>
+                        <tbody id="cotaTableBody">
+                            <tr><td colSpan={6} style={{ textAlign: 'center' }}>Cargando datos Cota...</td></tr>
                         </tbody>
                     </table>
                 </div>

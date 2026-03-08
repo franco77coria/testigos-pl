@@ -20,12 +20,34 @@ export async function GET() {
     try {
         const supabase = getServiceClient()
 
-        // 1. Fetch all resultados (paginated)
-        const resultados = await fetchAllRows(
-            supabase,
-            'resultados',
-            'municipio, votos_camara_partido, votos_camara_l101, votos_senado_1, datos_camara_guardados, datos_senado_guardados'
-        ) as Record<string, unknown>[]
+        // 1. Fetch all resultados + COTA detail in parallel
+        const [resultados, cotaResult] = await Promise.all([
+            fetchAllRows(
+                supabase,
+                'resultados',
+                'municipio, votos_camara_partido, votos_camara_l101, votos_senado_1, datos_camara_guardados, datos_senado_guardados'
+            ),
+            supabase.from('resultados')
+                .select('puesto, mesa_numero, votantes_8am, votantes_4pm, datos_4pm_guardados, foto_camara, foto_senado')
+                .ilike('municipio', 'COTA')
+        ])
+
+        // Aggregate COTA by puesto
+        const cotaByPuesto: Record<string, { puesto: string; votantes_8am: number; votantes_4pm: number; total_mesas: number; mesas_completadas: number }> = {}
+        for (const r of (cotaResult.data || [])) {
+            const p = String(r.puesto || '').trim()
+            if (!p) continue
+            if (!cotaByPuesto[p]) {
+                cotaByPuesto[p] = { puesto: p, votantes_8am: 0, votantes_4pm: 0, total_mesas: 0, mesas_completadas: 0 }
+            }
+            cotaByPuesto[p].total_mesas++
+            cotaByPuesto[p].votantes_8am += Number(r.votantes_8am) || 0
+            cotaByPuesto[p].votantes_4pm += Number(r.votantes_4pm) || 0
+            if (r.datos_4pm_guardados && r.foto_camara && r.foto_senado) {
+                cotaByPuesto[p].mesas_completadas++
+            }
+        }
+        const cotaData = Object.values(cotaByPuesto)
 
         // 2. Try to fetch municipio_kpi for priorities/metas (optional table)
         const kpiMap: Record<string, { prioridad: string; camara_meta: number; senado_meta: number; originalName: string }> = {}
@@ -122,7 +144,7 @@ export async function GET() {
             })
         }
 
-        return NextResponse.json({ exito: true, data })
+        return NextResponse.json({ exito: true, data, cotaData })
     } catch (error) {
         console.error('Error en mapa-kpi:', error)
         return NextResponse.json({ exito: false, mensaje: 'Error del sistema.' }, { status: 500 })
