@@ -56,6 +56,7 @@ const MP: Record<string, string> = {
 }
 
 function norm(s: string) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim() }
+function normId(s: string) { return norm(s).replace(/\s+/g, '-') }
 const NM: Record<string, string> = {}
 for (const m in MP) NM[norm(m)] = MP[m]
 function getProv(n: string) { return MP[n] || NM[norm(n)] || 'Sin Provincia' }
@@ -159,7 +160,7 @@ export default function MapaInteractivo() {
                 .data(cundiGeo.features)
                 .join('path')
                 .attr('class', 'muni')
-                .attr('id', (d: any) => 'm-' + norm(d.properties.name)) // eslint-disable-line @typescript-eslint/no-explicit-any
+                .attr('id', (d: any) => 'm-' + normId(d.properties.name)) // eslint-disable-line @typescript-eslint/no-explicit-any
                 .attr('d', path)
                 .attr('fill', '#E2E8F0')
                 .attr('stroke', 'rgba(255,255,255,0.4)')
@@ -238,7 +239,7 @@ export default function MapaInteractivo() {
                 kpiIdx[key] = d
                 const prio = (d.prioridad || 'BAJA').toUpperCase()
                 const pColor = CPriority[prio] || CPriority.ND
-                d3.select('#m-' + key).attr('fill', pColor)
+                d3.select('#m-' + normId(d.municipio)).attr('fill', pColor)
             })
 
             populateFilters()
