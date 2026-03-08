@@ -102,6 +102,7 @@ export default function MapaInteractivo() {
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
     const cotaData = useRef<CotaPuesto[]>([])
+    const onKPIsRef = useRef<((data: KPIRow[]) => void) | null>(null)
 
     const scriptsReady = d3Ready && topoReady
 
@@ -128,6 +129,18 @@ export default function MapaInteractivo() {
             initMap()
         })
     }, [auth.authorized, scriptsReady, fetchKPI])
+
+    // Auto-refresh every 30 seconds
+    useEffect(() => {
+        if (!mapInitialized.current) return
+        const interval = setInterval(async () => {
+            await fetchKPI()
+            if (onKPIsRef.current && kpiData.current.length > 0) {
+                onKPIsRef.current(kpiData.current)
+            }
+        }, 30000)
+        return () => clearInterval(interval)
+    }, [fetchKPI])
 
     function initMap() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -245,6 +258,7 @@ export default function MapaInteractivo() {
         })
 
         // ── Data Handlers ──
+        onKPIsRef.current = onKPIs
         function onKPIs(data: KPIRow[]) {
             if (!data || !data.length) return
 
