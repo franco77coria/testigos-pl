@@ -57,6 +57,15 @@ export default function LiderPage() {
   const [countdown, setCountdown] = useState(30)
   const [tambienEsTestigo, setTambienEsTestigo] = useState(false)
 
+  // Modal agregar testigo
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addForm, setAddForm] = useState({ cedula: '', nombre_completo: '', celular: '', correo: '', municipio: '', puesto: '', mesa_numero: '' })
+  const [addLoading, setAddLoading] = useState(false)
+  const [addMsg, setAddMsg] = useState<{ tipo: 'ok' | 'error'; texto: string } | null>(null)
+  const [municipiosData, setMunicipiosData] = useState<{ municipio: string; puestos: { puesto: string; total_mesas: number }[] }[]>([])
+  const [mesasDisponibles, setMesasDisponibles] = useState<number[]>([])
+  const [loadingMesas, setLoadingMesas] = useState(false)
+
   // Auth gate
   const [authorized, setAuthorized] = useState(false)
   const [gateCedula, setGateCedula] = useState('')
@@ -143,6 +152,71 @@ export default function LiderPage() {
       setGateError('Error de conexión.')
     }
     setGateLoading(false)
+  }
+
+  async function fetchMunicipios() {
+    try {
+      const res = await fetch('/api/lider/mesas-disponibles')
+      const json = await res.json()
+      if (json.exito) setMunicipiosData(json.municipios)
+    } catch { /* silent */ }
+  }
+
+  async function fetchMesasDisponibles(municipio: string, puesto: string) {
+    setLoadingMesas(true)
+    setMesasDisponibles([])
+    try {
+      const res = await fetch(`/api/lider/mesas-disponibles?municipio=${encodeURIComponent(municipio)}&puesto=${encodeURIComponent(puesto)}`)
+      const json = await res.json()
+      if (json.exito) setMesasDisponibles(json.disponibles)
+    } catch { /* silent */ }
+    setLoadingMesas(false)
+  }
+
+  function openAddModal() {
+    setShowAddModal(true)
+    setAddMsg(null)
+    setAddForm({ cedula: '', nombre_completo: '', celular: '', correo: '', municipio: '', puesto: '', mesa_numero: '' })
+    setMesasDisponibles([])
+    if (municipiosData.length === 0) fetchMunicipios()
+  }
+
+  function handleMunicipioChange(municipio: string) {
+    setAddForm(f => ({ ...f, municipio, puesto: '', mesa_numero: '' }))
+    setMesasDisponibles([])
+  }
+
+  function handlePuestoChange(puesto: string) {
+    setAddForm(f => ({ ...f, puesto, mesa_numero: '' }))
+    if (addForm.municipio && puesto) {
+      fetchMesasDisponibles(addForm.municipio, puesto)
+    }
+  }
+
+  const puestosDelMunicipio = municipiosData.find(m => m.municipio === addForm.municipio)?.puestos || []
+
+  async function submitAddTestigo() {
+    setAddLoading(true)
+    setAddMsg(null)
+    try {
+      const res = await fetch('/api/lider/testigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...addForm, cedula_lider: liderCedula }),
+      })
+      const json = await res.json()
+      if (json.exito) {
+        setAddMsg({ tipo: 'ok', texto: json.mensaje })
+        setAddForm({ cedula: '', nombre_completo: '', celular: '', correo: '', municipio: '', puesto: '', mesa_numero: '' })
+        // Refresh data
+        fetchData(liderCedula)
+      } else {
+        setAddMsg({ tipo: 'error', texto: json.mensaje })
+      }
+    } catch {
+      setAddMsg({ tipo: 'error', texto: 'Error de conexión.' })
+    }
+    setAddLoading(false)
   }
 
   const porcentajeGlobal = resumen.total_mesas > 0
@@ -280,6 +354,19 @@ export default function LiderPage() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={openAddModal}
+              style={{
+                background: '#10B981', border: 'none', color: 'white',
+                padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
+                fontSize: '11px', fontWeight: 700,
+                fontFamily: "'Inter', system-ui, sans-serif",
+                display: 'flex', alignItems: 'center', gap: '4px',
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>person_add</span>
+              Nuevo
+            </button>
             {tambienEsTestigo && liderCedula !== '__all__' && (
               <button
                 onClick={() => {
@@ -556,12 +643,155 @@ export default function LiderPage() {
         </div>
       </div>
 
+      {/* Modal agregar testigo */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 50,
+          background: 'rgba(0,0,0,0.5)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: '16px',
+        }} onClick={() => setShowAddModal(false)}>
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: '#FFFFFF', borderRadius: '16px', width: '100%',
+              maxWidth: '420px', maxHeight: '90vh', overflowY: 'auto',
+              padding: '24px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '17px', fontWeight: 800, color: '#111827', margin: 0 }}>Nuevo Testigo</h2>
+              <button onClick={() => setShowAddModal(false)} style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
+              }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#94A3B8' }}>close</span>
+              </button>
+            </div>
+
+            {/* Cédula */}
+            <ModalField label="Cédula" required>
+              <input type="text" inputMode="numeric" value={addForm.cedula}
+                onChange={e => setAddForm(f => ({ ...f, cedula: e.target.value }))}
+                style={inputStyle} placeholder="Ej: 1234567890" />
+            </ModalField>
+
+            {/* Nombre */}
+            <ModalField label="Nombre completo" required>
+              <input type="text" value={addForm.nombre_completo}
+                onChange={e => setAddForm(f => ({ ...f, nombre_completo: e.target.value }))}
+                style={inputStyle} placeholder="Nombre y apellidos" />
+            </ModalField>
+
+            {/* Celular */}
+            <ModalField label="Celular">
+              <input type="tel" inputMode="tel" value={addForm.celular}
+                onChange={e => setAddForm(f => ({ ...f, celular: e.target.value }))}
+                style={inputStyle} placeholder="Ej: 3101234567" />
+            </ModalField>
+
+            {/* Correo */}
+            <ModalField label="Correo electrónico">
+              <input type="email" value={addForm.correo}
+                onChange={e => setAddForm(f => ({ ...f, correo: e.target.value }))}
+                style={inputStyle} />
+            </ModalField>
+
+            {/* Municipio - Select */}
+            <ModalField label="Municipio" required>
+              <select value={addForm.municipio} onChange={e => handleMunicipioChange(e.target.value)}
+                style={{ ...inputStyle, cursor: 'pointer' }}>
+                <option value="">Seleccionar municipio...</option>
+                {municipiosData.map(m => (
+                  <option key={m.municipio} value={m.municipio}>{m.municipio}</option>
+                ))}
+              </select>
+            </ModalField>
+
+            {/* Puesto - Select (depende de municipio) */}
+            <ModalField label="Puesto de votación" required>
+              <select value={addForm.puesto} onChange={e => handlePuestoChange(e.target.value)}
+                disabled={!addForm.municipio}
+                style={{ ...inputStyle, cursor: addForm.municipio ? 'pointer' : 'not-allowed', opacity: addForm.municipio ? 1 : 0.5 }}>
+                <option value="">{addForm.municipio ? 'Seleccionar puesto...' : 'Primero selecciona municipio'}</option>
+                {puestosDelMunicipio.map(p => (
+                  <option key={p.puesto} value={p.puesto}>{p.puesto} ({p.total_mesas} mesas)</option>
+                ))}
+              </select>
+            </ModalField>
+
+            {/* Mesa - Select (depende de puesto) */}
+            <ModalField label="Mesa disponible" required>
+              {loadingMesas ? (
+                <div style={{ padding: '10px', fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}>Cargando mesas...</div>
+              ) : (
+                <select value={addForm.mesa_numero} onChange={e => setAddForm(f => ({ ...f, mesa_numero: e.target.value }))}
+                  disabled={!addForm.puesto || mesasDisponibles.length === 0}
+                  style={{ ...inputStyle, cursor: addForm.puesto && mesasDisponibles.length > 0 ? 'pointer' : 'not-allowed', opacity: addForm.puesto ? 1 : 0.5 }}>
+                  <option value="">
+                    {!addForm.puesto ? 'Primero selecciona puesto' : mesasDisponibles.length === 0 ? 'No hay mesas disponibles' : `${mesasDisponibles.length} mesas disponibles`}
+                  </option>
+                  {mesasDisponibles.map(num => (
+                    <option key={num} value={String(num)}>Mesa {num}</option>
+                  ))}
+                </select>
+              )}
+            </ModalField>
+
+            {addMsg && (
+              <div style={{
+                padding: '10px 14px', borderRadius: '10px', marginBottom: '12px',
+                background: addMsg.tipo === 'ok' ? '#ECFDF5' : '#FEF2F2',
+                border: `1px solid ${addMsg.tipo === 'ok' ? '#A7F3D0' : '#FECACA'}`,
+                fontSize: '13px', fontWeight: 600,
+                color: addMsg.tipo === 'ok' ? '#065F46' : '#991B1B',
+              }}>
+                {addMsg.texto}
+              </div>
+            )}
+
+            <button
+              onClick={submitAddTestigo}
+              disabled={addLoading || !addForm.cedula.trim() || !addForm.nombre_completo.trim() || !addForm.municipio.trim() || !addForm.puesto.trim() || !addForm.mesa_numero.trim()}
+              style={{
+                width: '100%', padding: '14px', borderRadius: '12px',
+                border: 'none', background: '#CE1126', color: 'white',
+                fontSize: '15px', fontWeight: 700, cursor: 'pointer',
+                fontFamily: "'Inter', system-ui, sans-serif",
+                boxShadow: '0 4px 14px rgba(206,17,38,0.2)',
+                opacity: addLoading ? 0.6 : 1,
+                marginTop: '4px',
+              }}
+            >
+              {addLoading ? 'Registrando...' : 'Registrar Testigo'}
+            </button>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 380px) {
           .stats-grid-lider { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
+    </div>
+  )
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '10px 12px', borderRadius: '10px',
+  border: '1px solid #E2E8F0', background: '#F8FAFC',
+  fontSize: '14px', fontWeight: 500, color: '#0F172A',
+  outline: 'none', boxSizing: 'border-box' as const,
+  fontFamily: "'Inter', system-ui, sans-serif",
+}
+
+function ModalField({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: '12px' }}>
+      <label style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
+        {label} {required && <span style={{ color: '#EF4444' }}>*</span>}
+      </label>
+      {children}
     </div>
   )
 }
