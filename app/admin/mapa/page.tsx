@@ -346,9 +346,14 @@ export default function MapaInteractivo() {
             setT('lBajaA', fmt(prioStats.BAJA.votA))
 
             // Header totals
+            const totalTVM = prioStats.TOTAL.metaC
+            const pctH = (v: number) => totalTVM > 0 ? ((v / totalTVM) * 100).toFixed(1) + '%' : '0%'
             setT('hCamPL', fmt(prioStats.TOTAL.votC))
+            setT('hCamPLpct', pctH(prioStats.TOTAL.votC))
             setT('hAlex', fmt(prioStats.TOTAL.votA))
+            setT('hAlexPct', pctH(prioStats.TOTAL.votA))
             setT('hOscar', fmt(prioStats.TOTAL.votS))
+            setT('hOscarPct', pctH(prioStats.TOTAL.votS))
 
             renderSidebar()
         }
@@ -750,6 +755,7 @@ export default function MapaInteractivo() {
                 .hc-stat { display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 1.5rem; }
                 .hc-stat:last-child { border-right: none; padding-right: 0; }
                 .hc-val { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+                .hc-pct { font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.55); margin-top: 1px; }
                 .hc-lbl { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
                 .header-date { color: rgba(255,255,255,.7); font-size: .7rem; font-weight: 600; position: relative; z-index: 1; text-transform: uppercase; background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px; }
 
@@ -877,14 +883,17 @@ export default function MapaInteractivo() {
                     <div className="hdr-center">
                         <div className="hc-stat">
                             <div className="hc-val" id="hCamPL">—</div>
+                            <div className="hc-pct" id="hCamPLpct">—</div>
                             <div className="hc-lbl">Partido Liberal (Cam)</div>
                         </div>
                         <div className="hc-stat" style={{ color: '#ffd700' }}>
                             <div className="hc-val" id="hAlex">—</div>
+                            <div className="hc-pct" id="hAlexPct" style={{ color: 'rgba(255,215,0,0.6)' }}>—</div>
                             <div className="hc-lbl" style={{ color: 'rgba(255,215,0,0.7)' }}>Alex Prieto</div>
                         </div>
                         <div className="hc-stat">
                             <div className="hc-val" id="hOscar">—</div>
+                            <div className="hc-pct" id="hOscarPct">—</div>
                             <div className="hc-lbl">Oscar Sanchez (Sen)</div>
                         </div>
                     </div>
