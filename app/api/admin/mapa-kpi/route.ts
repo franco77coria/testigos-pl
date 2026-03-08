@@ -25,7 +25,7 @@ export async function GET() {
             fetchAllRows(
                 supabase,
                 'resultados',
-                'municipio, votos_camara_partido, votos_camara_l101, votos_senado_1, datos_camara_guardados, datos_senado_guardados'
+                'municipio, votos_camara_partido, votos_camara_l101, votos_camara_l102, votos_camara_l103, votos_camara_l104, votos_camara_l105, votos_camara_l106, votos_camara_l107, votos_senado_1, datos_camara_guardados, datos_senado_guardados, votantes_4pm'
             ),
             supabase.from('resultados')
                 .select('puesto, mesa_numero, votantes_8am, votantes_4pm, datos_4pm_guardados, foto_camara, foto_senado')
@@ -77,6 +77,7 @@ export async function GET() {
             senado_votos_oscar: number
             total_mesas: number
             mesas_con_camara: number
+            total_votos_mesa: number
         }> = {}
 
         for (const r of resultados) {
@@ -92,13 +93,20 @@ export async function GET() {
                     senado_votos_oscar: 0,
                     total_mesas: 0,
                     mesas_con_camara: 0,
+                    total_votos_mesa: 0,
                 }
             }
 
             agg[key].total_mesas++
-            agg[key].camara_votos_partido += Number(r.votos_camara_partido) || 0
+            // Votos Partido Liberal = 7 listas + voto partido
+            agg[key].camara_votos_partido += (Number(r.votos_camara_l101) || 0)
+                + (Number(r.votos_camara_l102) || 0) + (Number(r.votos_camara_l103) || 0)
+                + (Number(r.votos_camara_l104) || 0) + (Number(r.votos_camara_l105) || 0)
+                + (Number(r.votos_camara_l106) || 0) + (Number(r.votos_camara_l107) || 0)
+                + (Number(r.votos_camara_partido) || 0)
             agg[key].camara_votos_alex += Number(r.votos_camara_l101) || 0
             agg[key].senado_votos_oscar += Number(r.votos_senado_1) || 0
+            agg[key].total_votos_mesa += Number(r.votantes_4pm) || 0
             if (r.datos_camara_guardados) agg[key].mesas_con_camara++
         }
 
@@ -116,7 +124,7 @@ export async function GET() {
             data.push({
                 municipio: m.municipio,
                 prioridad: kpi?.prioridad || 'BAJA',
-                camara_meta: kpi?.camara_meta || 0,
+                total_votos_mesa: m.total_votos_mesa,
                 camara_votos_partido: m.camara_votos_partido,
                 camara_votos_alex: m.camara_votos_alex,
                 camara_pct_votantes: m.total_mesas > 0
@@ -134,7 +142,7 @@ export async function GET() {
             data.push({
                 municipio: kpi.originalName,
                 prioridad: kpi.prioridad,
-                camara_meta: kpi.camara_meta,
+                total_votos_mesa: 0,
                 camara_votos_partido: 0,
                 camara_votos_alex: 0,
                 camara_pct_votantes: 0,

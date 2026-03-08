@@ -65,7 +65,7 @@ function fmt(n: number) { return new Intl.NumberFormat('es-CO').format(n) }
 interface KPIRow {
     municipio: string
     prioridad: string
-    camara_meta: number
+    total_votos_mesa: number
     camara_votos_partido: number
     camara_votos_alex: number
     camara_pct_votantes: number
@@ -277,14 +277,14 @@ export default function MapaInteractivo() {
 
                 const st = prioStats[prio] || prioStats.BAJA
                 st.muns++
-                st.metaC += d.camara_meta || 0
+                st.metaC += d.total_votos_mesa || 0
                 st.votC += d.camara_votos_partido || 0
                 st.votA += d.camara_votos_alex || 0
                 st.metaS += d.senado_meta || 0
                 st.votS += d.senado_votos_oscar || 0
 
                 prioStats.TOTAL.muns++
-                prioStats.TOTAL.metaC += d.camara_meta || 0
+                prioStats.TOTAL.metaC += d.total_votos_mesa || 0
                 prioStats.TOTAL.votC += d.camara_votos_partido || 0
                 prioStats.TOTAL.votA += d.camara_votos_alex || 0
                 prioStats.TOTAL.metaS += d.senado_meta || 0
@@ -865,7 +865,7 @@ export default function MapaInteractivo() {
                             <tr>
                                 <th>Prioridad</th>
                                 <th style={{ textAlign: 'center' }}>Municipios</th>
-                                <th>Meta Alex Prieto</th>
+                                <th>Total Votos Mesa</th>
                                 <th style={{ color: '#d97706' }}>Votos Alex Prieto</th>
                                 <th>Votos Partido Liberal</th>
                                 <th>% Cump.</th>
