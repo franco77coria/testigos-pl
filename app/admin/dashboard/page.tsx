@@ -87,6 +87,12 @@ export default function AdminStats() {
     const [photoModal, setPhotoModal] = useState<{ mesa: number; urls: string[] } | null>(null)
     const [countdown, setCountdown] = useState(30)
 
+    // Conteo data (super admin only)
+    const [conteo, setConteo] = useState<{
+        habilitados: number; reporte10am: number; reporte1pm: number
+        alexP: number; senadoPl: number; oscarSanchez: number; camaraCun: number
+    } | null>(null)
+
     async function verifyCedula() {
         setGateLoading(true)
         setGateError('')
@@ -148,10 +154,19 @@ export default function AdminStats() {
                     },
                 })
             }
+
+            // Fetch conteo data for super admin
+            if (rol === 'super') {
+                const resDash = await fetch('/api/admin/dashboard')
+                const jsonDash = await resDash.json()
+                if (jsonDash.exito && jsonDash.data?.conteo) {
+                    setConteo(jsonDash.data.conteo)
+                }
+            }
         } catch { /* silent */ }
         setLoading(false)
         setCountdown(30)
-    }, [])
+    }, [rol])
 
     useEffect(() => {
         if (authorized) {
@@ -415,6 +430,46 @@ export default function AdminStats() {
                             }}><AnimatedNumber value={pct} />%</span>
                         </div>
                     </div>
+
+                    {/* =================== CONTEO (SUPER ONLY) =================== */}
+                    {rol === 'super' && conteo && (
+                        <div style={{ padding: 'clamp(12px, 2vw, 24px)', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
+                            <div style={{
+                                fontSize: 'clamp(10px, 1vw, 14px)', fontWeight: 700, color: '#94A3B8',
+                                textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 'clamp(8px, 1vw, 16px)',
+                            }}>Conteo de Votos</div>
+                            <div style={{
+                                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                                gap: 'clamp(6px, 1vw, 12px)',
+                            }}>
+                                {[
+                                    { label: 'Habilitados', value: conteo.habilitados, color: '#6366F1' },
+                                    { label: 'Reporte 10am', value: conteo.reporte10am, color: '#F59E0B' },
+                                    { label: 'Reporte 1pm', value: conteo.reporte1pm, color: '#F97316' },
+                                    { label: 'Alex P.', value: conteo.alexP, color: '#CE1126' },
+                                    { label: 'Senado PL', value: conteo.senadoPl, color: '#DC2626' },
+                                    { label: 'Oscar Sánchez', value: conteo.oscarSanchez, color: '#BE123C' },
+                                    { label: 'Cámara Cund.', value: conteo.camaraCun, color: '#9F1239' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{
+                                        textAlign: 'center', padding: 'clamp(6px, 1vw, 12px)',
+                                        borderRadius: '10px', background: '#FAFBFC', border: '1px solid #E5E7EB',
+                                    }}>
+                                        <div style={{
+                                            fontSize: 'clamp(18px, 3vw, 48px)', fontWeight: 800,
+                                            color: item.color, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1,
+                                        }}>
+                                            <AnimatedNumber value={item.value} />
+                                        </div>
+                                        <div style={{
+                                            fontSize: 'clamp(7px, 0.8vw, 11px)', fontWeight: 700,
+                                            color: '#94A3B8', textTransform: 'uppercase', marginTop: '2px',
+                                        }}>{item.label}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* =================== MUNICIPIO TABLE =================== */}
                     <div style={{ padding: 'clamp(10px, 2vw, 24px)', display: 'flex', flexDirection: 'column', gap: '6px' }}>

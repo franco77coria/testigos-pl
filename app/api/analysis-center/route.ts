@@ -74,12 +74,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Contar mesas por testigo
-    const testigoMesas: Record<string, { total: number; completadas: number }> = {}
+    const testigoMesas: Record<string, { total: number; completadas: number; numeros: number[] }> = {}
     for (const a of asignaciones) {
       if (!testigoMesas[a.testigo_cedula]) {
-        testigoMesas[a.testigo_cedula] = { total: 0, completadas: 0 }
+        testigoMesas[a.testigo_cedula] = { total: 0, completadas: 0, numeros: [] }
       }
       testigoMesas[a.testigo_cedula].total++
+      testigoMesas[a.testigo_cedula].numeros.push(a.mesa_numero)
       const r = resMap[`${a.testigo_cedula}__${a.mesa_numero}`]
       if (r?.datos_finales_guardados === true || (r?.datos_camara_guardados === true && r?.datos_senado_guardados === true)) {
         testigoMesas[a.testigo_cedula].completadas++
@@ -94,6 +95,7 @@ export async function GET(request: NextRequest) {
       total_testigos: number
       total_mesas: number
       mesas_completadas: number
+      mesa_numeros: number[]
     }> = {}
 
     for (const t of testigosData) {
@@ -107,6 +109,7 @@ export async function GET(request: NextRequest) {
           total_testigos: 0,
           total_mesas: 0,
           mesas_completadas: 0,
+          mesa_numeros: [],
         }
       }
       lideresAgg[cl].total_testigos++
@@ -114,11 +117,13 @@ export async function GET(request: NextRequest) {
       if (tm) {
         lideresAgg[cl].total_mesas += tm.total
         lideresAgg[cl].mesas_completadas += tm.completadas
+        lideresAgg[cl].mesa_numeros.push(...tm.numeros)
       }
     }
 
     const lideres = Object.values(lideresAgg).map(l => ({
       ...l,
+      mesa_numeros: [...new Set(l.mesa_numeros)].sort((a, b) => a - b),
       porcentaje: l.total_mesas > 0 ? Math.round((l.mesas_completadas / l.total_mesas) * 100) : 0,
     }))
 

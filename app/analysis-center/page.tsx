@@ -35,6 +35,7 @@ interface LiderResumen {
   total_testigos: number
   total_mesas: number
   mesas_completadas: number
+  mesa_numeros: number[]
   porcentaje: number
 }
 
@@ -670,6 +671,15 @@ export default function AnalysisCenterPage() {
                       </a>
                     )}
                   </div>
+                  {l.mesa_numeros && l.mesa_numeros.length > 0 && (
+                    <div style={{
+                      fontSize: '9px', color: '#64748B', fontWeight: 500, marginTop: '4px',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      <span style={{ fontWeight: 700, color: '#94A3B8' }}>Mesas:</span>{' '}
+                      {l.mesa_numeros.join(', ')}
+                    </div>
+                  )}
                   <div style={{ height: '4px', background: '#E5E7EB', borderRadius: '2px', marginTop: '6px', overflow: 'hidden' }}>
                     <div style={{
                       height: '100%', borderRadius: '2px', background: barColor,
