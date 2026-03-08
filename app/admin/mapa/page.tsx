@@ -745,26 +745,25 @@ export default function MapaInteractivo() {
                 .load-note { color: rgba(255,255,255,.6); margin-top: .5rem; font-size: .75rem; }
 
                 .map-wrap { display: flex; flex-direction: column; }
-                .header { background: linear-gradient(135deg, var(--pl-red) 0%, #b51a12 100%); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; color: #fff; position: relative; z-index: 500; box-shadow: 0 4px 15px rgba(227,33,23,0.2); overflow: hidden; }
-                .header::after { content: ''; position: absolute; top: 0; right: 0; width: 400px; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08)); pointer-events: none; }
-                .hdr-left { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 1; }
-                .pl-logo { width: 42px; height: 42px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; color: var(--pl-red); font-style: italic; letter-spacing: -2px; padding-right: 4px; line-height: 1; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-                .header h1 { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; text-transform: uppercase; }
-                .header .sub { font-size: .75rem; color: rgba(255,255,255,.8); font-weight: 500; letter-spacing: 0.02em; margin-top: 2px; }
-                .hdr-center { display: flex; gap: 1.5rem; background: rgba(0,0,0,0.15); padding: 0.4rem 1.2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); z-index: 1; }
-                .hc-stat { display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 1.5rem; }
-                .hc-stat:last-child { border-right: none; padding-right: 0; }
-                .hc-row { display: flex; align-items: baseline; gap: 6px; justify-content: center; }
-                .hc-val { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
-                .hc-pct { font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.55); }
-                .hc-lbl { font-size: 0.6rem; font-weight: 700; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-                .header-date { color: rgba(255,255,255,.7); font-size: .7rem; font-weight: 600; position: relative; z-index: 1; text-transform: uppercase; background: rgba(0,0,0,0.15); padding: 4px 10px; border-radius: 20px; }
+                .header { background: #fff; padding: 0.8rem 1.5rem; display: flex; align-items: center; justify-content: space-between; color: var(--s800); position: relative; z-index: 500; border-bottom: 3px solid var(--pl-red); }
+                .hdr-left { display: flex; align-items: center; gap: 0.8rem; }
+                .pl-logo { width: 36px; height: 36px; border-radius: 8px; background: var(--pl-red); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.5rem; color: #fff; font-style: italic; letter-spacing: -2px; padding-right: 3px; line-height: 1; }
+                .header h1 { font-size: 1rem; font-weight: 800; color: var(--s800); letter-spacing: -0.02em; }
+                .header .sub { font-size: .65rem; color: var(--s400); font-weight: 500; letter-spacing: 0.02em; margin-top: 1px; }
+                .hdr-center { display: flex; gap: 0; z-index: 1; }
+                .hc-stat { display: flex; flex-direction: column; align-items: center; padding: 0.3rem 1.2rem; border-right: 1px solid var(--s200); }
+                .hc-stat:last-child { border-right: none; }
+                .hc-row { display: flex; align-items: baseline; gap: 5px; justify-content: center; }
+                .hc-val { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--pl-red); }
+                .hc-pct { font-size: 0.7rem; font-weight: 700; color: var(--s400); }
+                .hc-lbl { font-size: 0.55rem; font-weight: 700; color: var(--s500); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1px; }
+                .header-date { color: var(--s500); font-size: .65rem; font-weight: 600; text-transform: uppercase; }
 
-                .table-summary-container { background: #fff; border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.5rem 0.8rem; display: flex; align-items: flex-start; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); overflow-x: auto; gap: 1rem; }
-                .summary-table { width: 100%; max-width: 1200px; border-collapse: collapse; font-size: .75rem; text-align: center; }
-                .summary-table th, .summary-table td { padding: 0.3rem 0.4rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
+                .table-summary-container { background: var(--s50); border-bottom: 1px solid var(--s200); z-index: 400; padding: 0.4rem 0.8rem; display: flex; align-items: flex-start; justify-content: center; overflow-x: auto; gap: 0.8rem; }
+                .summary-table { width: 100%; max-width: 1200px; border-collapse: collapse; font-size: .7rem; text-align: center; }
+                .summary-table th, .summary-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--s100); white-space: nowrap; }
                 .summary-table th { min-width: 0; }
-                .summary-table th { font-weight: 800; color: var(--s500); text-transform: uppercase; letter-spacing: 0.05em; background: var(--s50); }
+                .summary-table th { font-weight: 700; color: var(--s500); font-size: .6rem; letter-spacing: 0.03em; background: transparent; }
                 .summary-table th:first-child, .summary-table td:first-child { text-align: left; }
                 .summary-table .prio-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; color: #fff; font-weight: 800; font-size: 0.65rem; }
                 .summary-table .val { font-weight: 700; color: var(--s800); font-variant-numeric: tabular-nums; }
@@ -781,20 +780,20 @@ export default function MapaInteractivo() {
                 .prov-label { font-family: 'Inter', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; pointer-events: none; paint-order: stroke; stroke: rgba(255,255,255,0.85); stroke-width: 3.5px; fill: #1a2540; }
                 .prov-label.dimmed { opacity: 0.15; }
 
-                #sidebar { background: var(--card); z-index: 100; padding: 1.5rem; }
-                .sb-header { padding-bottom: 1rem; border-bottom: 1px solid var(--s200); background: #fff; margin-bottom: 1rem; }
-                .sb-title { font-size: .85rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--pl-red); display: flex; align-items: center; gap: 8px; }
-                .sb-title::before { content: ''; display: block; width: 4px; height: 14px; background: var(--pl-red); border-radius: 2px; }
-                .sb-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-                .prov-card { background: var(--s50); border: 1px solid var(--s200); border-radius: 12px; padding: 1rem; transition: border-color 0.2s; }
-                .prov-card:hover { border-color: var(--s300); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-                .pc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .8rem; }
-                .pc-name { font-weight: 800; font-size: .95rem; color: var(--s800); }
-                .pc-count { font-size: .65rem; font-weight: 700; color: var(--s500); background: var(--s200); padding: 2px 8px; border-radius: 10px; }
-                .pc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-                .pc-stat { display: flex; flex-direction: column; align-items: center; background: #fff; border: 1px solid var(--s100); border-radius: 8px; padding: .6rem .2rem; }
-                .pc-stat .n { font-size: 1.1rem; font-weight: 800; line-height: 1; margin-bottom: 3px; }
-                .pc-stat .l { font-size: .55rem; font-weight: 700; text-transform: uppercase; color: var(--s400); }
+                #sidebar { background: #fff; z-index: 100; padding: 1.2rem 1.5rem; }
+                .sb-header { padding-bottom: 0.8rem; border-bottom: 1px solid var(--s100); margin-bottom: 1rem; }
+                .sb-title { font-size: .75rem; font-weight: 800; letter-spacing: .03em; color: var(--s700); display: flex; align-items: center; gap: 8px; }
+                .sb-title::before { content: ''; display: block; width: 3px; height: 12px; background: var(--pl-red); border-radius: 2px; }
+                .sb-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.8rem; }
+                .prov-card { background: #fff; border: 1px solid var(--s100); border-radius: 10px; padding: 0.8rem 1rem; transition: border-color 0.2s; }
+                .prov-card:hover { border-color: var(--s200); }
+                .pc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+                .pc-name { font-weight: 700; font-size: .85rem; color: var(--s800); }
+                .pc-count { font-size: .6rem; font-weight: 600; color: var(--s400); background: var(--s100); padding: 2px 8px; border-radius: 10px; }
+                .pc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+                .pc-stat { display: flex; flex-direction: column; align-items: center; background: var(--s50); border: 1px solid var(--s100); border-radius: 6px; padding: .5rem .2rem; }
+                .pc-stat .n { font-size: 1rem; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+                .pc-stat .l { font-size: .5rem; font-weight: 700; text-transform: uppercase; color: var(--s400); }
 
                 #tooltip { position: fixed; z-index: 1000; pointer-events: none; background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: #fff; padding: 1rem; border-radius: 16px; font-size: .8rem; min-width: 250px; opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 16px 40px rgba(0,0,0,.3); }
                 #tooltip.v { opacity: 1; transform: translateY(0); }
@@ -841,17 +840,17 @@ export default function MapaInteractivo() {
                 .ls { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(255,255,255,0.8) inset; }
                 .l-count { font-size: .7rem; font-weight: 800; color: var(--s500); background: var(--s100); padding: 2px 8px; border-radius: 10px; }
 
-                .filter-bar { display: flex; gap: 1rem; padding: .6rem 1.5rem; background: #fff; border-bottom: 1px solid var(--s200); z-index: 390; align-items: center; justify-content: flex-start; }
+                .filter-bar { display: flex; gap: 1rem; padding: .5rem 1.5rem; background: #fff; border-bottom: 1px solid var(--s100); z-index: 390; align-items: center; justify-content: flex-start; }
                 .filter-group { display: flex; align-items: center; gap: .5rem; }
                 .filter-label { font-size: .65rem; font-weight: 700; color: var(--s500); text-transform: uppercase; letter-spacing: .05em; }
                 .filter-select { padding: .4rem .8rem; border-radius: 8px; border: 1px solid var(--s300); background: var(--s50); font-family: inherit; font-size: .75rem; font-weight: 600; color: var(--s800); outline: none; cursor: pointer; transition: .2s; min-width: 140px; }
                 .filter-select:hover { border-color: var(--s400); }
                 .filter-select:focus { border-color: var(--pl-red); }
-                .btn-reset { margin-left: auto; padding: .5rem 1rem; border: none; background: rgba(227,33,23,0.1); font-size: .75rem; font-weight: 800; border-radius: 8px; cursor: pointer; transition: .2s; color: var(--pl-red); display: flex; align-items: center; gap: 6px; }
-                .btn-reset:hover { background: var(--pl-red); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(227,33,23,0.2); }
+                .btn-reset { margin-left: auto; padding: .4rem .8rem; border: 1px solid var(--s200); background: #fff; font-size: .7rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: .2s; color: var(--s600); display: flex; align-items: center; gap: 6px; }
+                .btn-reset:hover { background: var(--s50); border-color: var(--s300); color: var(--s800); }
 
-                .toggle-tables-btn { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--s300); background: var(--s50); border-radius: 8px; font-size: .7rem; font-weight: 700; color: var(--s600); cursor: pointer; transition: all .2s; white-space: nowrap; }
-                .toggle-tables-btn:hover { background: var(--pl-red); color: #fff; border-color: var(--pl-red); }
+                .toggle-tables-btn { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--s200); background: #fff; border-radius: 6px; font-size: .65rem; font-weight: 700; color: var(--s500); cursor: pointer; transition: all .2s; white-space: nowrap; }
+                .toggle-tables-btn:hover { background: var(--s50); border-color: var(--s300); color: var(--s700); }
                 .toggle-tables-btn svg { flex-shrink: 0; }
 
                 @media(max-width:800px) {
@@ -886,9 +885,9 @@ export default function MapaInteractivo() {
                             <div className="hc-lbl">Partido Liberal (Cam)</div>
                             <div className="hc-row"><span className="hc-val" id="hCamPL">—</span><span className="hc-pct" id="hCamPLpct">—</span></div>
                         </div>
-                        <div className="hc-stat" style={{ color: '#ffd700' }}>
-                            <div className="hc-lbl" style={{ color: 'rgba(255,215,0,0.7)' }}>Alex Prieto</div>
-                            <div className="hc-row"><span className="hc-val" id="hAlex">—</span><span className="hc-pct" id="hAlexPct" style={{ color: 'rgba(255,215,0,0.6)' }}>—</span></div>
+                        <div className="hc-stat">
+                            <div className="hc-lbl">Alex Prieto</div>
+                            <div className="hc-row"><span className="hc-val" id="hAlex" style={{ color: '#d97706' }}>—</span><span className="hc-pct" id="hAlexPct">—</span></div>
                         </div>
                         <div className="hc-stat">
                             <div className="hc-lbl">Oscar Sanchez (Sen)</div>
@@ -916,16 +915,16 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
-                                <th colSpan={7} style={{ textAlign: 'center', background: 'rgba(227,33,23,0.1)', color: '#e32117', borderBottom: '2px solid #e32117' }}>
-                                    RESULTADOS CAMARA DE REPRESENTANTES
+                                <th colSpan={7} style={{ textAlign: 'center', color: '#e32117', borderBottom: '2px solid #e32117', fontWeight: 800, fontSize: '.65rem', background: 'transparent' }}>
+                                    Camara de Representantes
                                 </th>
                             </tr>
                             <tr>
-                                <th>Prio.</th>
-                                <th style={{ textAlign: 'center' }}>Mun.</th>
-                                <th>Tot. Votos</th>
-                                <th style={{ color: '#d97706' }}>V. Alex</th>
-                                <th>V. Partido</th>
+                                <th>Prioridad</th>
+                                <th style={{ textAlign: 'center' }}>Municipios</th>
+                                <th>Total Votos</th>
+                                <th style={{ color: '#d97706' }}>Votos Alex</th>
+                                <th>Votos Partido</th>
                                 <th>% Alex</th>
                                 <th>% Partido</th>
                             </tr>
@@ -937,14 +936,14 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ maxWidth: 300 }}>
                         <thead>
                             <tr>
-                                <th colSpan={3} style={{ textAlign: 'center', background: 'rgba(0,0,0,0.05)', color: '#1E293B', borderBottom: '2px solid #1E293B' }}>
-                                    RESULTADOS SENADO
+                                <th colSpan={3} style={{ textAlign: 'center', color: '#1E293B', borderBottom: '2px solid #1E293B', fontWeight: 800, fontSize: '.65rem' }}>
+                                    Senado
                                 </th>
                             </tr>
                             <tr>
                                 <th>Meta</th>
-                                <th>L10 Oscar S.</th>
-                                <th>%</th>
+                                <th>L10 Oscar Sanchez</th>
+                                <th>% Cump.</th>
                             </tr>
                         </thead>
                         <tbody id="summaryTableBodySenado">
@@ -961,8 +960,8 @@ export default function MapaInteractivo() {
                     <table className="summary-table" style={{ flex: 1 }}>
                         <thead>
                             <tr>
-                                <th colSpan={8} style={{ textAlign: 'center', background: 'rgba(34,139,34,0.1)', color: '#228B22', borderBottom: '2px solid #228B22' }}>
-                                    RESULTADOS DE COTA
+                                <th colSpan={8} style={{ textAlign: 'center', color: '#228B22', borderBottom: '2px solid #228B22', fontWeight: 800, fontSize: '.65rem' }}>
+                                    Resultados de Cota
                                 </th>
                             </tr>
                             <tr>
