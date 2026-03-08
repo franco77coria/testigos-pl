@@ -88,6 +88,7 @@ export default function MapaInteractivo() {
     const [topoReady, setTopoReady] = useState(false)
     const [mapLoading, setMapLoading] = useState(true)
     const [legendOpen, setLegendOpen] = useState(true)
+    const [tablesOpen, setTablesOpen] = useState(true)
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
 
@@ -748,6 +749,10 @@ export default function MapaInteractivo() {
                 .btn-reset { margin-left: auto; padding: .5rem 1rem; border: none; background: rgba(227,33,23,0.1); font-size: .75rem; font-weight: 800; border-radius: 8px; cursor: pointer; transition: .2s; color: var(--pl-red); display: flex; align-items: center; gap: 6px; }
                 .btn-reset:hover { background: var(--pl-red); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(227,33,23,0.2); }
 
+                .toggle-tables-btn { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border: 1px solid var(--s300); background: var(--s50); border-radius: 8px; font-size: .7rem; font-weight: 700; color: var(--s600); cursor: pointer; transition: all .2s; white-space: nowrap; }
+                .toggle-tables-btn:hover { background: var(--pl-red); color: #fff; border-color: var(--pl-red); }
+                .toggle-tables-btn svg { flex-shrink: 0; }
+
                 @media(max-width:800px) {
                     .main-body { flex-direction: column; }
                     #sidebar { width: 100%; height: 35vh; border-right: none; border-bottom: 1px solid var(--s200); }
@@ -789,10 +794,22 @@ export default function MapaInteractivo() {
                             <div className="hc-lbl">Oscar Sanchez (Sen)</div>
                         </div>
                     </div>
-                    <span className="header-date" id="dateLabel"></span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', zIndex: 1 }}>
+                        <button className="toggle-tables-btn" onClick={() => setTablesOpen(!tablesOpen)}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                {tablesOpen
+                                    ? <><path d="M18 15l-6-6-6 6" /></>
+                                    : <><path d="M6 9l6 6 6-6" /></>
+                                }
+                            </svg>
+                            {tablesOpen ? 'Ocultar tablas' : 'Mostrar tablas'}
+                        </button>
+                        <span className="header-date" id="dateLabel"></span>
+                    </div>
                 </header>
 
-                {/* SUMMARY TABLES */}
+                {/* SUMMARY TABLES + FILTERS (collapsible) */}
+                {tablesOpen && <>
                 <div className="table-summary-container">
                     <table className="summary-table" style={{ flex: 1, maxWidth: 750 }}>
                         <thead>
@@ -868,6 +885,7 @@ export default function MapaInteractivo() {
                         Ver Todo Cundinamarca
                     </button>
                 </div>
+                </>}
 
                 {/* MAIN BODY */}
                 <div className="main-body">
