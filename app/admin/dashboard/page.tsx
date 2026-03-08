@@ -309,10 +309,10 @@ export default function AdminStats() {
     // Derived percentages
     const pctCompletas = conteo ? conteo.progreso.porcentajeTotal : (data ? (data.resumen.totalMesas > 0 ? Math.round((data.resumen.completadas / data.resumen.totalMesas) * 100) : 0) : 0)
 
-    // Participación: (Votos a la 1pm) / (Habilitados 8am)
+    // Participación: Total Votos 4pm / Habilitados 8am
     let participaciónPct = 0
     if (conteo && conteo.horarios.habilitados8am > 0) {
-        participaciónPct = Math.round((conteo.horarios.conteo1pm / conteo.horarios.habilitados8am) * 100)
+        participaciónPct = Math.round((conteo.horarios.conteo4pm / conteo.horarios.habilitados8am) * 100)
     }
 
     // =================== MAIN DASHBOARD ===================
@@ -495,7 +495,7 @@ export default function AdminStats() {
                         </div>
 
                         <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Participación Real (1pm)</div>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Participación Real (4pm)</div>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginTop: '4px' }}>
                                 <span style={{ fontSize: '64px', fontWeight: 800, color: participaciónPct > 50 ? '#10B981' : '#F59E0B', lineHeight: 1 }}>
                                     <AnimatedNumber value={participaciónPct} />%
