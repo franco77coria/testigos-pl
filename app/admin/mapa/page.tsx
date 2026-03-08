@@ -407,43 +407,43 @@ export default function MapaInteractivo() {
                         <div class="pc-name">${p} <span style="font-size:0.55rem;color:#94A3B8;">&#9660;</span></div>
                         <div class="pc-count">${stat.muns} Mun.</div>
                     </div>
-                    <div style="font-size:0.65rem;color:#64748B;margin-bottom:8px;display:flex;flex-direction:column;gap:4px;">
-                        <div style="display:flex;justify-content:space-between;">
-                            <span>Votos Partido Liberal:</span> <b>${fmt(stat.vC)}</b> <span style="color:#94A3B8;font-size:0.6rem;">${pctStr(stat.vC, stat.tvm)}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;padding:2px 4px;background:rgba(227,33,23,0.05);border-radius:4px;color:#e32117;">
-                            <span style="font-weight:700;">Alex Prieto:</span> <b style="font-size:0.75rem;">${fmt(stat.vA)}</b> <span style="font-size:0.6rem;opacity:0.7;">${pctStr(stat.vA, stat.tvm)}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;">
-                            <span>L10 Oscar Sánchez:</span> <b>${fmt(stat.vS)}</b> <span style="color:#94A3B8;font-size:0.6rem;">${pctStr(stat.vS, stat.tvm)}</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;color:#94A3B8;">
-                            <span>Total Votos Mesa:</span> <b>${fmt(stat.tvm)}</b>
-                        </div>
-                    </div>
+                    <table style="width:100%;font-size:0.6rem;border-collapse:collapse;margin-bottom:8px;text-align:center;">
+                        <thead><tr style="color:#94A3B8;font-weight:700;font-size:0.55rem;text-transform:uppercase;letter-spacing:0.03em;">
+                            <th style="text-align:left;padding:2px 0;"></th>
+                            <th style="padding:2px 4px;">Votos</th>
+                            <th style="padding:2px 4px;">%</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr style="color:#64748B;"><td style="text-align:left;padding:2px 0;">Partido Liberal</td><td style="padding:2px 4px;font-weight:700;">${fmt(stat.vC)}</td><td style="padding:2px 4px;">${pctStr(stat.vC, stat.tvm)}</td></tr>
+                            <tr style="color:#e32117;background:rgba(227,33,23,0.04);border-radius:4px;"><td style="text-align:left;padding:2px 0;font-weight:700;">Alex Prieto</td><td style="padding:2px 4px;font-weight:800;font-size:0.7rem;">${fmt(stat.vA)}</td><td style="padding:2px 4px;font-weight:700;">${pctStr(stat.vA, stat.tvm)}</td></tr>
+                            <tr style="color:#64748B;"><td style="text-align:left;padding:2px 0;">L10 Oscar S.</td><td style="padding:2px 4px;font-weight:700;">${fmt(stat.vS)}</td><td style="padding:2px 4px;">${pctStr(stat.vS, stat.tvm)}</td></tr>
+                            <tr style="color:#94A3B8;border-top:1px solid #E2E8F0;"><td style="text-align:left;padding:2px 0;">Tot. Votos Mesa</td><td style="padding:2px 4px;font-weight:700;">${fmt(stat.tvm)}</td><td></td></tr>
+                        </tbody>
+                    </table>
                     <div class="pc-grid">
                         <div class="pc-stat" style="border-bottom: 2px solid #e32117"><div class="n" style="color:#e32117">${stat.al}</div><div class="l">Alta</div></div>
                         <div class="pc-stat" style="border-bottom: 2px solid #f0746e"><div class="n" style="color:#f0746e">${stat.md}</div><div class="l">Media</div></div>
                         <div class="pc-stat" style="border-bottom: 2px solid #f9c2c0"><div class="n" style="color:#f9c2c0">${stat.bj}</div><div class="l">Baja</div></div>
                     </div>
                     <div id="${muniId}" style="display:none;margin-top:6px;border-top:1px solid #E2E8F0;padding-top:6px;">
-                        ${stat.muniList.sort((a, b) => b.vA - a.vA).map(m => `
-                            <div style="font-size:0.6rem;padding:4px 0;border-bottom:1px solid #F1F5F9;display:flex;flex-direction:column;gap:2px;">
-                                <div style="font-weight:700;color:#1E293B;font-size:0.65rem;">${m.name}</div>
-                                <div style="display:flex;justify-content:space-between;color:#64748B;">
-                                    <span>Partido Liberal:</span> <span><b>${fmt(m.vC)}</b> <span style="color:#94A3B8;">${pctStr(m.vC, m.tvm)}</span></span>
-                                </div>
-                                <div style="display:flex;justify-content:space-between;color:#e32117;">
-                                    <span style="font-weight:600;">Alex Prieto:</span> <span><b>${fmt(m.vA)}</b> <span style="opacity:0.7;">${pctStr(m.vA, m.tvm)}</span></span>
-                                </div>
-                                <div style="display:flex;justify-content:space-between;color:#64748B;">
-                                    <span>L10 Oscar S.:</span> <span><b>${fmt(m.vS)}</b> <span style="color:#94A3B8;">${pctStr(m.vS, m.tvm)}</span></span>
-                                </div>
-                                <div style="display:flex;justify-content:space-between;color:#94A3B8;">
-                                    <span>Total Votos Mesa:</span> <b>${fmt(m.tvm)}</b>
-                                </div>
-                            </div>
-                        `).join('')}
+                        <table style="width:100%;font-size:0.55rem;border-collapse:collapse;text-align:center;">
+                            <thead><tr style="color:#94A3B8;font-weight:700;font-size:0.5rem;text-transform:uppercase;letter-spacing:0.03em;">
+                                <th style="text-align:left;padding:3px 0;">Municipio</th>
+                                <th style="padding:3px 2px;">Partido</th>
+                                <th style="padding:3px 2px;">Alex</th>
+                                <th style="padding:3px 2px;">L10</th>
+                                <th style="padding:3px 2px;">Tot.</th>
+                            </tr></thead>
+                            <tbody>
+                                ${stat.muniList.sort((a, b) => b.vA - a.vA).map(m => `<tr style="border-bottom:1px solid #F1F5F9;">
+                                    <td style="text-align:left;padding:3px 0;font-weight:600;color:#1E293B;">${m.name}</td>
+                                    <td style="padding:3px 2px;color:#64748B;"><b>${fmt(m.vC)}</b><div style="color:#94A3B8;font-size:0.48rem;">${pctStr(m.vC, m.tvm)}</div></td>
+                                    <td style="padding:3px 2px;color:#e32117;font-weight:700;"><b>${fmt(m.vA)}</b><div style="font-size:0.48rem;opacity:0.7;">${pctStr(m.vA, m.tvm)}</div></td>
+                                    <td style="padding:3px 2px;color:#64748B;"><b>${fmt(m.vS)}</b><div style="color:#94A3B8;font-size:0.48rem;">${pctStr(m.vS, m.tvm)}</div></td>
+                                    <td style="padding:3px 2px;color:#94A3B8;font-weight:700;">${fmt(m.tvm)}</td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
                     </div>`
 
                 // Toggle click on header
