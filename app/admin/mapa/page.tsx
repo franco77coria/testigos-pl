@@ -87,6 +87,7 @@ export default function MapaInteractivo() {
     const [d3Ready, setD3Ready] = useState(false)
     const [topoReady, setTopoReady] = useState(false)
     const [mapLoading, setMapLoading] = useState(true)
+    const [legendOpen, setLegendOpen] = useState(true)
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
 
@@ -631,7 +632,7 @@ export default function MapaInteractivo() {
                     --s500: #64748B; --s600: #475569; --s700: #334155; --s800: #1E293B; --s900: #0F172A;
                 }
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); height: 100vh; overflow: auto; }
+                body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--s800); min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
                 ::-webkit-scrollbar { width: 6px; }
                 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
                 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
@@ -644,7 +645,7 @@ export default function MapaInteractivo() {
                 .load-text { color: #fff; margin-top: 1.5rem; font-weight: 600; font-size: 1rem; }
                 .load-note { color: rgba(255,255,255,.6); margin-top: .5rem; font-size: .75rem; }
 
-                .map-wrap { display: flex; flex-direction: column; height: 100vh; }
+                .map-wrap { display: flex; flex-direction: column; min-height: 100vh; }
                 .header { background: linear-gradient(135deg, var(--pl-red) 0%, #b51a12 100%); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; color: #fff; position: relative; z-index: 500; box-shadow: 0 4px 15px rgba(227,33,23,0.2); overflow: hidden; }
                 .header::after { content: ''; position: absolute; top: 0; right: 0; width: 400px; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08)); pointer-events: none; }
                 .hdr-left { display: flex; align-items: center; gap: 1rem; position: relative; z-index: 1; }
@@ -667,8 +668,8 @@ export default function MapaInteractivo() {
                 .summary-table .val { font-weight: 700; color: var(--s800); font-variant-numeric: tabular-nums; }
                 .summary-table .pct { font-weight: 800; }
 
-                .main-body { display: flex; flex: 1; position: relative; overflow: hidden; background: #e8e4da; }
-                #map { flex: 1; position: relative; height: 100%; }
+                .main-body { display: flex; flex: 1; position: relative; overflow: hidden; background: #e8e4da; min-height: 500px; }
+                #map { flex: 1; position: relative; height: 100%; min-height: 500px; }
                 #mapSvg { width: 100%; height: 100%; display: block; }
                 .muni { cursor: pointer; transition: opacity .12s; }
                 .muni:hover { opacity: .75; }
@@ -728,7 +729,10 @@ export default function MapaInteractivo() {
                 .data-subbox { background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 10px; padding: 1rem; }
                 .data-subbox .db-val { font-size: 1.3rem; }
 
-                #legend { position: fixed; bottom: 20px; right: 20px; z-index: 800; background: var(--card); border-radius: 16px; padding: 1rem 1.2rem; border: 1px solid rgba(0,0,0,.08); box-shadow: 0 10px 30px rgba(0,0,0,.1); width: 260px; }
+                #legend { position: fixed; bottom: 20px; right: 20px; z-index: 800; background: var(--card); border-radius: 16px; padding: 1rem 1.2rem; border: 1px solid rgba(0,0,0,.08); box-shadow: 0 10px 30px rgba(0,0,0,.1); width: 260px; transition: all .3s ease; }
+                #legend.collapsed { width: auto; padding: 0; }
+                .legend-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 801; width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1px solid rgba(0,0,0,.08); box-shadow: 0 4px 12px rgba(0,0,0,.1); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 800; color: var(--s600); transition: all .2s; }
+                .legend-toggle:hover { background: var(--pl-red); color: #fff; transform: scale(1.05); }
                 #legend h4 { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--s500); margin-bottom: .8rem; }
                 .li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 4px 0; font-size: .75rem; font-weight: 600; color: var(--s800); }
                 .li-left { display: flex; align-items: center; gap: 8px; }
@@ -943,9 +947,19 @@ export default function MapaInteractivo() {
                 </div>
             </div>
 
+            {/* LEGEND TOGGLE */}
+            {!legendOpen && (
+                <button className="legend-toggle" onClick={() => setLegendOpen(true)} title="Mostrar totales">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </button>
+            )}
+
             {/* LEGEND */}
-            <div id="legend">
-                <h4 style={{ marginBottom: 12, fontSize: '0.8rem' }}>Totales Estrategicos</h4>
+            <div id="legend" style={{ display: legendOpen ? 'block' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <h4 style={{ fontSize: '0.8rem', margin: 0 }}>Totales Estrategicos</h4>
+                    <button onClick={() => setLegendOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', fontSize: '1rem', padding: '2px 6px', borderRadius: 4, lineHeight: 1 }} title="Ocultar">&#10005;</button>
+                </div>
                 <div className="li" style={{ flexDirection: 'column', alignItems: 'flex-start', padding: 10, background: 'rgba(227,33,23,0.08)', border: '1px solid rgba(227,33,23,0.2)', borderRadius: 8, marginBottom: 8 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: 6 }}>
                         <div className="li-left" style={{ fontWeight: 800, color: '#e32117' }}><div className="ls" style={{ background: '#e32117' }}></div>PRIORIDAD ALTA</div>
