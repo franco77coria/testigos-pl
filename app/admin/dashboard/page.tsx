@@ -566,26 +566,35 @@ export default function AdminStats() {
                                 <button onClick={() => setExpandedMuni(muniExpanded ? null : muni.municipio)}
                                     style={{
                                         width: '100%', padding: 'clamp(10px, 1.2vw, 16px) clamp(12px, 1.5vw, 20px)',
-                                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                        cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '8px',
                                         background: muniExpanded ? '#FAFBFC' : '#FFFFFF',
                                         borderBottom: muniExpanded ? '1px solid #E5E7EB' : 'none',
                                         border: 'none', textAlign: 'left', fontFamily: "'Inter', system-ui, sans-serif",
                                     }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#94A3B8' }}>
-                                            {muniExpanded ? 'expand_more' : 'chevron_right'}
-                                        </span>
-                                        <div style={{ minWidth: 0, flex: 1 }}>
-                                            <div style={{
-                                                fontSize: 'clamp(11px, 1.2vw, 16px)', fontWeight: 700, color: '#111827',
-                                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                            }}>{muni.municipio}</div>
-                                            <div style={{ fontSize: 'clamp(9px, 0.8vw, 12px)', color: '#94A3B8', fontWeight: 500 }}>
-                                                {muni.puestos.length} puesto{muni.puestos.length !== 1 ? 's' : ''} — {muni.totalMesas} mesas
+                                    {/* Row 1: Name + completion */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#94A3B8' }}>
+                                                {muniExpanded ? 'expand_more' : 'chevron_right'}
+                                            </span>
+                                            <div style={{ minWidth: 0, flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: 'clamp(11px, 1.2vw, 16px)', fontWeight: 700, color: '#111827',
+                                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                }}>{muni.municipio}</div>
+                                                <div style={{ fontSize: 'clamp(9px, 0.8vw, 12px)', color: '#94A3B8', fontWeight: 500 }}>
+                                                    {muni.puestos.length} puesto{muni.puestos.length !== 1 ? 's' : ''} — {muni.totalMesas} mesas
+                                                </div>
                                             </div>
                                         </div>
+                                        <span style={{
+                                            fontSize: 'clamp(9px, 0.9vw, 13px)', fontWeight: 700, padding: '2px 8px', borderRadius: '8px',
+                                            background: muniPct === 100 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.08)',
+                                            color: muniPct === 100 ? '#10B981' : '#F59E0B', flexShrink: 0,
+                                        }}>{muni.completadas}/{muni.totalMesas}</span>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                    {/* Row 2: Franja badges */}
+                                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', paddingLeft: '26px' }}>
                                         {[
                                             { label: '8am', val: muni.r8am, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)' },
                                             { label: '11am', val: muni.r11am, color: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
@@ -593,15 +602,10 @@ export default function AdminStats() {
                                             { label: '4pm', val: muni.r4pm, color: '#10B981', bg: 'rgba(16,185,129,0.08)' },
                                         ].map(f => (
                                             <span key={f.label} style={{
-                                                fontSize: '9px', fontWeight: 700, padding: '2px 5px', borderRadius: '6px',
+                                                fontSize: '10px', fontWeight: 700, padding: '3px 7px', borderRadius: '6px',
                                                 background: f.bg, color: f.color, whiteSpace: 'nowrap',
                                             }}>{f.label}: {f.val}/{muni.totalMesas}</span>
                                         ))}
-                                        <span style={{
-                                            fontSize: 'clamp(9px, 0.9vw, 13px)', fontWeight: 700, padding: '2px 8px', borderRadius: '8px',
-                                            background: muniPct === 100 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.08)',
-                                            color: muniPct === 100 ? '#10B981' : '#F59E0B',
-                                        }}>{muni.completadas}/{muni.totalMesas}</span>
                                     </div>
                                 </button>
 
