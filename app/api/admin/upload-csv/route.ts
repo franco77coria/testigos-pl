@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServiceClient } from '@/lib/supabase'
+import { getServiceClient, fetchAllRows } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -188,12 +188,10 @@ export async function POST(request: NextRequest) {
 
     // 2. UPSERT mesa_asignaciones (insertar solo las que no existen)
     // mesa_asignaciones no tiene UNIQUE constraint, así que verificamos manualmente
-    const { data: existingAsig } = await supabase
-      .from('mesa_asignaciones')
-      .select('testigo_cedula, mesa_numero')
+    const existingAsigRows = await fetchAllRows(supabase, 'mesa_asignaciones', 'testigo_cedula, mesa_numero')
 
     const existingAsigSet = new Set(
-      (existingAsig || []).map(a => `${a.testigo_cedula}__${a.mesa_numero}`)
+      existingAsigRows.map((a: Record<string, unknown>) => `${a.testigo_cedula}__${a.mesa_numero}`)
     )
 
     const newAsignaciones = asignaciones.filter(a => !existingAsigSet.has(`${a.cedula}__${a.mesa_numero}`))
@@ -212,12 +210,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Crear resultados SOLO para mesas nuevas (preserva progreso existente)
-    const { data: existingRes } = await supabase
-      .from('resultados')
-      .select('testigo_cedula, mesa_numero')
+    const existingResRows = await fetchAllRows(supabase, 'resultados', 'testigo_cedula, mesa_numero')
 
     const existingResSet = new Set(
-      (existingRes || []).map(r => `${r.testigo_cedula}__${r.mesa_numero}`)
+      existingResRows.map((r: Record<string, unknown>) => `${r.testigo_cedula}__${r.mesa_numero}`)
     )
 
     const newResultados = asignaciones
