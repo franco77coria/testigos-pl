@@ -101,6 +101,7 @@ export default function MapaInteractivo() {
     const [tablesOpen, setTablesOpen] = useState(true)
     const [countdown, setCountdown] = useState(20)
     const [refreshing, setRefreshing] = useState(false)
+    const [mapReady, setMapReady] = useState(false)
     const mapInitialized = useRef(false)
     const kpiData = useRef<KPIRow[]>([])
     const cotaData = useRef<CotaPuesto[]>([])
@@ -129,12 +130,13 @@ export default function MapaInteractivo() {
 
         fetchKPI().then(() => {
             initMap()
+            setMapReady(true)
         })
     }, [auth.authorized, scriptsReady, fetchKPI])
 
     // Auto-refresh every 20 seconds with countdown
     useEffect(() => {
-        if (!mapInitialized.current) return
+        if (!mapReady) return
         const tick = setInterval(() => {
             setCountdown(prev => {
                 if (prev <= 1) {
@@ -151,7 +153,7 @@ export default function MapaInteractivo() {
             })
         }, 1000)
         return () => clearInterval(tick)
-    }, [fetchKPI])
+    }, [fetchKPI, mapReady])
 
     function initMap() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
