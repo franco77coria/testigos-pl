@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import { CAMARA_CANDIDATOS, SENADO_CANDIDATOS } from '@/lib/types'
 
 // =================== ANIMATED COUNTER ===================
 function AnimatedNumber({ value, duration = 1200 }: { value: number; duration?: number }) {
@@ -71,6 +72,12 @@ interface DashboardData {
     }
 }
 
+interface ConteoDash {
+    progreso: { asignadas: number; pendientes: number; enProgreso: number; completadas: number; porcentajeTotal: number; conFotoTotal: number }
+    horarios: { habilitados8am: number; conteo11am: number; conteo1pm: number; reportes8am: number; reportes11am: number; reportes1pm: number }
+    votos: { camara: Record<string, number>; senado: Record<string, number> }
+}
+
 export default function AdminStats() {
     const [data, setData] = useState<DashboardData | null>(null)
     const [loading, setLoading] = useState(false)
@@ -82,16 +89,18 @@ export default function AdminStats() {
     const [gateLoading, setGateLoading] = useState(false)
     const [gateError, setGateError] = useState('')
 
+    // Filters
+    const [filtroMunicipio, setFiltroMunicipio] = useState('')
+    const [filtroLider, setFiltroLider] = useState('')
+    const [municipiosList, setMunicipiosList] = useState<string[]>([])
+
     // UI states
     const [expandedMuni, setExpandedMuni] = useState<string | null>(null)
     const [photoModal, setPhotoModal] = useState<{ mesa: number; urls: string[] } | null>(null)
     const [countdown, setCountdown] = useState(30)
 
     // Conteo data (super admin only)
-    const [conteo, setConteo] = useState<{
-        habilitados: number; reporte10am: number; reporte1pm: number
-        alexP: number; senadoPl: number; oscarSanchez: number; camaraCun: number
-    } | null>(null)
+    const [conteo, setConteo] = useState<ConteoDash | null>(null)
 
     async function verifyCedula() {
         setGateLoading(true)
@@ -119,7 +128,13 @@ export default function AdminStats() {
     const fetchStats = useCallback(async () => {
         setLoading(true)
         try {
-            const res = await fetch('/api/admin/monitor')
+            const params = new URLSearchParams()
+            if (filtroMunicipio) params.append('municipio', filtroMunicipio)
+            if (filtroLider) params.append('cedula_lider', filtroLider)
+
+            const q = params.toString() ? `?${params.toString()}` : ''
+
+            const res = await fetch(`/api/admin/monitor${q}`)
             const json = await res.json()
             if (json.exito) {
                 const muniMap = new Map<string, PuestoResult[]>()
@@ -153,20 +168,25 @@ export default function AdminStats() {
                         completadas: json.resumen.completadas,
                     },
                 })
+
+                // Only update the filters list if not previously loaded
+                if (json.municipios && municipiosList.length === 0) {
+                    setMunicipiosList(json.municipios)
+                }
             }
 
             // Fetch conteo data for super admin
             if (rol === 'super') {
-                const resDash = await fetch('/api/admin/dashboard')
+                const resDash = await fetch(`/api/admin/dashboard${q}`)
                 const jsonDash = await resDash.json()
-                if (jsonDash.exito && jsonDash.data?.conteo) {
-                    setConteo(jsonDash.data.conteo)
+                if (jsonDash.exito && jsonDash.data) {
+                    setConteo(jsonDash.data)
                 }
             }
         } catch { /* silent */ }
         setLoading(false)
         setCountdown(30)
-    }, [rol])
+    }, [rol, filtroMunicipio, filtroLider, municipiosList.length])
 
     useEffect(() => {
         if (authorized) {
@@ -175,13 +195,6 @@ export default function AdminStats() {
             return () => { clearInterval(interval); clearInterval(ticker) }
         }
     }, [authorized, fetchStats])
-
-    const pct = data ? (data.resumen.totalMesas > 0 ? Math.round((data.resumen.completadas / data.resumen.totalMesas) * 100) : 0) : 0
-
-    // Contar mesas con foto
-    const mesasConFoto = data ? data.municipios.reduce((sum, m) =>
-        sum + m.puestos.reduce((ps, p) =>
-            ps + p.mesas.filter(mesa => mesa.foto_camara || mesa.foto_senado).length, 0), 0) : 0
 
     // =================== GATE ===================
     if (!authorized) {
@@ -246,27 +259,6 @@ export default function AdminStats() {
         )
     }
 
-    // =================== LOADING ===================
-    if (loading && !data) {
-        return (
-            <div style={{
-                minHeight: '100vh', background: '#F0F2F5',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: "'Inter', system-ui, sans-serif",
-            }}>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{
-                        width: '40px', height: '40px', border: '3px solid #E5E7EB',
-                        borderTopColor: '#CE1126', borderRadius: '50%',
-                        animation: 'spin 0.8s linear infinite', margin: '0 auto 12px',
-                    }} />
-                    <p style={{ color: '#94A3B8', fontSize: '13px' }}>Cargando estadísticas...</p>
-                </div>
-                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-            </div>
-        )
-    }
-
     // =================== PHOTO MODAL ===================
     const photoModalEl = photoModal && (
         <div onClick={() => setPhotoModal(null)} style={{
@@ -298,6 +290,15 @@ export default function AdminStats() {
         </div>
     )
 
+    // Derived percentages
+    const pctCompletas = conteo ? conteo.progreso.porcentajeTotal : (data ? (data.resumen.totalMesas > 0 ? Math.round((data.resumen.completadas / data.resumen.totalMesas) * 100) : 0) : 0)
+
+    // Participación: (Votos a la 1pm) / (Habilitados 8am)
+    let participaciónPct = 0
+    if (conteo && conteo.horarios.habilitados8am > 0) {
+        participaciónPct = Math.round((conteo.horarios.conteo1pm / conteo.horarios.habilitados8am) * 100)
+    }
+
     // =================== MAIN DASHBOARD ===================
     return (
         <div style={{
@@ -318,8 +319,7 @@ export default function AdminStats() {
             {/* Header */}
             <header style={{
                 background: '#FFFFFF', padding: 'clamp(8px, 1.5vw, 16px) clamp(12px, 2vw, 24px)',
-                borderBottom: '1px solid #E5E7EB',
-                position: 'sticky', top: 0, zIndex: 20,
+                borderBottom: '1px solid #E5E7EB', position: 'sticky', top: 0, zIndex: 20,
                 boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -334,7 +334,7 @@ export default function AdminStats() {
                         <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                 <h1 style={{ fontSize: 'clamp(14px, 2vw, 20px)', fontWeight: 700, color: '#111827', margin: 0 }}>
-                                    Estadísticas en Vivo
+                                    Control Central
                                 </h1>
                                 <span style={{
                                     display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%',
@@ -342,7 +342,7 @@ export default function AdminStats() {
                                 }} />
                             </div>
                             <p style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500, margin: 0 }}>
-                                {rol === 'super' ? 'Super Admin' : 'Viewer'} — {countdown}s
+                                {rol === 'super' ? 'Super Admin' : 'Viewer'} — actualiza en {countdown}s
                             </p>
                         </div>
                     </div>
@@ -360,255 +360,314 @@ export default function AdminStats() {
                                 background: '#FEE2E2', border: 'none', color: '#DC2626',
                                 padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', gap: '4px',
-                                fontSize: '11px', fontWeight: 700,
-                                fontFamily: "'Inter', system-ui, sans-serif",
-                            }}
-                            title="Cerrar sesión"
-                        >
-                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span>
-                            Salir
+                                fontSize: '11px', fontWeight: 700, fontFamily: "'Inter', system-ui, sans-serif",
+                            }} title="Cerrar sesión">
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span> Salir
                         </button>
+                    </div>
+                </div>
+
+                {/* Filtros */}
+                <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <select
+                        value={filtroMunicipio}
+                        onChange={(e) => { setFiltroMunicipio(e.target.value); setTimeout(fetchStats, 100); }}
+                        style={{
+                            padding: '8px 12px', borderRadius: '8px', border: '1px solid #E5E7EB',
+                            fontSize: '13px', color: '#111827', outline: 'none', minWidth: '150px',
+                            background: '#FAFBFC', cursor: 'pointer'
+                        }}
+                    >
+                        <option value="">TODOS LOS MUNICIPIOS</option>
+                        {municipiosList.map(m => (
+                            <option key={m} value={m}>{m}</option>
+                        ))}
+                    </select>
+
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #E5E7EB', borderRadius: '8px', background: '#FAFBFC', padding: '0 12px', minWidth: '200px' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#94A3B8', marginRight: '6px' }}>person_search</span>
+                        <input
+                            type="text"
+                            placeholder="Buscar por CC del Líder"
+                            value={filtroLider}
+                            onChange={(e) => setFiltroLider(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && fetchStats()}
+                            style={{
+                                border: 'none', background: 'transparent', outline: 'none', fontSize: '13px',
+                                color: '#111827', width: '100%', padding: '8px 0'
+                            }}
+                        />
+                        {filtroLider && (
+                            <button onClick={() => { setFiltroLider(''); setTimeout(fetchStats, 100); }} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', padding: 0 }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '14px', color: '#94A3B8' }}>close</span>
+                            </button>
+                        )}
                     </div>
                 </div>
             </header>
 
             <style>{`
                 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-                @keyframes spin { to { transform: rotate(360deg); } }
                 @media (max-width: 480px) {
                     .kpi-grid-dash { grid-template-columns: repeat(2, 1fr) !important; }
                 }
             `}</style>
 
-            {/* =================== KPI CARDS =================== */}
-            {data && (
-                <>
-                    <div style={{ padding: 'clamp(12px, 2vw, 24px)', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
-                        <div className="kpi-grid-dash" style={{
-                            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(6px, 1vw, 16px)',
-                            marginBottom: 'clamp(10px, 1.5vw, 20px)',
-                        }}>
+            {loading && !conteo && !data && (
+                <div style={{ padding: '40px', textAlign: 'center' }}>
+                    <div style={{ width: '30px', height: '30px', border: '3px solid #E5E7EB', borderTopColor: '#CE1126', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
+                    <p style={{ color: '#94A3B8', fontSize: '13px' }}>Cargando datos...</p>
+                </div>
+            )}
+
+            {/* =================== SUPER ADMIN KPI DASHBOARD =================== */}
+            {(rol === 'super' && conteo) && (
+                <div style={{ padding: 'clamp(12px, 2vw, 24px)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                    {/* Sección 1: Progreso Transmisión */}
+                    <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#3B82F6' }}>analytics</span>
+                            Progreso de Escrutinio (Mesas)
+                        </div>
+                        <div className="kpi-grid-dash" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
                             {[
-                                { value: data.resumen.totalMesas, label: 'Mesas', color: '#111827' },
-                                { value: data.resumen.completadas, label: 'Completas', color: '#10B981' },
-                                { value: pct, label: '% Progreso', color: '#CE1126', suffix: '%' },
-                                { value: mesasConFoto, label: 'Con Foto', color: '#3B82F6' },
-                            ].map((kpi, i) => (
-                                <div key={i} style={{
-                                    textAlign: 'center', padding: 'clamp(8px, 1.5vw, 16px)',
-                                    borderRadius: '12px', background: '#FAFBFC', border: '1px solid #E5E7EB',
-                                }}>
-                                    <div style={{
-                                        fontSize: 'clamp(24px, 4vw, 96px)', fontWeight: 800, color: kpi.color,
-                                        fontVariantNumeric: 'tabular-nums', lineHeight: 1.1,
-                                    }}>
-                                        <AnimatedNumber value={kpi.value} />{kpi.suffix || ''}
-                                    </div>
-                                    <div style={{
-                                        fontSize: 'clamp(8px, 1vw, 14px)', fontWeight: 700, color: '#94A3B8',
-                                        textTransform: 'uppercase', letterSpacing: '0.04em', marginTop: '4px',
-                                    }}>{kpi.label}</div>
+                                { label: 'Asignadas', val: conteo.progreso.asignadas, color: '#64748B' },
+                                { label: 'Completadas', val: conteo.progreso.completadas, color: '#10B981' },
+                                { label: 'En Progreso', val: conteo.progreso.enProgreso, color: '#F59E0B' },
+                                { label: 'Pendientes', val: conteo.progreso.pendientes, color: '#EF4444' },
+                                { label: 'Con Imágenes', val: conteo.progreso.conFotoTotal, color: '#3B82F6' },
+                            ].map((k, i) => (
+                                <div key={i} style={{ background: '#FAFBFC', borderRadius: '12px', padding: '16px', textAlign: 'center', border: '1px solid #F1F5F9' }}>
+                                    <div style={{ fontSize: 'clamp(20px, 3vw, 36px)', fontWeight: 800, color: k.color }}><AnimatedNumber value={k.val} /></div>
+                                    <div style={{ fontSize: '11px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>{k.label}</div>
                                 </div>
                             ))}
                         </div>
+                    </div>
 
-                        {/* Progress bar */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ flex: 1, height: 'clamp(6px, 1vw, 12px)', background: '#E5E7EB', borderRadius: '6px', overflow: 'hidden' }}>
-                                <div style={{
-                                    height: '100%', borderRadius: '6px',
-                                    background: pct >= 80 ? 'linear-gradient(90deg, #10B981, #059669)' :
-                                        pct >= 40 ? 'linear-gradient(90deg, #F59E0B, #10B981)' :
-                                            'linear-gradient(90deg, #CE1126, #F59E0B)',
-                                    width: `${pct}%`, transition: 'width 1s ease-out',
-                                }} />
+                    {/* Sección 2: Franjas Horarias y Participación */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+
+                        <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#10B981' }}>schedule</span>
+                                Votantes por Franja
                             </div>
-                            <span style={{
-                                fontSize: 'clamp(12px, 1.5vw, 20px)', fontWeight: 800,
-                                color: pct >= 80 ? '#10B981' : pct >= 40 ? '#F59E0B' : '#CE1126',
-                                fontVariantNumeric: 'tabular-nums', minWidth: '50px', textAlign: 'right',
-                            }}><AnimatedNumber value={pct} />%</span>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', textAlign: 'center' }}>
+                                <div style={{ background: '#FAFBFC', padding: '12px', borderRadius: '10px', border: '1px solid #F1F5F9' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#111827' }}><AnimatedNumber value={conteo.horarios.habilitados8am} /></div>
+                                    <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Habilitados (8am)</div>
+                                    <div style={{ fontSize: '9px', color: '#94A3B8', marginTop: '4px' }}>{conteo.horarios.reportes8am} reportes</div>
+                                </div>
+                                <div style={{ background: '#FAFBFC', padding: '12px', borderRadius: '10px', border: '1px solid #F1F5F9' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#F59E0B' }}><AnimatedNumber value={conteo.horarios.conteo11am} /></div>
+                                    <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Conteo (11am)</div>
+                                    <div style={{ fontSize: '9px', color: '#94A3B8', marginTop: '4px' }}>{conteo.horarios.reportes11am} reportes</div>
+                                </div>
+                                <div style={{ background: '#FAFBFC', padding: '12px', borderRadius: '10px', border: '1px solid #F1F5F9' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: 800, color: '#CE1126' }}><AnimatedNumber value={conteo.horarios.conteo1pm} /></div>
+                                    <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Conteo (1pm)</div>
+                                    <div style={{ fontSize: '9px', color: '#94A3B8', marginTop: '4px' }}>{conteo.horarios.reportes1pm} reportes</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Participación Real (1pm)</div>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginTop: '4px' }}>
+                                <span style={{ fontSize: '64px', fontWeight: 800, color: participaciónPct > 50 ? '#10B981' : '#F59E0B', lineHeight: 1 }}>
+                                    <AnimatedNumber value={participaciónPct} />%
+                                </span>
+                            </div>
+                            <div style={{ marginTop: '8px', fontSize: '12px', color: '#94A3B8', fontWeight: 500 }}>
+                                Basado en {conteo.horarios.habilitados8am} electores.
+                            </div>
                         </div>
                     </div>
 
-                    {/* =================== CONTEO (SUPER ONLY) =================== */}
-                    {rol === 'super' && conteo && (
-                        <div style={{ padding: 'clamp(12px, 2vw, 24px)', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
-                            <div style={{
-                                fontSize: 'clamp(10px, 1vw, 14px)', fontWeight: 700, color: '#94A3B8',
-                                textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 'clamp(8px, 1vw, 16px)',
-                            }}>Conteo de Votos</div>
-                            <div style={{
-                                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                                gap: 'clamp(6px, 1vw, 12px)',
-                            }}>
-                                {[
-                                    { label: 'Habilitados', value: conteo.habilitados, color: '#6366F1' },
-                                    { label: 'Reporte 10am', value: conteo.reporte10am, color: '#F59E0B' },
-                                    { label: 'Reporte 1pm', value: conteo.reporte1pm, color: '#F97316' },
-                                    { label: 'Alex P.', value: conteo.alexP, color: '#CE1126' },
-                                    { label: 'Senado PL', value: conteo.senadoPl, color: '#DC2626' },
-                                    { label: 'Oscar Sánchez', value: conteo.oscarSanchez, color: '#BE123C' },
-                                    { label: 'Cámara Cund.', value: conteo.camaraCun, color: '#9F1239' },
-                                ].map((item, i) => (
-                                    <div key={i} style={{
-                                        textAlign: 'center', padding: 'clamp(6px, 1vw, 12px)',
-                                        borderRadius: '10px', background: '#FAFBFC', border: '1px solid #E5E7EB',
-                                    }}>
-                                        <div style={{
-                                            fontSize: 'clamp(18px, 3vw, 48px)', fontWeight: 800,
-                                            color: item.color, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1,
-                                        }}>
-                                            <AnimatedNumber value={item.value} />
-                                        </div>
-                                        <div style={{
-                                            fontSize: 'clamp(7px, 0.8vw, 11px)', fontWeight: 700,
-                                            color: '#94A3B8', textTransform: 'uppercase', marginTop: '2px',
-                                        }}>{item.label}</div>
-                                    </div>
-                                ))}
+                    {/* Votos: CÁMARA */}
+                    <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '2px solid rgba(220, 38, 38, 0.1)', padding: '16px' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 800, color: '#DC2626', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>how_to_vote</span>
+                            Recuento de Votos — CÁMARA DE REPRESENTANTES
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
+                            {CAMARA_CANDIDATOS.map(c => (
+                                <div key={c.code} style={{ background: '#FEF2F2', padding: '12px', borderRadius: '10px', border: '1px solid #FECACA', textAlign: 'center' }}>
+                                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#B91C1C' }}><AnimatedNumber value={conteo.votos.camara[c.code] || 0} /></div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#7F1D1D', marginTop: '4px', textTransform: 'uppercase' }}>{c.title}</div>
+                                </div>
+                            ))}
+                            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '10px', border: '1px solid #E2E8F0', textAlign: 'center' }}>
+                                <div style={{ fontSize: '28px', fontWeight: 800, color: '#475569' }}><AnimatedNumber value={conteo.votos.camara['votos_camara_partido'] || 0} /></div>
+                                <div style={{ fontSize: '11px', fontWeight: 700, color: '#334155', marginTop: '4px', textTransform: 'uppercase' }}>Solo Partido</div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Votos: SENADO */}
+                    <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '2px solid rgba(59, 130, 246, 0.1)', padding: '16px' }}>
+                        <div style={{ fontSize: '14px', fontWeight: 800, color: '#2563EB', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>how_to_vote</span>
+                            Recuento de Votos — SENADO
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
+                            {SENADO_CANDIDATOS.map(c => (
+                                <div key={c.code} style={{ background: '#EFF6FF', padding: '12px', borderRadius: '10px', border: '1px solid #BFDBFE', textAlign: 'center' }}>
+                                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#1D4ED8' }}><AnimatedNumber value={conteo.votos.senado[c.code] || 0} /></div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#1E3A8A', marginTop: '4px', textTransform: 'uppercase' }}>{c.title}</div>
+                                </div>
+                            ))}
+                            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '10px', border: '1px solid #E2E8F0', textAlign: 'center' }}>
+                                <div style={{ fontSize: '28px', fontWeight: 800, color: '#475569' }}><AnimatedNumber value={conteo.votos.senado['votos_senado_partido'] || 0} /></div>
+                                <div style={{ fontSize: '11px', fontWeight: 700, color: '#334155', marginTop: '4px', textTransform: 'uppercase' }}>Solo Partido</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            )}
+
+
+            {/* =================== DETALLE POR MUNICIPIO (VIEWER & SUPER) =================== */}
+            {data && (
+                <div style={{ padding: '0 clamp(10px, 2vw, 24px) 24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+
+                    <div style={{ fontSize: '14px', fontWeight: 800, color: '#111827', margin: '8px 0 12px', paddingLeft: '4px' }}>
+                        Detalle de Mesas ({data.resumen.totalMesas} en total)
+                    </div>
+
+                    {data.municipios.map(muni => {
+                        const muniExpanded = expandedMuni === muni.municipio
+                        const muniPct = muni.totalMesas > 0 ? Math.round((muni.completadas / muni.totalMesas) * 100) : 0
+
+                        return (
+                            <div key={muni.municipio} style={{
+                                background: '#FFFFFF', borderRadius: '12px',
+                                border: '1px solid #E5E7EB', overflow: 'hidden',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                            }}>
+                                <button onClick={() => setExpandedMuni(muniExpanded ? null : muni.municipio)}
+                                    style={{
+                                        width: '100%', padding: 'clamp(10px, 1.2vw, 16px) clamp(12px, 1.5vw, 20px)',
+                                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                        background: muniExpanded ? '#FAFBFC' : '#FFFFFF',
+                                        borderBottom: muniExpanded ? '1px solid #E5E7EB' : 'none',
+                                        border: 'none', textAlign: 'left', fontFamily: "'Inter', system-ui, sans-serif",
+                                    }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#94A3B8' }}>
+                                            {muniExpanded ? 'expand_more' : 'chevron_right'}
+                                        </span>
+                                        <div style={{ minWidth: 0, flex: 1 }}>
+                                            <div style={{
+                                                fontSize: 'clamp(11px, 1.2vw, 16px)', fontWeight: 700, color: '#111827',
+                                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                            }}>{muni.municipio}</div>
+                                            <div style={{ fontSize: 'clamp(9px, 0.8vw, 12px)', color: '#94A3B8', fontWeight: 500 }}>
+                                                {muni.puestos.length} puesto{muni.puestos.length !== 1 ? 's' : ''} — {muni.totalMesas} mesas
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                                        <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: '#E5E7EB', overflow: 'hidden' }}>
+                                            <div style={{ height: '100%', background: muniPct === 100 ? '#10B981' : '#F59E0B', width: `${muniPct}%` }} />
+                                        </div>
+                                        <span style={{
+                                            fontSize: 'clamp(9px, 0.9vw, 13px)', fontWeight: 700, padding: '2px 8px', borderRadius: '8px',
+                                            background: muniPct === 100 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.08)',
+                                            color: muniPct === 100 ? '#10B981' : '#F59E0B',
+                                        }}>{muni.completadas}/{muni.totalMesas}</span>
+                                    </div>
+                                </button>
+
+                                {muniExpanded && (
+                                    <div style={{ padding: '8px' }}>
+                                        {muni.puestos.map(puesto => (
+                                            <div key={puesto.puesto} style={{ marginBottom: '8px' }}>
+                                                <div style={{
+                                                    fontSize: 'clamp(10px, 1vw, 13px)', fontWeight: 700, color: '#111827',
+                                                    padding: '6px 8px', display: 'flex', justifyContent: 'space-between',
+                                                }}>
+                                                    <span>{puesto.puesto}</span>
+                                                    <span style={{
+                                                        color: puesto.completadas === puesto.totalMesas ? '#10B981' : '#F59E0B',
+                                                        fontWeight: 700,
+                                                    }}>{puesto.completadas}/{puesto.totalMesas}</span>
+                                                </div>
+                                                <div style={{
+                                                    display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(70px, 8vw, 120px), 1fr))',
+                                                    gap: '6px', padding: '0 4px',
+                                                }}>
+                                                    {puesto.mesas.map(mesa => {
+                                                        const done = mesa.camara_guardado && mesa.senado_guardado
+                                                        const hasPhotos = mesa.foto_camara_url || mesa.foto_senado_url
+                                                        const photoUrls = [mesa.foto_camara_url, mesa.foto_senado_url, mesa.foto_camara_2_url, mesa.foto_senado_2_url].filter(Boolean) as string[]
+
+                                                        return (
+                                                            <div key={mesa.mesa_numero} style={{
+                                                                padding: '8px 6px', borderRadius: '8px', textAlign: 'center',
+                                                                background: done ? 'rgba(16,185,129,0.06)' : '#FFFFFF',
+                                                                border: `1px solid ${done ? 'rgba(16,185,129,0.2)' : '#E5E7EB'}`,
+                                                                position: 'relative',
+                                                            }}>
+                                                                <div style={{
+                                                                    fontSize: 'clamp(14px, 1.5vw, 22px)', fontWeight: 700,
+                                                                    color: done ? '#10B981' : '#111827',
+                                                                }}>{mesa.mesa_numero}</div>
+
+                                                                {/* 7 micro indicators */}
+                                                                <div style={{
+                                                                    display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px', flexWrap: 'wrap',
+                                                                }}>
+                                                                    {[
+                                                                        { v: mesa.conteo_8am, l: '8H' },
+                                                                        { v: mesa.conteo_11am, l: '11' },
+                                                                        { v: mesa.conteo_1pm, l: '1P' },
+                                                                        { v: mesa.foto_senado, l: 'FS' },
+                                                                        { v: mesa.senado_guardado, l: 'SN' },
+                                                                        { v: mesa.foto_camara, l: 'FC' },
+                                                                        { v: mesa.camara_guardado, l: 'CM' },
+                                                                    ].map((item, i) => (
+                                                                        <div key={i} style={{
+                                                                            width: 'clamp(10px, 1.2vw, 16px)', height: 'clamp(10px, 1.2vw, 16px)',
+                                                                            borderRadius: '2px', background: item.v ? '#10B981' : '#FEE2E2',
+                                                                        }} title={item.l} />
+                                                                    ))}
+                                                                </div>
+
+                                                                {hasPhotos && (
+                                                                    <button onClick={() => setPhotoModal({ mesa: mesa.mesa_numero, urls: photoUrls })}
+                                                                        style={{
+                                                                            position: 'absolute', top: '2px', right: '2px',
+                                                                            background: '#3B82F6', border: 'none', borderRadius: '4px',
+                                                                            padding: '1px 4px', cursor: 'pointer',
+                                                                        }}>
+                                                                        <span style={{ fontSize: '7px', fontWeight: 700, color: 'white' }}>{photoUrls.length}</span>
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })}
+
+                    {data.municipios.length === 0 && (
+                        <div style={{
+                            background: '#FFFFFF', borderRadius: '12px', padding: '40px',
+                            textAlign: 'center', border: '1px solid #E5E7EB',
+                        }}>
+                            <p style={{ color: '#94A3B8', fontSize: '14px' }}>No hay datos de mesas con estos filtros.</p>
                         </div>
                     )}
-
-                    {/* =================== MUNICIPIO TABLE =================== */}
-                    <div style={{ padding: 'clamp(10px, 2vw, 24px)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {data.municipios.map(muni => {
-                            const muniExpanded = expandedMuni === muni.municipio
-                            const muniPct = muni.totalMesas > 0 ? Math.round((muni.completadas / muni.totalMesas) * 100) : 0
-
-                            return (
-                                <div key={muni.municipio} style={{
-                                    background: '#FFFFFF', borderRadius: '12px',
-                                    border: '1px solid #E5E7EB', overflow: 'hidden',
-                                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                                }}>
-                                    <button onClick={() => setExpandedMuni(muniExpanded ? null : muni.municipio)}
-                                        style={{
-                                            width: '100%', padding: 'clamp(10px, 1.2vw, 16px) clamp(12px, 1.5vw, 20px)',
-                                            cursor: 'pointer',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                            background: muniExpanded ? '#FAFBFC' : '#FFFFFF',
-                                            borderBottom: muniExpanded ? '1px solid #E5E7EB' : 'none',
-                                            border: 'none', textAlign: 'left',
-                                            fontFamily: "'Inter', system-ui, sans-serif",
-                                        }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#94A3B8' }}>
-                                                {muniExpanded ? 'expand_more' : 'chevron_right'}
-                                            </span>
-                                            <div style={{ minWidth: 0, flex: 1 }}>
-                                                <div style={{
-                                                    fontSize: 'clamp(11px, 1.2vw, 16px)', fontWeight: 700, color: '#111827',
-                                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                                }}>{muni.municipio}</div>
-                                                <div style={{ fontSize: 'clamp(9px, 0.8vw, 12px)', color: '#94A3B8', fontWeight: 500 }}>
-                                                    {muni.puestos.length} puesto{muni.puestos.length !== 1 ? 's' : ''} — {muni.totalMesas} mesas
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                                            <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: '#E5E7EB', overflow: 'hidden' }}>
-                                                <div style={{ height: '100%', background: muniPct === 100 ? '#10B981' : '#F59E0B', width: `${muniPct}%` }} />
-                                            </div>
-                                            <span style={{
-                                                fontSize: 'clamp(9px, 0.9vw, 13px)', fontWeight: 700, padding: '2px 8px', borderRadius: '8px',
-                                                background: muniPct === 100 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.08)',
-                                                color: muniPct === 100 ? '#10B981' : '#F59E0B',
-                                            }}>{muni.completadas}/{muni.totalMesas}</span>
-                                        </div>
-                                    </button>
-
-                                    {muniExpanded && (
-                                        <div style={{ padding: '8px' }}>
-                                            {muni.puestos.map(puesto => (
-                                                <div key={puesto.puesto} style={{ marginBottom: '8px' }}>
-                                                    <div style={{
-                                                        fontSize: 'clamp(10px, 1vw, 13px)', fontWeight: 700, color: '#111827',
-                                                        padding: '6px 8px', display: 'flex', justifyContent: 'space-between',
-                                                    }}>
-                                                        <span>{puesto.puesto}</span>
-                                                        <span style={{
-                                                            color: puesto.completadas === puesto.totalMesas ? '#10B981' : '#F59E0B',
-                                                            fontWeight: 700,
-                                                        }}>{puesto.completadas}/{puesto.totalMesas}</span>
-                                                    </div>
-                                                    <div style={{
-                                                        display: 'grid',
-                                                        gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(70px, 8vw, 120px), 1fr))',
-                                                        gap: '6px', padding: '0 4px',
-                                                    }}>
-                                                        {puesto.mesas.map(mesa => {
-                                                            const done = mesa.camara_guardado && mesa.senado_guardado
-                                                            const hasPhotos = mesa.foto_camara_url || mesa.foto_senado_url
-                                                            const photoUrls = [mesa.foto_camara_url, mesa.foto_senado_url, mesa.foto_camara_2_url, mesa.foto_senado_2_url].filter(Boolean) as string[]
-
-                                                            return (
-                                                                <div key={mesa.mesa_numero} style={{
-                                                                    padding: '8px 6px', borderRadius: '8px', textAlign: 'center',
-                                                                    background: done ? 'rgba(16,185,129,0.06)' : '#FFFFFF',
-                                                                    border: `1px solid ${done ? 'rgba(16,185,129,0.2)' : '#E5E7EB'}`,
-                                                                    position: 'relative',
-                                                                }}>
-                                                                    <div style={{
-                                                                        fontSize: 'clamp(14px, 1.5vw, 22px)', fontWeight: 700,
-                                                                        color: done ? '#10B981' : '#111827',
-                                                                    }}>{mesa.mesa_numero}</div>
-
-                                                                    {/* 7 micro indicators */}
-                                                                    <div style={{
-                                                                        display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px', flexWrap: 'wrap',
-                                                                    }}>
-                                                                        {[
-                                                                            { v: mesa.conteo_8am, l: '8H' },
-                                                                            { v: mesa.conteo_11am, l: '11' },
-                                                                            { v: mesa.conteo_1pm, l: '1P' },
-                                                                            { v: mesa.foto_senado, l: 'FS' },
-                                                                            { v: mesa.senado_guardado, l: 'SN' },
-                                                                            { v: mesa.foto_camara, l: 'FC' },
-                                                                            { v: mesa.camara_guardado, l: 'CM' },
-                                                                        ].map((item, i) => (
-                                                                            <div key={i} style={{
-                                                                                width: 'clamp(10px, 1.2vw, 16px)',
-                                                                                height: 'clamp(10px, 1.2vw, 16px)',
-                                                                                borderRadius: '2px',
-                                                                                background: item.v ? '#10B981' : '#FEE2E2',
-                                                                            }} title={item.l} />
-                                                                        ))}
-                                                                    </div>
-
-                                                                    {hasPhotos && (
-                                                                        <button onClick={() => setPhotoModal({ mesa: mesa.mesa_numero, urls: photoUrls })}
-                                                                            style={{
-                                                                                position: 'absolute', top: '2px', right: '2px',
-                                                                                background: '#3B82F6', border: 'none', borderRadius: '4px',
-                                                                                padding: '1px 4px', cursor: 'pointer',
-                                                                            }}>
-                                                                            <span style={{ fontSize: '7px', fontWeight: 700, color: 'white' }}>{photoUrls.length}</span>
-                                                                        </button>
-                                                                    )}
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )
-                        })}
-
-                        {data.municipios.length === 0 && (
-                            <div style={{
-                                background: '#FFFFFF', borderRadius: '12px', padding: '40px',
-                                textAlign: 'center', border: '1px solid #E5E7EB',
-                            }}>
-                                <p style={{ color: '#94A3B8', fontSize: '14px' }}>No hay datos de mesas aún.</p>
-                            </div>
-                        )}
-                    </div>
-                </>
+                </div>
             )}
         </div>
     )
