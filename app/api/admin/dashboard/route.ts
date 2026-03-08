@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
                 if (res.datos_camara_guardados) {
                     mesasCompletadas++
                     if (progressByMunicipio[res.municipio]) progressByMunicipio[res.municipio].completadas++
-                } else if (res.estado === 'en_progreso') {
+                } else if (res.foto_camara || res.datos_8am_guardados || res.datos_11am_guardados || res.datos_1pm_guardados || res.datos_4pm_guardados) {
                     mesasEnProgreso++
                 } else {
                     mesasPendientes++
