@@ -314,7 +314,7 @@ export default function AnalysisCenterPage() {
                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
               </button>
               <div>
-                <h1 style={{ fontSize: '15px', fontWeight: 700, color: '#111827', margin: 0 }}>
+                <h1 style={{ fontSize: '15px', fontWeight: 700, color: '#111827', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 'clamp(120px, 40vw, 300px)' }}>
                   {drilldownLider.nombre}
                 </h1>
                 <p style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 600, margin: 0 }}>

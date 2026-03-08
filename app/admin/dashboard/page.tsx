@@ -344,13 +344,16 @@ export default function AdminStats() {
             <style>{`
                 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
                 @keyframes spin { to { transform: rotate(360deg); } }
+                @media (max-width: 480px) {
+                    .kpi-grid-dash { grid-template-columns: repeat(2, 1fr) !important; }
+                }
             `}</style>
 
             {/* =================== KPI CARDS =================== */}
             {data && (
                 <>
                     <div style={{ padding: 'clamp(12px, 2vw, 24px)', background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
-                        <div style={{
+                        <div className="kpi-grid-dash" style={{
                             display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'clamp(6px, 1vw, 16px)',
                             marginBottom: 'clamp(10px, 1.5vw, 20px)',
                         }}>

@@ -9,7 +9,7 @@ function cleanCedula(value: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { cedula } = await request.json()
+    const { cedula, forzarTestigo } = await request.json()
 
     if (!cedula || String(cedula).trim() === '') {
       return NextResponse.json({ exito: false, mensaje: 'Ingrese su número de cédula.' })
@@ -18,34 +18,37 @@ export async function POST(request: NextRequest) {
     const supabase = getServiceClient()
     const cedulaClean = cleanCedula(String(cedula))
 
-    // 1. Verificar si es admin
-    const { data: admin } = await supabase
-      .from('admins')
-      .select('cedula')
-      .eq('cedula', cedulaClean)
-      .single()
+    // Si forzarTestigo, saltar directamente al check de testigo
+    if (!forzarTestigo) {
+      // 1. Verificar si es admin
+      const { data: admin } = await supabase
+        .from('admins')
+        .select('cedula')
+        .eq('cedula', cedulaClean)
+        .single()
 
-    if (admin) {
-      return NextResponse.json({
-        exito: true,
-        esCoordinador: true,
-        sesion: { cedula: cedulaClean, esAdmin: true },
-      })
-    }
+      if (admin) {
+        return NextResponse.json({
+          exito: true,
+          esCoordinador: true,
+          sesion: { cedula: cedulaClean, esAdmin: true },
+        })
+      }
 
-    // 2. Verificar si es analista
-    const { data: analista } = await supabase
-      .from('analistas')
-      .select('cedula, nombre, telefono')
-      .eq('cedula', cedulaClean)
-      .single()
+      // 2. Verificar si es analista
+      const { data: analista } = await supabase
+        .from('analistas')
+        .select('cedula, nombre, telefono')
+        .eq('cedula', cedulaClean)
+        .single()
 
-    if (analista) {
-      return NextResponse.json({
-        exito: true,
-        esAnalista: true,
-        sesion: { cedula: analista.cedula, nombre: analista.nombre },
-      })
+      if (analista) {
+        return NextResponse.json({
+          exito: true,
+          esAnalista: true,
+          sesion: { cedula: analista.cedula, nombre: analista.nombre },
+        })
+      }
     }
 
     // 3. Verificar si es lider
@@ -55,10 +58,18 @@ export async function POST(request: NextRequest) {
       .eq('cedula', cedulaClean)
       .single()
 
-    if (lider) {
+    if (lider && !forzarTestigo) {
+      // Check if lider is also a testigo
+      const { data: testigoCheck } = await supabase
+        .from('testigos')
+        .select('cedula')
+        .eq('cedula', cedulaClean)
+        .single()
+
       return NextResponse.json({
         exito: true,
         esLider: true,
+        tambienEsTestigo: !!testigoCheck,
         sesion: { cedula: lider.cedula, nombre: lider.nombre },
       })
     }

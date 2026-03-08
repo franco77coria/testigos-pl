@@ -287,7 +287,7 @@ export default function MonitorPage() {
                                     animation: 'pulse-dot 2s ease-in-out infinite',
                                 }} />
                             </h1>
-                            <p style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 600, margin: 0 }}>
+                            <p style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 'clamp(140px, 40vw, 400px)' }}>
                                 {userRole === 'lider' ? `${userName} — Mis mesas` : 'Vista de mesas'} — {countdown}s
                             </p>
                         </div>
@@ -310,7 +310,7 @@ export default function MonitorPage() {
             </header>
 
             {/* Stats ribbon */}
-            <div style={{
+            <div className="stats-grid-monitor" style={{
                 background: '#FFFFFF', padding: 'clamp(12px, 2vw, 20px)',
                 borderBottom: '1px solid #E5E7EB',
                 display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px',
@@ -524,6 +524,9 @@ export default function MonitorPage() {
                 @keyframes pulse-dot {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.3; }
+                }
+                @media (max-width: 360px) {
+                    .stats-grid-monitor { grid-template-columns: 1fr 1fr 1fr !important; gap: 6px !important; }
                 }
             `}</style>
         </div>

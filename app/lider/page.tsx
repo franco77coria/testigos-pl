@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface MesaCumplimiento {
   mesa_numero: number
@@ -46,6 +47,7 @@ const TAREAS = [
 ]
 
 export default function LiderPage() {
+  const router = useRouter()
   const [testigos, setTestigos] = useState<TestigoLider[]>([])
   const [liderNombre, setLiderNombre] = useState('')
   const [resumen, setResumen] = useState<Resumen>({ total_testigos: 0, testigos_al_dia: 0, total_mesas: 0, mesas_completadas: 0 })
@@ -53,6 +55,7 @@ export default function LiderPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [expandedTestigo, setExpandedTestigo] = useState<string | null>(null)
   const [countdown, setCountdown] = useState(30)
+  const [tambienEsTestigo, setTambienEsTestigo] = useState(false)
 
   // Auth gate
   const [authorized, setAuthorized] = useState(false)
@@ -64,9 +67,11 @@ export default function LiderPage() {
   useEffect(() => {
     const stored = sessionStorage.getItem('lider_cedula')
     const nombre = sessionStorage.getItem('lider_nombre')
+    const esTestigo = sessionStorage.getItem('tambien_es_testigo') === 'true'
     if (stored) {
       setLiderCedula(stored)
       setLiderNombre(nombre || '')
+      setTambienEsTestigo(esTestigo)
       setAuthorized(true)
     } else {
       setLoading(false)
@@ -118,6 +123,10 @@ export default function LiderPage() {
         setLiderNombre(json.sesion.nombre)
         sessionStorage.setItem('lider_cedula', json.sesion.cedula)
         sessionStorage.setItem('lider_nombre', json.sesion.nombre)
+        if (json.tambienEsTestigo) {
+          setTambienEsTestigo(true)
+          sessionStorage.setItem('tambien_es_testigo', 'true')
+        }
         setAuthorized(true)
         setLoading(true)
       } else if (json.exito && (json.esCoordinador || json.esAnalista)) {
@@ -262,7 +271,7 @@ export default function LiderPage() {
               color: 'white', fontWeight: 800, fontSize: '16px',
             }}>L</div>
             <div>
-              <h1 style={{ fontSize: '15px', fontWeight: 700, color: '#111827', margin: 0 }}>
+              <h1 style={{ fontSize: '15px', fontWeight: 700, color: '#111827', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 'clamp(100px, 30vw, 200px)' }}>
                 {liderNombre || 'Panel de Líder'}
               </h1>
               <p style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
@@ -271,6 +280,25 @@ export default function LiderPage() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {tambienEsTestigo && liderCedula !== '__all__' && (
+              <button
+                onClick={() => {
+                  sessionStorage.setItem('forzar_testigo', 'true')
+                  sessionStorage.setItem('forzar_testigo_cedula', liderCedula)
+                  router.push('/')
+                }}
+                style={{
+                  background: '#3B82F6', border: 'none', color: 'white',
+                  padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
+                  fontSize: '11px', fontWeight: 700,
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>how_to_vote</span>
+                Mi Mesa
+              </button>
+            )}
             <span style={{ fontSize: '10px', fontWeight: 600, color: '#94A3B8' }}>{countdown}s</span>
             <button
               onClick={() => { setLoading(true); fetchData(liderCedula) }}
