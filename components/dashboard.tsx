@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { SesionTestigo, MesaDashboard } from '@/lib/types'
 import { calcularEstado, SENADO_CANDIDATOS } from '@/lib/types'
 import MesaCard from './mesa-card'
 import { horaActual } from '@/lib/utils'
+import { processPendingQueue, getPendingCount } from '@/lib/save-queue'
+import { toast } from './toast'
 
 interface Props {
   sesion: SesionTestigo
@@ -38,6 +40,8 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
   const [refreshing, setRefreshing] = useState(false)
   const [ultimaAct, setUltimaAct] = useState(horaActual())
   const [senadoCandidatos, setSenadoCandidatos] = useState(SENADO_CANDIDATOS)
+  const [pendingSaves, setPendingSaves] = useState(0)
+  const [processingQueue, setProcessingQueue] = useState(false)
 
   const { testigo, mesas } = sesion
 
@@ -45,6 +49,41 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
   const completadas = mesas.filter((m) => calcularEstado(m) === 'completada').length
   const pendientes = total - completadas
 
+  // Procesar cola de guardados pendientes
+  const processQueue = useCallback(async () => {
+    const count = getPendingCount()
+    setPendingSaves(count)
+    if (count === 0) return
+
+    setProcessingQueue(true)
+    const processed = await processPendingQueue(
+      (item) => {
+        toast('ok', `Guardado pendiente enviado: ${item.description}`)
+      },
+      (item) => {
+        if (item.retries >= 10) {
+          toast('err', `No se pudo enviar: ${item.description} (máx reintentos)`)
+        }
+      }
+    )
+    setProcessingQueue(false)
+    setPendingSaves(getPendingCount())
+
+    if (processed > 0) {
+      toast('ok', `${processed} dato(s) pendiente(s) sincronizado(s).`)
+      // Refrescar mesas para reflejar los datos enviados
+      try {
+        const res = await fetch(`/api/mesas?cedula=${sesion.cedula}`)
+        const data = await res.json()
+        if (data.exito) {
+          onMesasUpdate(data.mesas)
+          setUltimaAct(horaActual())
+        }
+      } catch { /* silent */ }
+    }
+  }, [sesion.cedula, onMesasUpdate])
+
+  // Al montar: cargar config + procesar cola + escuchar reconexión
   useEffect(() => {
     fetch('/api/admin/config')
       .then(r => r.json())
@@ -54,7 +93,28 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
         }
       })
       .catch(() => { })
-  }, [])
+
+    // Procesar pendientes al cargar
+    processQueue()
+
+    // Cuando el navegador recupera conexión, reintentar
+    const handleOnline = () => {
+      toast('ok', 'Conexión recuperada. Sincronizando...')
+      processQueue()
+    }
+    window.addEventListener('online', handleOnline)
+
+    // Chequear pendientes periódicamente (cada 30s)
+    const interval = setInterval(() => {
+      setPendingSaves(getPendingCount())
+      if (getPendingCount() > 0) processQueue()
+    }, 30000)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      clearInterval(interval)
+    }
+  }, [processQueue])
 
   async function refrescar() {
     setRefreshing(true)
@@ -146,6 +206,53 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
 
         {/* Main */}
         <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '96px' }}>
+          {/* Banner de pendientes */}
+          {pendingSaves > 0 && (
+            <div style={{
+              background: '#FEF3C7',
+              borderBottom: '1px solid #F59E0B',
+              padding: '10px 16px',
+              display: 'flex', alignItems: 'center', gap: '8px',
+              animation: processingQueue ? 'pulse 1.5s ease-in-out infinite' : 'none',
+            }}>
+              <span className="material-symbols-outlined" style={{
+                fontSize: '18px', color: '#F59E0B',
+                animation: processingQueue ? 'spin 1s linear infinite' : 'none',
+              }}>
+                {processingQueue ? 'sync' : 'cloud_off'}
+              </span>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#92400E' }}>
+                  {processingQueue
+                    ? 'Sincronizando datos pendientes...'
+                    : `${pendingSaves} dato(s) pendiente(s) de enviar`
+                  }
+                </span>
+                <p style={{ fontSize: '10px', color: '#A16207', margin: '2px 0 0' }}>
+                  {processingQueue
+                    ? 'Enviando al servidor...'
+                    : 'Se enviarán automáticamente al recuperar conexión'
+                  }
+                </p>
+              </div>
+              {!processingQueue && (
+                <button
+                  onClick={processQueue}
+                  style={{
+                    background: '#F59E0B', color: 'white', border: 'none',
+                    borderRadius: '6px', padding: '6px 10px',
+                    fontSize: '11px', fontWeight: 700, cursor: 'pointer',
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    display: 'flex', alignItems: 'center', gap: '4px',
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>refresh</span>
+                  Reintentar
+                </button>
+              )}
+            </div>
+          )}
+
           {/* User info bar */}
           <div style={{
             background: '#FFFFFF',
@@ -290,6 +397,10 @@ export default function Dashboard({ sesion, onLogout, onMesasUpdate }: Props) {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
         }
       `}</style>
     </div>

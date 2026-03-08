@@ -7,6 +7,7 @@ import { calcularEstado, CAMARA_CANDIDATOS, SENADO_CANDIDATOS, FRANJAS_HORARIAS 
 import PhotoCapture from './photo-capture'
 import ConfirmModal from './confirm-modal'
 import { toast } from './toast'
+import { saveWithRetry } from '@/lib/save-queue'
 
 interface Props {
   mesa: MesaDashboard
@@ -68,20 +69,27 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
     setConfirmAction(null)
     setSaving(true)
     try {
-      const res = await fetch('/api/mesas/save-horario', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cedula, mesa_numero: mesa.mesa_numero, franja,
-          votantes: parseInt(valHorario[franja]) || 0,
-        }),
-      })
-      const data = await res.json()
-      if (!data.exito) { toast('err', data.mensaje || 'Error al guardar.'); return }
+      const payload = {
+        cedula, mesa_numero: mesa.mesa_numero, franja,
+        votantes: parseInt(valHorario[franja]) || 0,
+      }
+      const franjaLabel = FRANJAS_HORARIAS.find(f => f.key === franja)?.hora || franja
+      const data = await saveWithRetry(
+        '/api/mesas/save-horario',
+        payload,
+        `Conteo ${franjaLabel} - Mesa ${mesa.mesa_numero}`
+      )
+      if (!data.exito) {
+        toast('err', data.mensaje || 'Error al guardar.')
+        return
+      }
       toast('ok', data.mensaje || 'Conteo guardado.')
       await refreshMesa()
-    } catch { toast('err', 'Error de conexión.') }
-    finally { setSaving(false) }
+    } catch {
+      toast('err', 'Error de conexión.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   // ---- GUARDAR SENADO ----
@@ -101,20 +109,25 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
     setConfirmAction(null)
     setSaving(true)
     try {
-      const payload: Record<string, any> = {}
-      activeSenado.forEach(c => { payload[c.code] = parseInt(valores[c.code]) || 0 })
-      payload.votos_senado_partido = parseInt(valores.votos_senado_partido) || 0
-      const res = await fetch('/api/mesas/save-senado', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cedula, mesa_numero: mesa.mesa_numero, datos: payload }),
-      })
-      const data = await res.json()
-      if (!data.exito) { toast('err', data.mensaje || 'Error al guardar.'); return }
+      const datos: Record<string, any> = {}
+      activeSenado.forEach(c => { datos[c.code] = parseInt(valores[c.code]) || 0 })
+      datos.votos_senado_partido = parseInt(valores.votos_senado_partido) || 0
+      const data = await saveWithRetry(
+        '/api/mesas/save-senado',
+        { cedula, mesa_numero: mesa.mesa_numero, datos },
+        `Senado - Mesa ${mesa.mesa_numero}`
+      )
+      if (!data.exito) {
+        toast('err', data.mensaje || 'Error al guardar.')
+        return
+      }
       toast('ok', 'Registros de Senado guardados.')
       await refreshMesa()
-    } catch { toast('err', 'Error de conexión.') }
-    finally { setSaving(false) }
+    } catch {
+      toast('err', 'Error de conexión.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   // ---- GUARDAR CÁMARA ----
@@ -134,20 +147,25 @@ export default function MesaCard({ mesa, cedula, onUpdate, senadoCandidatos }: P
     setConfirmAction(null)
     setSaving(true)
     try {
-      const payload: Record<string, any> = {}
-      CAMARA_CANDIDATOS.forEach(c => { payload[c.code] = parseInt(valores[c.code]) || 0 })
-      payload.votos_camara_partido = parseInt(valores.votos_camara_partido) || 0
-      const res = await fetch('/api/mesas/save-camara', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cedula, mesa_numero: mesa.mesa_numero, datos: payload }),
-      })
-      const data = await res.json()
-      if (!data.exito) { toast('err', data.mensaje || 'Error al guardar.'); return }
+      const datos: Record<string, any> = {}
+      CAMARA_CANDIDATOS.forEach(c => { datos[c.code] = parseInt(valores[c.code]) || 0 })
+      datos.votos_camara_partido = parseInt(valores.votos_camara_partido) || 0
+      const data = await saveWithRetry(
+        '/api/mesas/save-camara',
+        { cedula, mesa_numero: mesa.mesa_numero, datos },
+        `Cámara - Mesa ${mesa.mesa_numero}`
+      )
+      if (!data.exito) {
+        toast('err', data.mensaje || 'Error al guardar.')
+        return
+      }
       toast('ok', 'Registros de Cámara guardados.')
       await refreshMesa()
-    } catch { toast('err', 'Error de conexión.') }
-    finally { setSaving(false) }
+    } catch {
+      toast('err', 'Error de conexión.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function handleUploadPhoto(base64: string, tipo: 'camara' | 'senado' | 'camara_2' | 'senado_2') {
