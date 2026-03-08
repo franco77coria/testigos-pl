@@ -52,6 +52,10 @@ interface PuestoResult {
     puesto: string
     totalMesas: number
     completadas: number
+    r8am: number
+    r11am: number
+    r1pm: number
+    r4pm: number
     mesas: MesaResult[]
 }
 
@@ -59,6 +63,10 @@ interface MunicipioResult {
     municipio: string
     totalMesas: number
     completadas: number
+    r8am: number
+    r11am: number
+    r1pm: number
+    r4pm: number
     puestos: PuestoResult[]
 }
 
@@ -142,11 +150,16 @@ export default function AdminStats() {
                 const muniMap = new Map<string, PuestoResult[]>()
                 for (const p of json.puestos) {
                     if (!muniMap.has(p.municipio)) muniMap.set(p.municipio, [])
+                    const mesas: MesaResult[] = p.mesas
                     muniMap.get(p.municipio)!.push({
                         puesto: p.puesto,
                         totalMesas: p.total,
                         completadas: p.completadas,
-                        mesas: p.mesas,
+                        r8am: mesas.filter((m: MesaResult) => m.conteo_8am).length,
+                        r11am: mesas.filter((m: MesaResult) => m.conteo_11am).length,
+                        r1pm: mesas.filter((m: MesaResult) => m.conteo_1pm).length,
+                        r4pm: mesas.filter((m: MesaResult) => m.camara_guardado && m.senado_guardado).length,
+                        mesas,
                     })
                 }
 
@@ -156,6 +169,10 @@ export default function AdminStats() {
                         municipio: muni,
                         totalMesas: puestos.reduce((s, p) => s + p.totalMesas, 0),
                         completadas: puestos.reduce((s, p) => s + p.completadas, 0),
+                        r8am: puestos.reduce((s, p) => s + p.r8am, 0),
+                        r11am: puestos.reduce((s, p) => s + p.r11am, 0),
+                        r1pm: puestos.reduce((s, p) => s + p.r1pm, 0),
+                        r4pm: puestos.reduce((s, p) => s + p.r4pm, 0),
                         puestos,
                     })
                 }
@@ -568,10 +585,18 @@ export default function AdminStats() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                                        <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: '#E5E7EB', overflow: 'hidden' }}>
-                                            <div style={{ height: '100%', background: muniPct === 100 ? '#10B981' : '#F59E0B', width: `${muniPct}%` }} />
-                                        </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                        {[
+                                            { label: '8am', val: muni.r8am, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)' },
+                                            { label: '11am', val: muni.r11am, color: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
+                                            { label: '1pm', val: muni.r1pm, color: '#EF4444', bg: 'rgba(239,68,68,0.08)' },
+                                            { label: '4pm', val: muni.r4pm, color: '#10B981', bg: 'rgba(16,185,129,0.08)' },
+                                        ].map(f => (
+                                            <span key={f.label} style={{
+                                                fontSize: '9px', fontWeight: 700, padding: '2px 5px', borderRadius: '6px',
+                                                background: f.bg, color: f.color, whiteSpace: 'nowrap',
+                                            }}>{f.label}: {f.val}/{muni.totalMesas}</span>
+                                        ))}
                                         <span style={{
                                             fontSize: 'clamp(9px, 0.9vw, 13px)', fontWeight: 700, padding: '2px 8px', borderRadius: '8px',
                                             background: muniPct === 100 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.08)',
@@ -586,13 +611,27 @@ export default function AdminStats() {
                                             <div key={puesto.puesto} style={{ marginBottom: '8px' }}>
                                                 <div style={{
                                                     fontSize: 'clamp(10px, 1vw, 13px)', fontWeight: 700, color: '#111827',
-                                                    padding: '6px 8px', display: 'flex', justifyContent: 'space-between',
+                                                    padding: '6px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                                    flexWrap: 'wrap', gap: '4px',
                                                 }}>
-                                                    <span>{puesto.puesto}</span>
-                                                    <span style={{
-                                                        color: puesto.completadas === puesto.totalMesas ? '#10B981' : '#F59E0B',
-                                                        fontWeight: 700,
-                                                    }}>{puesto.completadas}/{puesto.totalMesas}</span>
+                                                    <span style={{ marginRight: 'auto' }}>{puesto.puesto}</span>
+                                                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                        {[
+                                                            { label: '8am', val: puesto.r8am, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)' },
+                                                            { label: '11am', val: puesto.r11am, color: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
+                                                            { label: '1pm', val: puesto.r1pm, color: '#EF4444', bg: 'rgba(239,68,68,0.08)' },
+                                                            { label: '4pm', val: puesto.r4pm, color: '#10B981', bg: 'rgba(16,185,129,0.08)' },
+                                                        ].map(f => (
+                                                            <span key={f.label} style={{
+                                                                fontSize: '9px', fontWeight: 700, padding: '2px 5px', borderRadius: '6px',
+                                                                background: f.bg, color: f.color, whiteSpace: 'nowrap',
+                                                            }}>{f.label}: {f.val}/{puesto.totalMesas}</span>
+                                                        ))}
+                                                        <span style={{
+                                                            color: puesto.completadas === puesto.totalMesas ? '#10B981' : '#F59E0B',
+                                                            fontWeight: 700, fontSize: 'clamp(10px, 1vw, 13px)',
+                                                        }}>{puesto.completadas}/{puesto.totalMesas}</span>
+                                                    </div>
                                                 </div>
                                                 <div style={{
                                                     display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
