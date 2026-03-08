@@ -177,19 +177,27 @@ export async function POST(request: NextRequest) {
     const lideres = Object.values(lideresMap)
     const analistas = Object.values(analistasMap)
 
-    // 1. Limpiar e insertar testigos
-    await supabase.from('testigos').delete().neq('cedula', '')
+    // 1. UPSERT testigos (actualiza datos si ya existe, inserta si es nuevo)
     for (let i = 0; i < testigos.length; i += 500) {
-      const { error } = await supabase.from('testigos').insert(testigos.slice(i, i + 500))
+      const { error } = await supabase.from('testigos').upsert(testigos.slice(i, i + 500), { onConflict: 'cedula' })
       if (error) {
-        console.error('Error insertando testigos:', error)
-        return NextResponse.json({ exito: false, mensaje: `Error insertando testigos: ${error.message}` })
+        console.error('Error upserting testigos:', error)
+        return NextResponse.json({ exito: false, mensaje: `Error upserting testigos: ${error.message}` })
       }
     }
 
-    // 2. Limpiar e insertar mesa_asignaciones
-    await supabase.from('mesa_asignaciones').delete().neq('testigo_cedula', '')
-    const asignRows = asignaciones.map(a => ({
+    // 2. UPSERT mesa_asignaciones (insertar solo las que no existen)
+    // mesa_asignaciones no tiene UNIQUE constraint, así que verificamos manualmente
+    const { data: existingAsig } = await supabase
+      .from('mesa_asignaciones')
+      .select('testigo_cedula, mesa_numero')
+
+    const existingAsigSet = new Set(
+      (existingAsig || []).map(a => `${a.testigo_cedula}__${a.mesa_numero}`)
+    )
+
+    const newAsignaciones = asignaciones.filter(a => !existingAsigSet.has(`${a.cedula}__${a.mesa_numero}`))
+    const asignRows = newAsignaciones.map(a => ({
       testigo_cedula: a.cedula,
       mesa_numero: a.mesa_numero,
       municipio: a.municipio,
@@ -203,44 +211,54 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 3. Limpiar y crear resultados vacíos
-    await supabase.from('resultados').delete().neq('testigo_cedula', '')
-    const resultadosRows = asignaciones.map(a => ({
-      testigo_cedula: a.cedula,
-      mesa_numero: a.mesa_numero,
-      municipio: a.municipio,
-      puesto: a.puesto,
-      estado: 'pendiente',
-    }))
-    for (let i = 0; i < resultadosRows.length; i += 500) {
-      await supabase.from('resultados').insert(resultadosRows.slice(i, i + 500))
+    // 3. Crear resultados SOLO para mesas nuevas (preserva progreso existente)
+    const { data: existingRes } = await supabase
+      .from('resultados')
+      .select('testigo_cedula, mesa_numero')
+
+    const existingResSet = new Set(
+      (existingRes || []).map(r => `${r.testigo_cedula}__${r.mesa_numero}`)
+    )
+
+    const newResultados = asignaciones
+      .filter(a => !existingResSet.has(`${a.cedula}__${a.mesa_numero}`))
+      .map(a => ({
+        testigo_cedula: a.cedula,
+        mesa_numero: a.mesa_numero,
+        municipio: a.municipio,
+        puesto: a.puesto,
+        estado: 'pendiente',
+      }))
+
+    for (let i = 0; i < newResultados.length; i += 500) {
+      await supabase.from('resultados').insert(newResultados.slice(i, i + 500))
     }
 
-    // 4. Limpiar e insertar lideres
-    await supabase.from('lideres').delete().neq('cedula', '')
+    // 4. UPSERT lideres
     for (let i = 0; i < lideres.length; i += 500) {
-      const { error } = await supabase.from('lideres').insert(lideres.slice(i, i + 500))
+      const { error } = await supabase.from('lideres').upsert(lideres.slice(i, i + 500), { onConflict: 'cedula' })
       if (error) {
-        console.error('Error insertando lideres:', error)
-        return NextResponse.json({ exito: false, mensaje: `Error insertando lideres: ${error.message}` })
+        console.error('Error upserting lideres:', error)
+        return NextResponse.json({ exito: false, mensaje: `Error upserting lideres: ${error.message}` })
       }
     }
 
-    // 5. Limpiar e insertar analistas
-    await supabase.from('analistas').delete().neq('cedula', '')
+    // 5. UPSERT analistas
     for (let i = 0; i < analistas.length; i += 500) {
-      const { error } = await supabase.from('analistas').insert(analistas.slice(i, i + 500))
+      const { error } = await supabase.from('analistas').upsert(analistas.slice(i, i + 500), { onConflict: 'cedula' })
       if (error) {
-        console.error('Error insertando analistas:', error)
-        return NextResponse.json({ exito: false, mensaje: `Error insertando analistas: ${error.message}` })
+        console.error('Error upserting analistas:', error)
+        return NextResponse.json({ exito: false, mensaje: `Error upserting analistas: ${error.message}` })
       }
     }
 
     return NextResponse.json({
       exito: true,
-      mensaje: `${testigos.length} testigos, ${asignaciones.length} mesas, ${lideres.length} líderes y ${analistas.length} analistas importados.`,
+      mensaje: `${testigos.length} testigos (upsert), ${newAsignaciones.length} mesas nuevas, ${newResultados.length} resultados nuevos, ${lideres.length} líderes y ${analistas.length} analistas importados. Progreso existente preservado.`,
       total: testigos.length,
-      mesas: asignaciones.length,
+      mesas_nuevas: newAsignaciones.length,
+      mesas_total: asignaciones.length,
+      resultados_nuevos: newResultados.length,
       lideres: lideres.length,
       analistas: analistas.length,
     })
