@@ -77,8 +77,8 @@ export async function GET(request: NextRequest) {
         // Agregar resultados
         if (resultados.length > 0) {
             for (const res of resultados) {
-                // Estado
-                if (res.estado === 'completada') {
+                // Estado — completada = datos de Cámara guardados
+                if (res.datos_camara_guardados) {
                     mesasCompletadas++
                     if (progressByMunicipio[res.municipio]) progressByMunicipio[res.municipio].completadas++
                 } else if (res.estado === 'en_progreso') {
