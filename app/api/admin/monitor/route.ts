@@ -34,13 +34,17 @@ export async function GET(request: NextRequest) {
         const resFilters: { eq?: Record<string, string>; in?: { column: string; values: string[] } } = {}
         if (filtroMunicipio) resFilters.eq = { municipio: filtroMunicipio }
         if (cedulasTestigos) resFilters.in = { column: 'testigo_cedula', values: cedulasTestigos }
-        const resultados = await fetchAllRows(supabase, 'resultados', '*', Object.keys(resFilters).length > 0 ? resFilters : undefined)
-
         // 2. Get asignaciones (paginated)
         const asigFilters: { eq?: Record<string, string>; in?: { column: string; values: string[] } } = {}
         if (filtroMunicipio) asigFilters.eq = { municipio: filtroMunicipio }
         if (cedulasTestigos) asigFilters.in = { column: 'testigo_cedula', values: cedulasTestigos }
-        const asignaciones = await fetchAllRows(supabase, 'mesa_asignaciones', 'testigo_cedula, mesa_numero, municipio, puesto', Object.keys(asigFilters).length > 0 ? asigFilters : undefined)
+
+        // Fetch in parallel for massive speedup
+        const [resultados, asignaciones, allMunicipios] = await Promise.all([
+            fetchAllRows(supabase, 'resultados', '*', Object.keys(resFilters).length > 0 ? resFilters : undefined),
+            fetchAllRows(supabase, 'mesa_asignaciones', 'testigo_cedula, mesa_numero, municipio, puesto', Object.keys(asigFilters).length > 0 ? asigFilters : undefined),
+            fetchAllRows(supabase, 'mesa_asignaciones', 'municipio')
+        ])
 
         // 3. Get testigo info (nombre, celular, correo)
         const allCedulas = new Set<string>()
@@ -70,8 +74,8 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // 4. Get unique municipios for filter dropdown (paginated)
-        const allMunicipios = await fetchAllRows(supabase, 'mesa_asignaciones', 'municipio')
+        // 4. Get unique municipios for filter dropdown
+        // (already fetched in parallel via allMunicipios)
         const municipioSet = new Set<string>()
         allMunicipios.forEach(m => municipioSet.add(m.municipio as string))
 

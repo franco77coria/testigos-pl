@@ -597,8 +597,8 @@ export default function AdminStats() {
                                                     }}>{puesto.completadas}/{puesto.totalMesas}</span>
                                                 </div>
                                                 <div style={{
-                                                    display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(70px, 8vw, 120px), 1fr))',
-                                                    gap: '6px', padding: '0 4px',
+                                                    display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                                                    gap: '8px', padding: '0 4px',
                                                 }}>
                                                     {puesto.mesas.map(mesa => {
                                                         const done = mesa.camara_guardado && mesa.senado_guardado
@@ -619,21 +619,28 @@ export default function AdminStats() {
 
                                                                 {/* 7 micro indicators */}
                                                                 <div style={{
-                                                                    display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px', flexWrap: 'wrap',
+                                                                    display: 'flex', justifyContent: 'center', gap: '4px', marginTop: '8px', flexWrap: 'wrap',
                                                                 }}>
                                                                     {[
-                                                                        { v: mesa.conteo_8am, l: '8H' },
-                                                                        { v: mesa.conteo_11am, l: '11' },
-                                                                        { v: mesa.conteo_1pm, l: '1P' },
-                                                                        { v: mesa.foto_senado, l: 'FS' },
-                                                                        { v: mesa.senado_guardado, l: 'SN' },
-                                                                        { v: mesa.foto_camara, l: 'FC' },
-                                                                        { v: mesa.camara_guardado, l: 'CM' },
+                                                                        { v: mesa.conteo_8am, l: '8am' },
+                                                                        { v: mesa.conteo_11am, l: '11am' },
+                                                                        { v: mesa.conteo_1pm, l: '1pm' },
+                                                                        { v: mesa.foto_senado, l: '📸 Sen' },
+                                                                        { v: mesa.senado_guardado, l: '📝 Sen' },
+                                                                        { v: mesa.foto_camara, l: '📸 Cám' },
+                                                                        { v: mesa.camara_guardado, l: '📝 Cám' },
                                                                     ].map((item, i) => (
                                                                         <div key={i} style={{
-                                                                            width: 'clamp(10px, 1.2vw, 16px)', height: 'clamp(10px, 1.2vw, 16px)',
-                                                                            borderRadius: '2px', background: item.v ? '#10B981' : '#FEE2E2',
-                                                                        }} title={item.l} />
+                                                                            fontSize: '9px', fontWeight: 700, letterSpacing: '0.02em',
+                                                                            padding: '3px 5px', borderRadius: '4px',
+                                                                            color: item.v ? '#FFFFFF' : '#EF4444',
+                                                                            background: item.v ? '#10B981' : '#FEE2E2',
+                                                                            border: `1px solid ${item.v ? '#059669' : '#FCA5A5'}`,
+                                                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                            whiteSpace: 'nowrap'
+                                                                        }} title={item.l}>
+                                                                            {item.l}
+                                                                        </div>
                                                                     ))}
                                                                 </div>
 

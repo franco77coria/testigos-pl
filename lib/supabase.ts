@@ -36,11 +36,30 @@ export async function fetchAllRows(
   select: string,
   filters?: { eq?: Record<string, string>; in?: { column: string; values: string[] } },
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const all: any[] = []
-  let from = 0
-  while (true) {
-    let query = client.from(table).select(select).range(from, from + PAGE_SIZE - 1)
+  // 1. Obtener count total
+  let countQuery = client.from(table).select('*', { count: 'exact', head: true })
+  if (filters?.eq) {
+    for (const [k, v] of Object.entries(filters.eq)) {
+      countQuery = countQuery.eq(k, v)
+    }
+  }
+  if (filters?.in) {
+    countQuery = countQuery.in(filters.in.column, filters.in.values)
+  }
+
+  const { count, error: countError } = await countQuery
+  if (countError) throw countError
+  if (!count || count === 0) return []
+
+  // 2. Fetch en paralelo
+  const totalPages = Math.ceil(count / PAGE_SIZE)
+  const promises = []
+
+  for (let i = 0; i < totalPages; i++) {
+    const from = i * PAGE_SIZE
+    const to = from + PAGE_SIZE - 1
+
+    let query = client.from(table).select(select).range(from, to)
     if (filters?.eq) {
       for (const [k, v] of Object.entries(filters.eq)) {
         query = query.eq(k, v)
@@ -49,12 +68,17 @@ export async function fetchAllRows(
     if (filters?.in) {
       query = query.in(filters.in.column, filters.in.values)
     }
-    const { data, error } = await query
-    if (error) throw error
-    if (!data || data.length === 0) break
-    all.push(...data)
-    if (data.length < PAGE_SIZE) break
-    from += PAGE_SIZE
+    promises.push(query)
   }
+
+  const results = await Promise.all(promises)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const all: any[] = []
+  for (const res of results) {
+    if (res.error) throw res.error
+    if (res.data) all.push(...res.data)
+  }
+
   return all
 }

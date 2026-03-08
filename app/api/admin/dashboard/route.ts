@@ -28,14 +28,15 @@ export async function GET(request: NextRequest) {
         if (filtroMunicipio) resFilters.eq = { municipio: filtroMunicipio }
         if (cedulasTestigos) resFilters.in = { column: 'testigo_cedula', values: cedulasTestigos }
 
-        const resultados = await fetchAllRows(supabase, 'resultados', '*', Object.keys(resFilters).length > 0 ? resFilters : undefined)
-
         // 3. Traer asignaciones paginadas para calcular totales de mesas (los resultados pueden estar incompletos)
         const asigFilters: { eq?: Record<string, string>; in?: { column: string; values: string[] } } = {}
         if (filtroMunicipio) asigFilters.eq = { municipio: filtroMunicipio }
         if (cedulasTestigos) asigFilters.in = { column: 'testigo_cedula', values: cedulasTestigos }
 
-        const asignaciones = await fetchAllRows(supabase, 'mesa_asignaciones', 'mesa_numero, municipio', Object.keys(asigFilters).length > 0 ? asigFilters : undefined)
+        const [resultados, asignaciones] = await Promise.all([
+            fetchAllRows(supabase, 'resultados', '*', Object.keys(resFilters).length > 0 ? resFilters : undefined),
+            fetchAllRows(supabase, 'mesa_asignaciones', 'mesa_numero, municipio', Object.keys(asigFilters).length > 0 ? asigFilters : undefined)
+        ])
 
         let totalMesas = asignaciones.length
         let mesasCompletadas = 0
