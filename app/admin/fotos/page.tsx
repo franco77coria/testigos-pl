@@ -26,7 +26,9 @@ export default function FotosPage() {
     const [mesas, setMesas] = useState<MesaFoto[]>([])
     const [municipios, setMunicipios] = useState<string[]>([])
     const [filtro, setFiltro] = useState('')
+    const [filtroPuesto, setFiltroPuesto] = useState('')
     const [soloSinFoto, setSoloSinFoto] = useState(false)
+    const [orden, setOrden] = useState<'mesa' | 'municipio' | 'sin_foto' | 'con_foto'>('municipio')
     const [resumen, setResumen] = useState<Resumen>({ total: 0, con_foto: 0, sin_foto: 0 })
     const [loading, setLoading] = useState(true)
     const [lightbox, setLightbox] = useState<{ urls: string[]; index: number } | null>(null)
@@ -86,7 +88,20 @@ export default function FotosPage() {
         }
     }
 
-    const filteredMesas = soloSinFoto ? mesas.filter(m => !m.tiene_fotos) : mesas
+    // Puestos únicos del dataset actual
+    const puestosUnicos = [...new Set(mesas.map(m => m.puesto))].sort()
+
+    // Filtrar y ordenar
+    let filteredMesas = soloSinFoto ? mesas.filter(m => !m.tiene_fotos) : [...mesas]
+    if (filtroPuesto) filteredMesas = filteredMesas.filter(m => m.puesto === filtroPuesto)
+
+    filteredMesas.sort((a, b) => {
+        if (orden === 'mesa') return a.mesa_numero - b.mesa_numero
+        if (orden === 'sin_foto') return (a.tiene_fotos ? 1 : 0) - (b.tiene_fotos ? 1 : 0) || a.mesa_numero - b.mesa_numero
+        if (orden === 'con_foto') return (b.tiene_fotos ? 1 : 0) - (a.tiene_fotos ? 1 : 0) || a.mesa_numero - b.mesa_numero
+        // default: municipio
+        return a.municipio.localeCompare(b.municipio) || a.mesa_numero - b.mesa_numero
+    })
 
     // ===== AUTH GATE =====
     if (!authorized) {
@@ -240,13 +255,29 @@ export default function FotosPage() {
                             Galería de Fotos
                         </h1>
                     </div>
-                    <button onClick={() => fetchData(filtro || undefined)}
-                        style={{
-                            background: 'rgba(206,17,38,0.08)', border: 'none', color: '#CE1126',
-                            padding: '8px', borderRadius: '8px', cursor: 'pointer', display: 'flex',
-                        }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>sync</span>
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button onClick={() => fetchData(filtro || undefined)}
+                            style={{
+                                background: 'rgba(206,17,38,0.08)', border: 'none', color: '#CE1126',
+                                padding: '8px', borderRadius: '8px', cursor: 'pointer', display: 'flex',
+                            }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>sync</span>
+                        </button>
+                        <button
+                            onClick={() => { window.location.href = '/' }}
+                            style={{
+                                background: '#FEE2E2', border: 'none', color: '#DC2626',
+                                padding: '6px 12px', borderRadius: '8px', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', gap: '4px',
+                                fontSize: '11px', fontWeight: 700,
+                                fontFamily: "'Inter', system-ui, sans-serif",
+                            }}
+                            title="Cerrar sesión"
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>logout</span>
+                            Salir
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -267,10 +298,10 @@ export default function FotosPage() {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
                     <select value={filtro} onChange={e => handleFiltro(e.target.value)}
                         style={{
-                            flex: 1, minWidth: '200px', padding: '10px 14px',
+                            flex: 1, minWidth: '150px', padding: '10px 14px',
                             background: '#F8FAFC', border: '1px solid #E5E7EB',
                             borderRadius: '10px', fontSize: '13px', fontWeight: 500,
                             color: '#111827', outline: 'none', cursor: 'pointer',
@@ -278,6 +309,32 @@ export default function FotosPage() {
                         }}>
                         <option value="">Todos los municipios</option>
                         {municipios.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                    <select value={filtroPuesto} onChange={e => setFiltroPuesto(e.target.value)}
+                        style={{
+                            flex: 1, minWidth: '150px', padding: '10px 14px',
+                            background: '#F8FAFC', border: '1px solid #E5E7EB',
+                            borderRadius: '10px', fontSize: '13px', fontWeight: 500,
+                            color: '#111827', outline: 'none', cursor: 'pointer',
+                            fontFamily: "'Inter', system-ui, sans-serif",
+                        }}>
+                        <option value="">Todos los puestos</option>
+                        {puestosUnicos.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <select value={orden} onChange={e => setOrden(e.target.value as any)}
+                        style={{
+                            padding: '10px 14px',
+                            background: '#F8FAFC', border: '1px solid #E5E7EB',
+                            borderRadius: '10px', fontSize: '12px', fontWeight: 600,
+                            color: '#111827', outline: 'none', cursor: 'pointer',
+                            fontFamily: "'Inter', system-ui, sans-serif",
+                        }}>
+                        <option value="municipio">Ordenar: Municipio</option>
+                        <option value="mesa">Ordenar: # Mesa</option>
+                        <option value="sin_foto">Ordenar: Sin foto primero</option>
+                        <option value="con_foto">Ordenar: Con foto primero</option>
                     </select>
                     <button onClick={() => setSoloSinFoto(!soloSinFoto)}
                         style={{
